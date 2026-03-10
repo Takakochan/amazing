@@ -1,56 +1,57 @@
-from abc import abstractmethod, ABC
-from typing import Any
+from abc import ABC, abstractmethod
 
 
 class ConfigValue(ABC):
     @abstractmethod
     @staticmethod
-    def parse(line: Any) -> Any:
+    def parse(value: str) -> int | str | bool | tuple[int, int]:
         pass
 
 
 class IntValue(ConfigValue):
     @staticmethod
-    def parse(line: str) -> int:
-        return int(line.strip())
+    def parse(value: str) -> int:
+        return int(value)
 
 
 class StrValue(ConfigValue):
     @staticmethod
-    def parse(line: str) -> str:
-        return line.strip()
+    def parse(value: str) -> str:
+        return value
 
 
 class BoolValue(ConfigValue):
     @staticmethod
-    def parse(line: str) -> bool:
-        striped_line = line.strip()
-        if striped_line == "True":
+    def parse(value: str) -> bool:
+        if value == "True":
             return True
-        elif striped_line == "False":
+
+        if value == "False":
             return False
-        else:
-            raise ValueError("Invalid input, must be True or False")
+
+        raise ValueError("Invalid input, must be True or False")
 
 
 class PositonValue(ConfigValue):
     @staticmethod
-    def parse(line: str) -> tuple[int, int]:
-        split_line = line.split(",")
+    def parse(value: str) -> tuple[int, int]:
+        split_value = value.split(",")
         # TODO: check invalid input
-        x = IntValue.parse(split_line[0])
-        y = IntValue.parse(split_line[1])
+        x = IntValue.parse(split_value[0])
+        y = IntValue.parse(split_value[1])
 
         return (x, y)
 
 
 def read_config():
-    with open("config.txt", "r") as file:
+    with open("config.txt") as file:
         for line in file:
-            if line.strip().startswith("#"):
+            stripped_line = line.strip()
+
+            if stripped_line.startswith("#"):
                 continue
 
-            split_line = line.split("=")
+            split_line = stripped_line.split("=")
             # TODO: check invalid input
             key = split_line[0]
             value = split_line[1]
