@@ -43,7 +43,11 @@ class StrValue(ConfigValue):
         return value
 
 
-def parse_line(config: dict, line: str) -> None:
+def parse_line(
+    config: dict,
+    maze_dict: dict,
+    line: str,
+) -> None:
     stripped_line = line.strip()
 
     if not stripped_line or stripped_line.startswith("#"):
@@ -59,12 +63,13 @@ def parse_line(config: dict, line: str) -> None:
     if parser is None:
         raise ValueError(f"Invalid key: {key}")
 
+    # TODO: catch error
     result = parser.parse(value)
 
-    print(f"{key}={value} -> {result}")
+    maze_dict[key.lower()] = result
 
 
-def read_config(filename: str) -> None:
+def read_config(filename: str) -> dict:
     config: dict = {}
 
     config["HEIGHT"] = IntValue
@@ -74,13 +79,19 @@ def read_config(filename: str) -> None:
     config["OUTPUT_FILE"] = StrValue
     config["PERFECT"] = BoolValue
 
-    try:
-        with open(filename, encoding="utf-8") as file:
-            for line in file:
-                parse_line(config, line)
-    except OSError as error:
-        print(f"{error}")
+    with open(filename, encoding="utf-8") as file:
+        maze_dict: dict = {}
+        for line in file:
+            # TODO: catch error
+            parse_line(config, maze_dict, line)
+        return maze_dict
 
 
 if __name__ == "__main__":
-    read_config("config.txt")
+    try:
+        maze_dict = read_config("badconfig.txt")
+        # TODO: check for missing key/value pairs
+        # TODO: convert to Maze class
+        print(f"{maze_dict}")
+    except OSError as error:
+        print(f"{error}")
