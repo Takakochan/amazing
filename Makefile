@@ -6,9 +6,7 @@ MYPY_FLAGS += --ignore-missing-imports
 MYPY_FLAGS += --disallow-untyped-defs
 MYPY_FLAGS += --check-untyped-defs
 
-SRC := src
-
-MAIN_PROGRAM := $(SRC)/a_maze_ing.py
+MAIN_PROGRAM := a_maze_ing.py
 
 all: install run
 
@@ -33,12 +31,12 @@ clean:
 	$(RM) .venv/
 
 lint:
-	uvx flake8 ./src/
-	uvx mypy ./src/ $(MYPY_FLAGS)
+	uvx flake8 .
+	uvx mypy . $(MYPY_FLAGS)
 
 lint-strict:
-	uvx flake8 ./src/
-	uvx mypy ./src/ --strict
+	uvx flake8 .
+	uvx mypy . --strict
 	uvx ruff check
 	uvx ty check
 
