@@ -6,6 +6,10 @@ MYPY_FLAGS += --ignore-missing-imports
 MYPY_FLAGS += --disallow-untyped-defs
 MYPY_FLAGS += --check-untyped-defs
 
+SRC := src
+
+MAIN_PROGRAM := $(SRC)/a_maze_ing.py
+
 all: install run
 
 install:
@@ -16,11 +20,11 @@ install:
 	uv add numpy
 
 run:
-	uv run src/main.py
+	uv run $(MAIN_PROGRAM)
 
 debug:
 	# TODO: use pdb
-	uv run src/main.py
+	uv run $(MAIN_PROGRAM)
 
 clean:
 	uvx ruff clean
