@@ -48,4 +48,7 @@ ignore = [
   # "D211", # no-blank-line-before-class
   "D212", # multi-line-summary-first-line
   # "D213", # multi-line-summary-second-line
+
+  "TD003",  # missing link for todo
+  "FIX002", # resolve todo
 ]
