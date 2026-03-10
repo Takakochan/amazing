@@ -43,8 +43,29 @@ class StrValue(ConfigValue):
         return value
 
 
+def parse_line(config: dict, line: str) -> None:
+    stripped_line = line.strip()
+
+    if not stripped_line or stripped_line.startswith("#"):
+        return
+
+    split_line = stripped_line.split("=", 1)
+    # TODO: check invalid input
+    key = split_line[0]
+    value = split_line[1]
+
+    parser = config.get(key)
+
+    if parser is None:
+        raise ValueError(f"Invalid key: {key}")
+
+    result = parser.parse(value)
+
+    print(f"{key}={value} -> {result}")
+
+
 def read_config(filename: str) -> None:
-    config = {}
+    config: dict = {}
 
     config["HEIGHT"] = IntValue
     config["WIDTH"] = IntValue
@@ -56,24 +77,7 @@ def read_config(filename: str) -> None:
     try:
         with open(filename, encoding="utf-8") as file:
             for line in file:
-                stripped_line = line.strip()
-
-                if not stripped_line or stripped_line.startswith("#"):
-                    continue
-
-                split_line = stripped_line.split("=", 1)
-                # TODO: check invalid input
-                key = split_line[0]
-                value = split_line[1]
-
-                parser = config.get(key)
-
-                if parser is None:
-                    raise ValueError(f"Invalid key: {key}")
-
-                result = parser.parse(value)
-
-                print(f"{key}={value} -> {result}")
+                parse_line(config, line)
     except OSError as error:
         print(f"{error}")
 
