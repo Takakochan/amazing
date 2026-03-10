@@ -10,8 +10,6 @@ docstring-code-format = true
 select = [
   "I",   # isort
   "E",   # pycodestyle
-  "DOC", # pydoclint
-  "D",   # pydocstyle
   "F",   # Pyflakes
   "PL",  # Pylint
   "UP",  # pyupgrade
@@ -25,9 +23,7 @@ select = [
   "A",   # flake8-builtins
   "COM", # flake8-commas
   "C4",  # flake8-comprehensions
-  "EM",  # flake8-errmsg
   "EXE", # flake8-executable
-  "FIX", # flake8-fixme
   "ISC", # flake8-implicit-str-concat
   "ICN", # flake8-import-conventions
   "LOG", # flake8-logging
@@ -39,16 +35,23 @@ select = [
   "SLF", # flake8-self
   "SIM", # flake8-simplify
   "TID", # flake8-tidy-imports
-  "TD",  # flake8-todos
   "TC",  # flake8-type-checking
   "ARG", # flake8-unused-arguments
 ]
 ignore = [
+  "DOC", # pydoclint
+
+  "D",    # pydocstyle
   "D203", # incorrect-blank-line-before-class
   # "D211", # no-blank-line-before-class
   "D212", # multi-line-summary-first-line
   # "D213", # multi-line-summary-second-line
 
-  "TD003",  # missing link for todo
+  "EM", # flake8-errmsg
+
+  "FIX",    # flake8-fixme
   "FIX002", # resolve todo
+
+  "TD",    # flake8-todos
+  "TD003", # missing link for todo
 ]
