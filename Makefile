@@ -40,4 +40,8 @@ lint-strict:
 	uvx ruff check
 	uvx ty check
 
-.PHONY: all install run debug clean lint lint-strict
+format:
+	uvx ruff format
+	uvx ruff check --fix --select=I001
+
+.PHONY: all install run debug clean lint lint-strict format
