@@ -37,11 +37,12 @@ lint:
 lint-strict:
 	uvx flake8 .
 	uvx mypy . --strict
+	uvx ruff format --check
 	uvx ruff check
 	uvx ty check
 
 format:
-	uvx ruff format
 	uvx ruff check --fix --select=I001
+	uvx ruff format
 
 .PHONY: all install run debug clean lint lint-strict format
