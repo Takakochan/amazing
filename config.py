@@ -1,118 +1,106 @@
-from collections.abc import Callable
-from dataclasses import dataclass, fields
-from typing import Any, Self, get_type_hints
+from dataclasses import dataclass, field, fields
+from typing import TYPE_CHECKING, Any, Self
 
-# TODO: convert to fallible function
-type ParserFn = Callable[[str], Any]
+from numpy.char import isnumeric
+from returns.result import Failure, Result, Success
 
-PARSERS: dict[str, ParserFn] = {}
-
-
-def register_parser(fn: ParserFn) -> ParserFn:
-    return_type = get_type_hints(fn).get("return")
-
-    # TODO: error if return_type is None
-    # TODO: error if PARSERS[return_type] is already defined
-
-    if return_type is not None:
-        PARSERS[return_type.__name__] = fn
-
-    return fn
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
-@register_parser
-def parse_int(value: str) -> int:
-    return int(value)
+def parse_int(value: str) -> Result[int, Exception]:
+    if isnumeric(value):
+        return Success(int(value))
+
+    return Failure(f"invalid integer: `{value}`")
 
 
-@register_parser
-def parse_int_tuple(value: str) -> tuple[int, int]:
+def parse_int_tuple(value: str) -> Result[tuple[int, int], Exception]:
     split_value = value.split(",", 1)
-    x = parse_int(split_value[0])
-    y = parse_int(split_value[1])
-    return (x, y)
+
+    if len(split_value) != 2:
+        return Failure(f"invalid tuple: `{value}`")
+
+    return Result.do((x, y) for x in split_value[0] for y in split_value[1])
 
 
-@register_parser
-def parse_bool(value: str) -> bool:
+def parse_bool(value: str) -> Result[bool, Exception]:
     if value == "True":
-        return True
+        return Success(True)
 
     if value == "False":
-        return False
+        return Success(False)
 
-    raise ValueError(f"invalid literal for boolean: '{value}'")
-
-
-@register_parser
-def parse_str(value: str) -> str:
-    return value
+    return Failure(f"invalid literal for boolean: `{value}`")
 
 
-# TODO: convert to fallible function
+def parse_str(value: str) -> Result[str, Exception]:
+    return Success(value)
 
 
-def parse_line(config: dict[str, Any], line: str) -> None:
+def parse_line(config: dict[str, Any], line: str) -> Result[None, Exception]:
     stripped_line = line.strip()
 
     if not stripped_line or stripped_line.startswith("#"):
-        return
+        return Success(None)
 
     split_line = stripped_line.split("=", 1)
 
-    # TODO: verify there are 2 items in split_line
+    if len(split_line) != 2:
+        return Failure(f"missing `=` in line: `{stripped_line}`")
 
     key = split_line[0]
     value = split_line[1]
 
-    field_names: list[str] = [field.name.upper() for field in fields(Config)]
-    field_types: list[Any] = [field.type for field in fields(Config)]
+    if key not in [field.name.upper() for field in fields(Config)]:
+        return Failure(f"invalid key: '{key}'")
 
-    try:
-        index = field_names.index(key)
-    except ValueError as err:
-        raise ValueError(f"invalid key: '{key}'") from err
+    parser: Callable[[str], Result[Any, Exception]] = (
+        Config.__dataclass_fields__[key.lower()].metadata["parser"]
+    )
 
-    field_type = field_types[index]
-    parser = PARSERS[field_type.__name__]
-    result = parser(value)
+    match parser(value):
+        case Success(result):
+            config[key.lower()] = result
+        case Failure(error):
+            return Failure(error)
 
-    # TODO: handle parser error
-
-    config[key.lower()] = result
+    return Success(None)
 
 
 @dataclass
 class Config:
-    width: int
-    height: int
-    entry: tuple[int, int]
-    exit: tuple[int, int]
-    output_file: str
-    perfect: bool
+    width: int = field(metadata={"parser": parse_int})
+    height: int = field(metadata={"parser": parse_int})
+    entry: tuple[int, int] = field(metadata={"parser": parse_int_tuple})
+    exit: tuple[int, int] = field(metadata={"parser": parse_int_tuple})
+    output_file: str = field(metadata={"parser": parse_str})
+    perfect: bool = field(metadata={"parser": parse_bool})
 
     @classmethod
-    def from_file(cls, filename: str) -> Self | None:
+    def from_file(cls, filename: str) -> Result[Self, None]:
         try:
             with open(filename, encoding="utf-8") as file:
                 config: dict[str, Any] = {}
 
                 for line in file:
-                    parse_line(config, line)
+                    match parse_line(config, line):
+                        case Success(None):
+                            pass
+                        case Failure(err):
+                            return Failure(err)
 
                 try:
-                    return cls(**config)
+                    return Success(cls(**config))
                 except Exception as err:
-                    print(f"missing key/value pair: {err}")
-                    return None
+                    return Failure(f"missing key/value pair: {err}")
         except OSError as error:
-            print(f"{error}")
-            return None
+            return Failure(error)
 
 
 if __name__ == "__main__":
-    try:
-        config = Config.from_file("config.txt")
-        print(f"config: {config}")
-    except Exception as err:
-        print(f"Exception: {err}")
+    match Config.from_file("config.txt"):
+        case Success(config):
+            print(f"config: {config}")
+        case Failure(error):
+            print(f"Error: {error}")
