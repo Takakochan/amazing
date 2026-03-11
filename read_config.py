@@ -19,6 +19,8 @@ class PositonValue(ConfigValue):
     def parse(value: str) -> tuple[int, int]:
         split_value = value.split(",", 1)
         # TODO: check invalid input
+        if len(split_value) != 2:
+            raise ValueError("Potisional value must contain 2 integer")
         x = IntValue.parse(split_value[0])
         y = IntValue.parse(split_value[1])
 
