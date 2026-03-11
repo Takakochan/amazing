@@ -3,7 +3,7 @@ from dataclasses import dataclass, fields
 from typing import Any, Self, get_type_hints
 
 # TODO: convert to fallible function
-type ParserFn[T] = Callable[[str], T]
+type ParserFn = Callable[[str], Any]
 
 PARSERS: dict[str, ParserFn] = {}
 
@@ -52,7 +52,7 @@ def parse_str(value: str) -> str:
 # TODO: convert to fallible function
 
 
-def parse_line(config: dict, line: str) -> None:
+def parse_line(config: dict[str, Any], line: str) -> None:
     stripped_line = line.strip()
 
     if not stripped_line or stripped_line.startswith("#"):
@@ -95,7 +95,7 @@ class Config:
     def from_file(cls, filename: str) -> Self | None:
         try:
             with open(filename, encoding="utf-8") as file:
-                config = {}
+                config: dict[str, Any] = {}
 
                 for line in file:
                     parse_line(config, line)
@@ -104,8 +104,10 @@ class Config:
                     return cls(**config)
                 except Exception as err:
                     print(f"missing key/value pair: {err}")
+                    return None
         except OSError as error:
             print(f"{error}")
+            return None
 
 
 if __name__ == "__main__":
