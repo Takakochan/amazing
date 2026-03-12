@@ -14,7 +14,7 @@ class IntValue(ConfigValue):
         return int(value)
 
 
-class PositonValue(ConfigValue):
+class PositionValue(ConfigValue):
     @staticmethod
     def parse(value: str) -> tuple[int, int]:
         split_value = value.split(",", 1)
@@ -76,8 +76,8 @@ def read_config(filename: str) -> dict:
 
     config["HEIGHT"] = IntValue
     config["WIDTH"] = IntValue
-    config["ENTRY"] = PositonValue
-    config["EXIT"] = PositonValue
+    config["ENTRY"] = PositionValue
+    config["EXIT"] = PositionValue
     config["OUTPUT_FILE"] = StrValue
     config["PERFECT"] = BoolValue
 
