@@ -85,7 +85,11 @@ def read_config(filename: str) -> dict:
         maze_dict: dict = {}
         for line in file:
             # TODO: catch error
-            parse_line(config, maze_dict, line)
+            try:
+                parse_line(config, maze_dict, line)
+            except FileNotFoundError as e:
+                print(f"Error: {e}")
+        
         return maze_dict
 
 
