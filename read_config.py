@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class ConfigValue(ABC):
@@ -11,7 +12,10 @@ class ConfigValue(ABC):
 class IntValue(ConfigValue):
     @staticmethod
     def parse(value: str) -> int:
-        return int(value)
+        try:
+            return int(value)
+        except ValueError:
+            raise ValueError(f"invalid integer: '{value}'")
 
 
 class PositionValue(ConfigValue):
@@ -20,7 +24,7 @@ class PositionValue(ConfigValue):
         split_value = value.split(",", 1)
         # TODO: check invalid input
         if len(split_value) != 2:
-            raise ValueError("Potisional value must contain 2 integer")
+            raise ValueError("Potisional value must contain 2 integers")
         x = IntValue.parse(split_value[0])
         y = IntValue.parse(split_value[1])
 
@@ -71,9 +75,10 @@ def parse_line(
     maze_dict[key.lower()] = result
 
 
+REQUIRED_KEYS = {'WIDTH', 'HEIGHT', 'ENTRY', 'EXIT', 'OUTPUT_FILE', 'PERFECT'}
+
 def read_config(filename: str) -> dict:
     config: dict = {}
-
     config["HEIGHT"] = IntValue
     config["WIDTH"] = IntValue
     config["ENTRY"] = PositionValue
@@ -81,16 +86,21 @@ def read_config(filename: str) -> dict:
     config["OUTPUT_FILE"] = StrValue
     config["PERFECT"] = BoolValue
 
-    with open(filename, encoding="utf-8") as file:
-        maze_dict: dict = {}
-        for line in file:
-            # TODO: catch error
-            try:
-                parse_line(config, maze_dict, line)
-            except FileNotFoundError as e:
-                print(f"Error: {e}")
-        
-        return maze_dict
+    try:
+        with open(filename, encoding="utf-8") as file:
+            maze_dict: dict = {}
+            for line in file:
+                try:
+                    parse_line(config, maze_dict, line)
+                except ValueError as e:
+                    print(f"Error: {e}")
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
+
+    missing_key = REQUIRED_KEYS - maze_dict.keys()
+    if missing_key
+        raise ValueError(f"Incomplete config values")
+    return maze_dict
 
 
 if __name__ == "__main__":
