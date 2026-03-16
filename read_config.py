@@ -77,6 +77,7 @@ def parse_line(
 
 REQUIRED_KEYS = {'WIDTH', 'HEIGHT', 'ENTRY', 'EXIT', 'OUTPUT_FILE', 'PERFECT'}
 
+
 def read_config(filename: str) -> dict:
     config: dict = {}
     config["HEIGHT"] = IntValue
@@ -98,8 +99,8 @@ def read_config(filename: str) -> dict:
         print(f"Error: {e}")
 
     missing_key = REQUIRED_KEYS - maze_dict.keys()
-    if missing_key
-        raise ValueError(f"Incomplete config values")
+    if missing_key:
+        raise ValueError("Incomplete config values")
     return maze_dict
 
 
