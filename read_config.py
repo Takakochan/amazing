@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Any
 
 
 class ConfigValue(ABC):
@@ -58,20 +57,14 @@ def parse_line(
 
     if not stripped_line or stripped_line.startswith("#"):
         return
-
     split_line = stripped_line.split("=", 1)
     # TODO: check invalid input
     key = split_line[0]
     value = split_line[1]
-
     parser = config.get(key)
-
     if parser is None:
-        raise ValueError(f"Invalid key: {key}")
-
-    # TODO: catch error
+        raise ValueError(f"Invalid key: Missing Non-mandatory key: '{key}'")
     result = parser.parse(value)
-
     maze_dict[key.lower()] = result
 
 
@@ -97,8 +90,9 @@ def read_config(filename: str) -> dict:
                     print(f"Error: {e}")
     except FileNotFoundError as e:
         print(f"Error: {e}")
-
-    missing_key = REQUIRED_KEYS - maze_dict.keys()
+    maze_keys = set(maze_dict.keys())
+    upper_maze_keys = {key.upper() for key in maze_keys}
+    missing_key = REQUIRED_KEYS - upper_maze_keys
     if missing_key:
         raise ValueError("Incomplete config values")
     return maze_dict
@@ -106,8 +100,7 @@ def read_config(filename: str) -> dict:
 
 if __name__ == "__main__":
     try:
-        maze_dict = read_config("badconfig.txt")
-        # TODO: check for missing key/value pairs
+        maze_dict = read_config("config.txt")
         # TODO: convert to Maze class
         print(f"{maze_dict}")
     except OSError as error:
