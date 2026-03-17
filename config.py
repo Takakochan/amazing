@@ -2,34 +2,56 @@ from collections.abc import Callable
 from dataclasses import dataclass, fields
 from typing import Any, Self, get_type_hints
 
-# TODO: convert to fallible function
 type ParserFn = Callable[[str], Any]
 
 PARSERS: dict[str, ParserFn] = {}
 
 
+class ConfigError(Exception):
+    pass
+
+
 def register_parser(fn: ParserFn) -> ParserFn:
     return_type = get_type_hints(fn).get("return")
 
-    # TODO: error if return_type is None
-    # TODO: error if PARSERS[return_type] is already defined
+    if return_type is None:
+        raise ConfigError(f"parser function `{fn}` returns `None`")
 
-    if return_type is not None:
-        PARSERS[return_type.__name__] = fn
+    if PARSERS.get(return_type) is not None:
+        raise ConfigError(
+            f"parser function already defined for `{return_type}`",
+        )
+
+    PARSERS[return_type] = fn
 
     return fn
 
 
 @register_parser
 def parse_int(value: str) -> int:
-    return int(value)
+    try:
+        return int(value)
+    except ValueError as error:
+        raise ConfigError(f"invalid integer: `{value}`") from error
 
 
 @register_parser
 def parse_int_tuple(value: str) -> tuple[int, int]:
     split_value = value.split(",", 1)
-    x = parse_int(split_value[0])
-    y = parse_int(split_value[1])
+
+    if len(split_value) != 2:
+        raise ConfigError("expected two values seperated by a comma")
+
+    try:
+        x = parse_int(split_value[0])
+    except ConfigError as error:
+        raise error
+
+    try:
+        y = parse_int(split_value[1])
+    except ConfigError as error:
+        raise error
+
     return (x, y)
 
 
@@ -41,15 +63,12 @@ def parse_bool(value: str) -> bool:
     if value == "False":
         return False
 
-    raise ValueError(f"invalid literal for boolean: '{value}'")
+    raise ConfigError(f"invalid boolean literal: `{value}`")
 
 
 @register_parser
 def parse_str(value: str) -> str:
     return value
-
-
-# TODO: convert to fallible function
 
 
 def parse_line(config: dict[str, Any], line: str) -> None:
@@ -60,7 +79,8 @@ def parse_line(config: dict[str, Any], line: str) -> None:
 
     split_line = stripped_line.split("=", 1)
 
-    # TODO: verify there are 2 items in split_line
+    if len(split_line) != 2:
+        raise ConfigError("expected two values seperated by =")
 
     key = split_line[0]
     value = split_line[1]
@@ -70,14 +90,16 @@ def parse_line(config: dict[str, Any], line: str) -> None:
 
     try:
         index = field_names.index(key)
-    except ValueError as err:
-        raise ValueError(f"invalid key: '{key}'") from err
+    except ValueError as error:
+        raise ConfigError(f"invalid key: `{key}`") from error
 
     field_type = field_types[index]
-    parser = PARSERS[field_type.__name__]
-    result = parser(value)
+    parser = PARSERS[field_type]
 
-    # TODO: handle parser error
+    try:
+        result = parser(value)
+    except ConfigError as error:
+        raise error
 
     config[key.lower()] = result
 
@@ -92,9 +114,9 @@ class Config:
     perfect: bool
 
     @classmethod
-    def from_file(cls, filename: str) -> Self | None:
+    def from_file(cls, filepath: str) -> Self | None:
         try:
-            with open(filename, encoding="utf-8") as file:
+            with open(filepath, encoding="utf-8") as file:
                 config: dict[str, Any] = {}
 
                 for line in file:
@@ -102,17 +124,15 @@ class Config:
 
                 try:
                     return cls(**config)
-                except Exception as err:
-                    print(f"missing key/value pair: {err}")
-                    return None
+                except KeyError as error:
+                    raise ConfigError("missing key/value pair") from error
         except OSError as error:
-            print(f"{error}")
-            return None
+            raise ConfigError(f"failed to open file: `{filepath}`") from error
 
 
 if __name__ == "__main__":
     try:
         config = Config.from_file("config.txt")
         print(f"config: {config}")
-    except Exception as err:
-        print(f"Exception: {err}")
+    except ConfigError as err:
+        print(f"ERROR: {err}")
