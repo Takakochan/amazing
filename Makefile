@@ -15,7 +15,7 @@ install:
 	uv tool install mypy
 	uv tool install ruff
 	uv tool install ty
-	uv add returns
+	uv add numpy
 
 run:
 	uv run $(MAIN_PROGRAM)

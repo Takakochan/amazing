@@ -55,9 +55,3 @@ ignore = [
   "TD",    # flake8-todos
   "TD003", # missing link for todo
 ]
-
-[lint.pylint]
-allow-magic-value-types = ["str", "bytes", "int"]
-
-[lint.flake8-boolean-trap]
-extend-allowed-calls = ["returns.result.Success", "returns.result.Failure"]
