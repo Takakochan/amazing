@@ -1,13 +1,14 @@
-WIDTH=20
-HEIGHT=15
-ENTRY=2.3,3
+WIDTH=40
+HEIGHT=60
+ENTRY=2,4
 EXIT=19,14
 OUTPUT_FILE=maze.txt
 PERFECT=True
-#SEED=
-#ALGORITHM=
-#SOUND=
+#SEED=50
+#ALGORITHM=Algo
+#SOUND=ON
 #DISPLAY MODE=
 
 
 #Lines starting with # are comments and must be ignored.
+
