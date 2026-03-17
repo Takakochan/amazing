@@ -1,7 +1,7 @@
 """The cell state."""
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, StrEnum, auto
 from typing import Self
 
 
@@ -17,6 +17,13 @@ class WallState(Enum):
 
     open = 0
     closed = 1
+
+
+class Direction(StrEnum):
+    north = auto()
+    east = auto()
+    south = auto()
+    west = auto()
 
 
 @dataclass
