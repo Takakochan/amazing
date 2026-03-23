@@ -89,7 +89,8 @@ class CellState:
 
         """
         # TODO(ilclaass): handle invalid input
-
+        if bits < 0 or bits > 0b1111:
+            raise ValueError("bits must be a 4-bit int")
         north = WallState(bits & 1)
         east = WallState((bits >> 1) & 1)
         south = WallState((bits >> 2) & 1)
@@ -110,6 +111,8 @@ class CellState:
 
         """
         # TODO(ilclaass): handle invalid input
+        if len(character) != 1:
+            raise ValueError("Must be a single hex")
 
         bits = int(character, 16)
         return cls.from_4_bit_int(bits)
@@ -138,5 +141,3 @@ class CellState:
 
         """
         return f"{self.to_4_bit_int():X}"
-
-
