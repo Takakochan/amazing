@@ -138,3 +138,5 @@ class CellState:
 
         """
         return f"{self.to_4_bit_int():X}"
+
+
