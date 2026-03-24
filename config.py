@@ -112,6 +112,7 @@ class Config:
     exit: tuple[int, int]
     output_file: str
     perfect: bool
+    seed: int
 
     @classmethod
     def from_file(cls, filepath: str) -> Self:

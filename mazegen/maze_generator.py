@@ -10,9 +10,12 @@ class MazeGenerator(Grid):
         entry: tuple[int, int],
         exit: tuple[int, int],  # noqa: A002
         perfect: bool,  # noqa: FBT001
+        seed: int | None = None,
     ) -> None:
         self._entry = entry
         self._exit = exit
+
+        random.seed(seed)
 
         stack = []
 
