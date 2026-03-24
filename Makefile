@@ -18,7 +18,7 @@ install:
 	uv add numpy
 
 run:
-	uv run $(MAIN_PROGRAM)
+	uv run $(MAIN_PROGRAM) config.txt
 
 debug:
 	# TODO: use pdb

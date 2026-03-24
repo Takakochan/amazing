@@ -31,8 +31,8 @@ class Maze:
                 file.write("\n")
             file.write("\n")
 
-            file.write(f"{self.config.entry[0]},{self.config.entry[0]}\n")
-            file.write(f"{self.config.exit[0]},{self.config.exit[0]}\n")
+            file.write(f"{self.config.entry[0]},{self.config.entry[1]}\n")
+            file.write(f"{self.config.exit[0]},{self.config.exit[1]}\n")
 
             # TODO: write solution to output file
             file.write("<solution>\n")
