@@ -1,4 +1,4 @@
-from grid import Grid
+from mazegen.grid import Grid
 
 
 class MazeGenerator(Grid):

@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Self
 
-from wall_state import WallState
+from mazegen.wall_state import WallState
 
 
 @dataclass

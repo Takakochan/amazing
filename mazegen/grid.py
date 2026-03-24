@@ -1,6 +1,6 @@
-from cell_state import CellState
-from direction import Direction
-from wall_state import WallState
+from mazegen.cell_state import CellState
+from mazegen.direction import Direction
+from mazegen.wall_state import WallState
 
 
 class CoordinateError(Exception):
