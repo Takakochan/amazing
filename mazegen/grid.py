@@ -38,12 +38,12 @@ class Grid:
 
     def init_walls(self) -> None:
         self._north_walls = [
-            [WallState.closed for _x in range(self.width)]
+            [WallState.CLOSED for _x in range(self.width)]
             for _y in range(self.height + 1)
         ]
 
         self._west_walls = [
-            [WallState.closed for _x in range(self.width + 1)]
+            [WallState.CLOSED for _x in range(self.width + 1)]
             for _y in range(self.height)
         ]
 
@@ -52,10 +52,16 @@ class Grid:
 
         return self._cells[y][x]
 
-    def set_cell(self, x: int, y: int, value: CellValue) -> None:
+    def _set_cell(self, x: int, y: int, value: CellValue) -> None:
         self._validate_coordinates(x, y)
 
         self._cells[y][x] = value
+
+    def unmark_cell(self, x: int, y: int) -> None:
+        self._set_cell(x, y, CellValue.UNMARKED)
+
+    def mark_cell(self, x: int, y: int) -> None:
+        self._set_cell(x, y, CellValue.MARKED)
 
     def get_cell_wall_state(
         self,
@@ -66,22 +72,22 @@ class Grid:
         self._validate_coordinates(x, y)
 
         match direction:
-            case Direction.north:
+            case Direction.NORTH:
                 return self._north_walls[y][x]
-            case Direction.east:
+            case Direction.EAST:
                 return self._west_walls[y][x + 1]
-            case Direction.south:
+            case Direction.SOUTH:
                 return self._north_walls[y + 1][x]
-            case Direction.west:
+            case Direction.WEST:
                 return self._west_walls[y][x]
 
     def get_cell_state(self, x: int, y: int) -> CellState:
         self._validate_coordinates(x, y)
 
-        north = self.get_cell_wall_state(x, y, Direction.north)
-        east = self.get_cell_wall_state(x, y, Direction.east)
-        south = self.get_cell_wall_state(x, y, Direction.south)
-        west = self.get_cell_wall_state(x, y, Direction.west)
+        north = self.get_cell_wall_state(x, y, Direction.NORTH)
+        east = self.get_cell_wall_state(x, y, Direction.EAST)
+        south = self.get_cell_wall_state(x, y, Direction.SOUTH)
+        west = self.get_cell_wall_state(x, y, Direction.WEST)
 
         return CellState(north, east, south, west)
 
@@ -101,20 +107,20 @@ class Grid:
         self._validate_coordinates(x, y)
 
         match direction:
-            case Direction.north:
+            case Direction.NORTH:
                 self._north_walls[y][x] = state
-            case Direction.east:
+            case Direction.EAST:
                 self._west_walls[y][x + 1] = state
-            case Direction.south:
+            case Direction.SOUTH:
                 self._north_walls[y + 1][x] = state
-            case Direction.west:
+            case Direction.WEST:
                 self._west_walls[y][x] = state
 
     def open_cell_wall(self, x: int, y: int, direction: Direction) -> None:
-        self._set_cell_wall_state(x, y, direction, WallState.open)
+        self._set_cell_wall_state(x, y, direction, WallState.OPEN)
 
     def close_cell_wall(self, x: int, y: int, direction: Direction) -> None:
-        self._set_cell_wall_state(x, y, direction, WallState.closed)
+        self._set_cell_wall_state(x, y, direction, WallState.CLOSED)
 
     def _print_cell_value(self, x: int, y: int) -> None:
         value = self.get_cell(x, y)
@@ -124,34 +130,34 @@ class Grid:
         self._validate_coordinates(x, y)
 
         match self.get_cell_wall_state(x, y, direction):
-            case WallState.open:
+            case WallState.OPEN:
                 print(" ", end="")
-            case WallState.closed:
+            case WallState.CLOSED:
                 match direction:
-                    case Direction.north | Direction.south:
+                    case Direction.NORTH | Direction.SOUTH:
                         print("-", end="")
-                    case Direction.west | Direction.east:
+                    case Direction.WEST | Direction.EAST:
                         print("|", end="")
 
     def display(self) -> None:
         for y in range(self.height):
             for x in range(self.width):
                 print("+", end="")
-                self._print_cell_wall(x, y, Direction.north)
+                self._print_cell_wall(x, y, Direction.NORTH)
 
             print("+", end="")
             print()
 
             for x in range(self.width):
-                self._print_cell_wall(x, y, Direction.west)
+                self._print_cell_wall(x, y, Direction.WEST)
                 self._print_cell_value(x, y)
 
-            self._print_cell_wall(self.width - 1, y, Direction.east)
+            self._print_cell_wall(self.width - 1, y, Direction.EAST)
             print()
 
         for x in range(self.width):
             print("+", end="")
-            self._print_cell_wall(x, self.height - 1, Direction.south)
+            self._print_cell_wall(x, self.height - 1, Direction.SOUTH)
 
         print("+", end="")
         print()

@@ -13,5 +13,5 @@ class WallState(Enum):
 
     """
 
-    open = 0
-    closed = 1
+    OPEN = 0
+    CLOSED = 1

@@ -34,10 +34,10 @@ class CellState:
 
         """
         return cls(
-            WallState.open,
-            WallState.open,
-            WallState.open,
-            WallState.open,
+            WallState.OPEN,
+            WallState.OPEN,
+            WallState.OPEN,
+            WallState.OPEN,
         )
 
     @classmethod
@@ -50,10 +50,10 @@ class CellState:
 
         """
         return cls(
-            WallState.closed,
-            WallState.closed,
-            WallState.closed,
-            WallState.closed,
+            WallState.CLOSED,
+            WallState.CLOSED,
+            WallState.CLOSED,
+            WallState.CLOSED,
         )
 
     @classmethod
