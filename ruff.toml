@@ -55,3 +55,6 @@ ignore = [
   "TD",    # flake8-todos
   "TD003", # missing link for todo
 ]
+
+[lint.pylint]
+allow-magic-value-types = ["str", "bytes", "complex", "float", "int"]

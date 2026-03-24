@@ -114,7 +114,7 @@ class Config:
     perfect: bool
 
     @classmethod
-    def from_file(cls, filepath: str) -> Self | None:
+    def from_file(cls, filepath: str) -> Self:
         try:
             with open(filepath, encoding="utf-8") as file:
                 config: dict[str, Any] = {}
