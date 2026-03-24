@@ -11,8 +11,6 @@ class CoordinateError(Exception):
     pass
 
 
-# TODO: create CellCoordinate class with x, y coordinates
-
 # TODO: take CellCoordinate class as argument
 
 

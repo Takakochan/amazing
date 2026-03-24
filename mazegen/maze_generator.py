@@ -1,7 +1,6 @@
 import random
 
 from mazegen.cell import Cell
-from mazegen.direction import Direction
 from mazegen.grid import Grid
 
 
@@ -28,20 +27,10 @@ def generate_dfs(grid: Grid, entry: Cell) -> None:
 
         neighbor_cell = random.choice(neighbors)
 
-        match (
-            current_cell.x - neighbor_cell.x,
-            current_cell.y - neighbor_cell.y,
-        ):
-            case (0, 1):
-                direction = Direction.NORTH
-            case (0, -1):
-                direction = Direction.SOUTH
-            case (1, 0):
-                direction = Direction.WEST
-            case (-1, 0):
-                direction = Direction.EAST
-            case _:
-                raise RuntimeError("neighbor is not a neighbor")
+        try:
+            direction = current_cell.get_direction_to_neighbor(neighbor_cell)
+        except RuntimeError as error:
+            raise error
 
         grid.open_wall(current_cell.x, current_cell.y, direction)
         grid.mark_cell(neighbor_cell.x, neighbor_cell.y)
