@@ -58,3 +58,37 @@ class Grid:
     # TODO: validate x, y within range
     def close_cell(self, x: int, y: int, direction: Direction) -> None:
         self._set_cell_wall_state(x, y, direction, WallState.closed)
+
+    def _print_cell_wall(self, x: int, y: int, direction: Direction) -> None:
+        match self.get_cell_wall_state(x, y, direction):
+            case WallState.open:
+                print(" ", end="")
+            case WallState.closed:
+                match direction:
+                    case Direction.north | Direction.south:
+                        print("-", end="")
+                    case Direction.west | Direction.east:
+                        print("|", end="")
+
+    def display(self) -> None:
+        for y in range(self.height):
+            for x in range(self.width):
+                print("+", end="")
+                self._print_cell_wall(x, y, Direction.north)
+
+            print("+", end="")
+            print()
+
+            for x in range(self.width):
+                self._print_cell_wall(x, y, Direction.west)
+                print(" ", end="")
+
+            self._print_cell_wall(self.width, y, Direction.west)
+            print()
+
+        for x in range(self.width):
+            print("+", end="")
+            self._print_cell_wall(x, self.height, Direction.north)
+
+        print("+", end="")
+        print()

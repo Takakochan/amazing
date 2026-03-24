@@ -1,41 +1,24 @@
-"""The maze class."""
-
 from dataclasses import dataclass
+from typing import Self
 
-from cell_state import CellState
+from config import Config, ConfigError
+from grid import Grid
 
 
 @dataclass
 class Maze:
-    """
-    The maze.
+    config: Config
+    grid: Grid
 
-    Attributes:
-        width: the width of the maze.
-        height: the height of the maze.
-        entry: the (x, y) coordinates of the entry to the maze.
-        exit: the (x, y) coordinates of the exit to the maze.
-        output_file: the file to write the maze in.
-        perfect: option to ensure exactly one path from entry to exit.
+    @classmethod
+    def from_config_file(cls, filepath: str) -> Self:
+        try:
+            config = Config.from_file(filepath)
+            grid = Grid(config.width, config.height)
+            return cls(config, grid)
+        except ConfigError as error:
+            raise error
 
-    """
-
-    width: int
-    height: int
-    entry: tuple[int, int]
-    exit: tuple[int, int]
-    output_file: str
-    perfect: bool
-
-    grid: list[list[CellState]]
-
-    def initialize_grid(self) -> None:
-        """Initialize the grid of the maze."""
-        self.grid = [
-            [CellState.closed() for _y in range(self.height)]
-            for _x in range(self.width)
-        ]
-
-    def randomize_grid(self) -> None:
-        """Randomize the grid of the maze."""
-        pass
+    def display(self) -> None:
+        print(f"{self.config}")
+        self.grid.display()

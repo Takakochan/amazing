@@ -128,11 +128,3 @@ class Config:
                     raise ConfigError("missing key/value pair") from error
         except OSError as error:
             raise ConfigError(f"failed to open file: `{filepath}`") from error
-
-
-if __name__ == "__main__":
-    try:
-        config = Config.from_file("config.txt")
-        print(f"config: {config}")
-    except ConfigError as err:
-        print(f"ERROR: {err}")
