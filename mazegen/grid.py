@@ -11,6 +11,11 @@ class CoordinateError(Exception):
     pass
 
 
+# TODO: create CellCoordinate class with x, y coordinates
+
+# TODO: take CellCoordinate class as argument
+
+
 @dataclass
 class Grid:
     width: int
@@ -185,16 +190,6 @@ class Grid:
 
     def _print_wall(self, x: int, y: int, direction: Direction) -> None:
         self._validate_coordinates(x, y)
-
-        # match self.get_wall_state(x, y, direction):
-        #     case WallState.OPEN:
-        #         print(" ", end="")
-        #     case WallState.CLOSED:
-        #         match direction:
-        #             case Direction.NORTH | Direction.SOUTH:
-        #                 print("---", end="")
-        #             case Direction.WEST | Direction.EAST:
-        #                 print("|", end="")
 
         match (self.get_wall_state(x, y, direction), direction):
             case (WallState.OPEN, Direction.NORTH | Direction.SOUTH):

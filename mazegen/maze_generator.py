@@ -9,7 +9,7 @@ def generate_dfs(grid: Grid, entry: Cell) -> None:
     grid.init_cells()
     grid.init_walls()
 
-    stack = []
+    stack: list[Cell] = []
 
     entry_cell = grid.get_cell(entry.x, entry.y)
     grid.mark_cell(entry_cell.x, entry_cell.y)
