@@ -3,6 +3,10 @@ from direction import Direction
 from wall_state import WallState
 
 
+class CoordinateError(Exception):
+    pass
+
+
 class Grid:
     def __init__(self, width: int, height: int) -> None:
         self.width = width
@@ -18,17 +22,16 @@ class Grid:
             for _y in range(height)
         ]
 
-    # TODO: validate x, y within range
-    def cordinate_validate(
-            self,
-            x: int,
-            y: int
+    def _validate_coordinates(
+        self,
+        x: int,
+        y: int,
     ) -> None:
-        if 0 >= x > self.width:
-            raise ValueError(f"cordinat {x} is out of range")
-        if 0 >= y > self.width:
-            raise ValueError(f"cordinat {y} is out of range")     
-        
+        if x < 0 or x >= self.width:
+            raise CoordinateError(f"coordinate `{x}` is out of range")
+
+        if y < 0 or y >= self.height:
+            raise CoordinateError(f"coordinate `{y}` is out of range")
 
     def get_cell_wall_state(
         self,
@@ -36,6 +39,8 @@ class Grid:
         y: int,
         direction: Direction,
     ) -> WallState:
+        self._validate_coordinates(x, y)
+
         match direction:
             case Direction.north:
                 return self._north_walls[y][x]
@@ -47,6 +52,8 @@ class Grid:
                 return self._west_walls[y][x]
 
     def get_cell_state(self, x: int, y: int) -> CellState:
+        self._validate_coordinates(x, y)
+
         north = self.get_cell_wall_state(x, y, Direction.north)
         east = self.get_cell_wall_state(x, y, Direction.east)
         south = self.get_cell_wall_state(x, y, Direction.south)
@@ -60,7 +67,6 @@ class Grid:
             for y in range(self.height)
         ]
 
-    # TODO: validate x, y within range
     def _set_cell_wall_state(
         self,
         x: int,
@@ -68,6 +74,8 @@ class Grid:
         direction: Direction,
         state: WallState,
     ) -> None:
+        self._validate_coordinates(x, y)
+
         match direction:
             case Direction.north:
                 self._north_walls[y][x] = state
@@ -78,15 +86,15 @@ class Grid:
             case Direction.west:
                 self._west_walls[y][x] = state
 
-    # TODO: validate x, y within range
     def open_cell(self, x: int, y: int, direction: Direction) -> None:
         self._set_cell_wall_state(x, y, direction, WallState.open)
 
-    # TODO: validate x, y within range
     def close_cell(self, x: int, y: int, direction: Direction) -> None:
         self._set_cell_wall_state(x, y, direction, WallState.closed)
 
     def _print_cell_wall(self, x: int, y: int, direction: Direction) -> None:
+        self._validate_coordinates(x, y)
+
         match self.get_cell_wall_state(x, y, direction):
             case WallState.open:
                 print(" ", end="")
@@ -110,12 +118,12 @@ class Grid:
                 self._print_cell_wall(x, y, Direction.west)
                 print(" ", end="")
 
-            self._print_cell_wall(self.width, y, Direction.west)
+            self._print_cell_wall(self.width - 1, y, Direction.east)
             print()
 
         for x in range(self.width):
             print("+", end="")
-            self._print_cell_wall(x, self.height, Direction.north)
+            self._print_cell_wall(x, self.height - 1, Direction.south)
 
         print("+", end="")
         print()
