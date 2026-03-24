@@ -26,8 +26,8 @@ class Grid:
     ) -> None:
         if 0 >= x > self.width:
             raise ValueError(f"cordinat {x} is out of range")
-        if 0 >= x > self.width:
-            raise ValueError(f"cordinat {x} is out of range")     
+        if 0 >= y > self.width:
+            raise ValueError(f"cordinat {y} is out of range")     
         
 
     def get_cell_wall_state(
