@@ -10,31 +10,28 @@ def generate_dfs(grid: Grid, entry: Cell) -> None:
 
     stack: list[Cell] = []
 
-    entry_cell = grid.get_cell(entry.x, entry.y)
-    grid.mark_cell(entry_cell.x, entry_cell.y)
-    stack.append(entry_cell)
+    grid.mark_cell(entry)
+    stack.append(entry)
 
-    while len(stack) != 0:
-        current_cell = stack.pop()
-        neighbors = grid.get_cell_unmarked_neighbors(
-            current_cell.x,
-            current_cell.y,
-        )
-        if len(neighbors) == 0:
+    while stack:
+        current = stack.pop()
+
+        neighbors = grid.get_unmarked_neighbors(current)
+        if not neighbors:
             continue
 
-        stack.append(current_cell)
+        stack.append(current)
 
-        neighbor_cell = random.choice(neighbors)
+        neighbor = random.choice(neighbors)
 
         try:
-            direction = current_cell.get_direction_to_neighbor(neighbor_cell)
+            direction = current.get_direction_to_neighbor(neighbor)
         except RuntimeError as error:
             raise error
 
-        grid.open_wall(current_cell.x, current_cell.y, direction)
-        grid.mark_cell(neighbor_cell.x, neighbor_cell.y)
-        stack.append(neighbor_cell)
+        grid.open_wall(current, direction)
+        grid.mark_cell(neighbor)
+        stack.append(neighbor)
 
     grid.init_cells()
 
@@ -51,7 +48,7 @@ class MazeGenerator(Grid):
         self._exit = exit
 
         random.seed(seed)
-        generate_dfs(self, self.get_cell(entry[0], entry[1]))
+        generate_dfs(self, Cell(entry[0], entry[1]))
 
     def solve(
         self,
@@ -61,7 +58,7 @@ class MazeGenerator(Grid):
 
     def save(self, filename: str) -> None:
         with open(filename, "w", encoding="utf-8") as file:
-            for cell_list in self.get_cell_state_grid():
+            for cell_list in self.get_all_cell_states():
                 for cell in cell_list:
                     file.write(cell.to_hex())
                 file.write("\n")
