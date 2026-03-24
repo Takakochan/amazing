@@ -22,15 +22,12 @@ def main() -> None:
         config.perfect,
     )
 
-    print()
-    maze_generator.display()
-
     maze_generator.solve()
 
+    maze_generator.save(config.output_file)
+
     print()
     maze_generator.display()
-
-    maze_generator.save(config.output_file)
 
 
 if __name__ == "__main__":

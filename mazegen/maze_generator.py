@@ -1,3 +1,5 @@
+import random
+
 from mazegen.direction import Direction
 from mazegen.grid import Grid
 
@@ -30,7 +32,7 @@ class MazeGenerator(Grid):
 
             stack.append(current_cell)
 
-            neighbor = neighbors[0]
+            neighbor = random.choice(neighbors)
 
             dx = current_cell.x - neighbor.x
             dy = current_cell.y - neighbor.y
@@ -51,9 +53,6 @@ class MazeGenerator(Grid):
 
             self.mark_cell(neighbor.x, neighbor.y)
             stack.append(neighbor)
-
-            print()
-            self.display()
 
         self.init_cells()
 
