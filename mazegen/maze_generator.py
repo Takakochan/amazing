@@ -15,6 +15,9 @@ class MazeGenerator(Grid):
         self._entry = entry
         self._exit = exit
 
+        self.init_cells()
+        self.init_walls()
+
         random.seed(seed)
 
         stack = []

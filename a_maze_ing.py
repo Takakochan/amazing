@@ -14,21 +14,16 @@ def main() -> None:
 
     maze_generator = MazeGenerator(config.width, config.height)
 
-    maze_generator.display()
-
     maze_generator.generate(
         config.entry,
         config.exit,
         config.perfect,
         config.seed,
     )
+    maze_generator.display()
 
     maze_generator.solve()
-
     maze_generator.save(config.output_file)
-
-    print()
-    maze_generator.display()
 
 
 if __name__ == "__main__":
