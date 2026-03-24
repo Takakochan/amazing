@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from mazegen.cell import Cell
 from mazegen.cell_state import CellState
 from mazegen.cell_value import CellValue
 from mazegen.direction import Direction
@@ -47,23 +48,79 @@ class Grid:
             for _y in range(self.height)
         ]
 
-    def get_cell(self, x: int, y: int) -> CellValue:
+    def get_cell_value(self, x: int, y: int) -> CellValue:
         self._validate_coordinates(x, y)
 
         return self._cells[y][x]
 
-    def _set_cell(self, x: int, y: int, value: CellValue) -> None:
+    def _set_cell_value(self, x: int, y: int, value: CellValue) -> None:
         self._validate_coordinates(x, y)
 
         self._cells[y][x] = value
 
     def unmark_cell(self, x: int, y: int) -> None:
-        self._set_cell(x, y, CellValue.UNMARKED)
+        self._set_cell_value(x, y, CellValue.UNMARKED)
 
     def mark_cell(self, x: int, y: int) -> None:
-        self._set_cell(x, y, CellValue.MARKED)
+        self._set_cell_value(x, y, CellValue.MARKED)
 
-    def get_cell_wall_state(
+    def get_cell(self, x: int, y: int) -> Cell:
+        self._validate_coordinates(x, y)
+
+        return Cell(x, y, self.get_cell_value(x, y))
+
+    def get_cell_neighbor(
+        self,
+        x: int,
+        y: int,
+        direction: Direction,
+    ) -> Cell | None:
+        self._validate_coordinates(x, y)
+
+        match direction:
+            case Direction.NORTH:
+                if y == 0:
+                    return None
+                return self.get_cell(x, y - 1)
+            case Direction.EAST:
+                if x == self.width - 1:
+                    return None
+                return self.get_cell(x + 1, y)
+            case Direction.SOUTH:
+                if y == self.height - 1:
+                    return None
+                return self.get_cell(x, y + 1)
+            case Direction.WEST:
+                if x == 0:
+                    return None
+                return self.get_cell(x - 1, y)
+
+    def get_cell_neighbors(
+        self,
+        x: int,
+        y: int,
+    ) -> list[Cell]:
+        return [
+            cell
+            for cell in (
+                self.get_cell_neighbor(x, y, direction)
+                for direction in Direction
+            )
+            if cell is not None
+        ]
+
+    def get_cell_unmarked_neighbors(
+        self,
+        x: int,
+        y: int,
+    ) -> list[Cell]:
+        return [
+            cell
+            for cell in self.get_cell_neighbors(x, y)
+            if cell.value == CellValue.UNMARKED
+        ]
+
+    def get_wall_state(
         self,
         x: int,
         y: int,
@@ -84,10 +141,10 @@ class Grid:
     def get_cell_state(self, x: int, y: int) -> CellState:
         self._validate_coordinates(x, y)
 
-        north = self.get_cell_wall_state(x, y, Direction.NORTH)
-        east = self.get_cell_wall_state(x, y, Direction.EAST)
-        south = self.get_cell_wall_state(x, y, Direction.SOUTH)
-        west = self.get_cell_wall_state(x, y, Direction.WEST)
+        north = self.get_wall_state(x, y, Direction.NORTH)
+        east = self.get_wall_state(x, y, Direction.EAST)
+        south = self.get_wall_state(x, y, Direction.SOUTH)
+        west = self.get_wall_state(x, y, Direction.WEST)
 
         return CellState(north, east, south, west)
 
@@ -97,7 +154,7 @@ class Grid:
             for y in range(self.height)
         ]
 
-    def _set_cell_wall_state(
+    def _set_wall_state(
         self,
         x: int,
         y: int,
@@ -116,48 +173,58 @@ class Grid:
             case Direction.WEST:
                 self._west_walls[y][x] = state
 
-    def open_cell_wall(self, x: int, y: int, direction: Direction) -> None:
-        self._set_cell_wall_state(x, y, direction, WallState.OPEN)
+    def open_wall(self, x: int, y: int, direction: Direction) -> None:
+        self._set_wall_state(x, y, direction, WallState.OPEN)
 
-    def close_cell_wall(self, x: int, y: int, direction: Direction) -> None:
-        self._set_cell_wall_state(x, y, direction, WallState.CLOSED)
+    def close_wall(self, x: int, y: int, direction: Direction) -> None:
+        self._set_wall_state(x, y, direction, WallState.CLOSED)
 
     def _print_cell_value(self, x: int, y: int) -> None:
-        value = self.get_cell(x, y)
-        print(f"{value}", end="")
+        value = self.get_cell_value(x, y)
+        print(f" {value} ", end="")
 
-    def _print_cell_wall(self, x: int, y: int, direction: Direction) -> None:
+    def _print_wall(self, x: int, y: int, direction: Direction) -> None:
         self._validate_coordinates(x, y)
 
-        match self.get_cell_wall_state(x, y, direction):
-            case WallState.OPEN:
+        # match self.get_wall_state(x, y, direction):
+        #     case WallState.OPEN:
+        #         print(" ", end="")
+        #     case WallState.CLOSED:
+        #         match direction:
+        #             case Direction.NORTH | Direction.SOUTH:
+        #                 print("---", end="")
+        #             case Direction.WEST | Direction.EAST:
+        #                 print("|", end="")
+
+        match (self.get_wall_state(x, y, direction), direction):
+            case (WallState.OPEN, Direction.NORTH | Direction.SOUTH):
+                print("   ", end="")
+            case (WallState.OPEN, Direction.WEST | Direction.EAST):
                 print(" ", end="")
-            case WallState.CLOSED:
-                match direction:
-                    case Direction.NORTH | Direction.SOUTH:
-                        print("-", end="")
-                    case Direction.WEST | Direction.EAST:
-                        print("|", end="")
+            case (WallState.CLOSED, Direction.NORTH | Direction.SOUTH):
+                print("---", end="")
+            case (WallState.CLOSED, Direction.WEST | Direction.EAST):
+                print("|", end="")
 
     def display(self) -> None:
         for y in range(self.height):
             for x in range(self.width):
                 print("+", end="")
-                self._print_cell_wall(x, y, Direction.NORTH)
+                self._print_wall(x, y, Direction.NORTH)
 
             print("+", end="")
             print()
 
             for x in range(self.width):
-                self._print_cell_wall(x, y, Direction.WEST)
+                self._print_wall(x, y, Direction.WEST)
                 self._print_cell_value(x, y)
 
-            self._print_cell_wall(self.width - 1, y, Direction.EAST)
+            self._print_wall(self.width - 1, y, Direction.EAST)
             print()
 
         for x in range(self.width):
             print("+", end="")
-            self._print_cell_wall(x, self.height - 1, Direction.SOUTH)
+            self._print_wall(x, self.height - 1, Direction.SOUTH)
 
         print("+", end="")
         print()

@@ -58,3 +58,4 @@ ignore = [
 
 [lint.pylint]
 allow-magic-value-types = ["str", "bytes", "complex", "float", "int"]
+max-returns = 8

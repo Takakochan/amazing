@@ -13,13 +13,23 @@ def main() -> None:
         raise error
 
     maze_generator = MazeGenerator(config.width, config.height)
+
     maze_generator.display()
+
     maze_generator.generate(
         config.entry,
         config.exit,
         config.perfect,
     )
+
+    print()
+    maze_generator.display()
+
     maze_generator.solve()
+
+    print()
+    maze_generator.display()
+
     maze_generator.save(config.output_file)
 
 
