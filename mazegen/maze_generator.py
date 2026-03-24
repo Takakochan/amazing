@@ -1,7 +1,53 @@
 import random
 
+from mazegen.cell import Cell
 from mazegen.direction import Direction
 from mazegen.grid import Grid
+
+
+def generate_dfs(grid: Grid, entry: Cell) -> None:
+    grid.init_cells()
+    grid.init_walls()
+
+    stack = []
+
+    entry_cell = grid.get_cell(entry.x, entry.y)
+    grid.mark_cell(entry_cell.x, entry_cell.y)
+    stack.append(entry_cell)
+
+    while len(stack) != 0:
+        current_cell = stack.pop()
+        neighbors = grid.get_cell_unmarked_neighbors(
+            current_cell.x,
+            current_cell.y,
+        )
+        if len(neighbors) == 0:
+            continue
+
+        stack.append(current_cell)
+
+        neighbor_cell = random.choice(neighbors)
+
+        match (
+            current_cell.x - neighbor_cell.x,
+            current_cell.y - neighbor_cell.y,
+        ):
+            case (0, 1):
+                direction = Direction.NORTH
+            case (0, -1):
+                direction = Direction.SOUTH
+            case (1, 0):
+                direction = Direction.WEST
+            case (-1, 0):
+                direction = Direction.EAST
+            case _:
+                raise RuntimeError("neighbor is not a neighbor")
+
+        grid.open_wall(current_cell.x, current_cell.y, direction)
+        grid.mark_cell(neighbor_cell.x, neighbor_cell.y)
+        stack.append(neighbor_cell)
+
+    grid.init_cells()
 
 
 class MazeGenerator(Grid):
@@ -15,52 +61,8 @@ class MazeGenerator(Grid):
         self._entry = entry
         self._exit = exit
 
-        self.init_cells()
-        self.init_walls()
-
         random.seed(seed)
-
-        stack = []
-
-        entry_cell = self.get_cell(entry[0], entry[1])
-
-        self.mark_cell(entry_cell.x, entry_cell.y)
-        stack.append(entry_cell)
-
-        while len(stack) != 0:
-            current_cell = stack.pop()
-            neighbors = self.get_cell_unmarked_neighbors(
-                current_cell.x,
-                current_cell.y,
-            )
-            if len(neighbors) == 0:
-                continue
-
-            stack.append(current_cell)
-
-            neighbor = random.choice(neighbors)
-
-            dx = current_cell.x - neighbor.x
-            dy = current_cell.y - neighbor.y
-
-            match (dx, dy):
-                case (0, 1):
-                    direction = Direction.NORTH
-                case (0, -1):
-                    direction = Direction.SOUTH
-                case (1, 0):
-                    direction = Direction.WEST
-                case (-1, 0):
-                    direction = Direction.EAST
-                case _:
-                    raise RuntimeError("neighbor is not a neighbor")
-
-            self.open_wall(current_cell.x, current_cell.y, direction)
-
-            self.mark_cell(neighbor.x, neighbor.y)
-            stack.append(neighbor)
-
-        self.init_cells()
+        generate_dfs(self, self.get_cell(entry[0], entry[1]))
 
     def solve(
         self,
