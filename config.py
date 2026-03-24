@@ -1,6 +1,6 @@
 from collections.abc import Callable
 from dataclasses import dataclass, fields
-from typing import Any, Self, get_type_hints
+from typing import Any, Self, get_args, get_type_hints
 
 type ParserFn = Callable[[str], Any]
 
@@ -71,6 +71,34 @@ def parse_str(value: str) -> str:
     return value
 
 
+def get_parser(key: str) -> ParserFn:
+    field_names: list[str] = [field.name.upper() for field in fields(Config)]
+    field_types: list[Any] = [field.type for field in fields(Config)]
+
+    try:
+        index = field_names.index(key)
+    except ValueError as error:
+        raise ConfigError(f"invalid key: `{key}`") from error
+
+    field_type = field_types[index]
+    type_args = get_args(field_type)
+
+    if len(type_args) <= 1 or type_args[-1] is not type(None):
+        return PARSERS[field_type]
+
+    parts = tuple(arg for arg in type_args)
+
+    if len(parts) == 1:
+        return PARSERS[parts[0]]
+
+    union = parts[0]
+
+    for part in parts[1:-1]:
+        union |= part
+
+    return PARSERS[union]
+
+
 def parse_line(config: dict[str, Any], line: str) -> None:
     stripped_line = line.strip()
 
@@ -85,16 +113,10 @@ def parse_line(config: dict[str, Any], line: str) -> None:
     key = split_line[0]
     value = split_line[1]
 
-    field_names: list[str] = [field.name.upper() for field in fields(Config)]
-    field_types: list[Any] = [field.type for field in fields(Config)]
-
     try:
-        index = field_names.index(key)
-    except ValueError as error:
-        raise ConfigError(f"invalid key: `{key}`") from error
-
-    field_type = field_types[index]
-    parser = PARSERS[field_type]
+        parser = get_parser(key)
+    except ConfigError as error:
+        raise error
 
     try:
         result = parser(value)
@@ -112,7 +134,7 @@ class Config:
     exit: tuple[int, int]
     output_file: str
     perfect: bool
-    seed: int
+    seed: int | None = None
 
     @classmethod
     def from_file(cls, filepath: str) -> Self:
