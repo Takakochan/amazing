@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from mazegen.cell_state import CellState
 from mazegen.direction import Direction
 from mazegen.wall_state import WallState
@@ -7,20 +9,14 @@ class CoordinateError(Exception):
     pass
 
 
+@dataclass
 class Grid:
-    def __init__(self, width: int, height: int) -> None:
-        self.width = width
-        self.height = height
+    width: int
+    height: int
 
-        self._north_walls = [
-            [WallState.closed for _x in range(width)]
-            for _y in range(height + 1)
-        ]
-
-        self._west_walls = [
-            [WallState.closed for _x in range(width + 1)]
-            for _y in range(height)
-        ]
+    def __post_init__(self) -> None:
+        self.init_cells()
+        self.init_walls()
 
     def _validate_coordinates(
         self,
@@ -32,6 +28,32 @@ class Grid:
 
         if y < 0 or y >= self.height:
             raise CoordinateError(f"coordinate `{y}` is out of range")
+
+    def init_cells(self) -> None:
+        self._cells = [
+            [0 for _x in range(self.width)] for _y in range(self.height)
+        ]
+
+    def init_walls(self) -> None:
+        self._north_walls = [
+            [WallState.closed for _x in range(self.width)]
+            for _y in range(self.height + 1)
+        ]
+
+        self._west_walls = [
+            [WallState.closed for _x in range(self.width + 1)]
+            for _y in range(self.height)
+        ]
+
+    def get_cell(self, x: int, y: int) -> int:
+        self._validate_coordinates(x, y)
+
+        return self._cells[y][x]
+
+    def set_cell(self, x: int, y: int, value: int) -> None:
+        self._validate_coordinates(x, y)
+
+        self._cells[y][x] = value
 
     def get_cell_wall_state(
         self,
@@ -86,11 +108,15 @@ class Grid:
             case Direction.west:
                 self._west_walls[y][x] = state
 
-    def open_cell(self, x: int, y: int, direction: Direction) -> None:
+    def open_cell_wall(self, x: int, y: int, direction: Direction) -> None:
         self._set_cell_wall_state(x, y, direction, WallState.open)
 
-    def close_cell(self, x: int, y: int, direction: Direction) -> None:
+    def close_cell_wall(self, x: int, y: int, direction: Direction) -> None:
         self._set_cell_wall_state(x, y, direction, WallState.closed)
+
+    def _print_cell_value(self, x: int, y: int) -> None:
+        value = self.get_cell(x, y)
+        print(f"{value}", end="")
 
     def _print_cell_wall(self, x: int, y: int, direction: Direction) -> None:
         self._validate_coordinates(x, y)
@@ -116,7 +142,7 @@ class Grid:
 
             for x in range(self.width):
                 self._print_cell_wall(x, y, Direction.west)
-                print(" ", end="")
+                self._print_cell_value(x, y)
 
             self._print_cell_wall(self.width - 1, y, Direction.east)
             print()
