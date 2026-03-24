@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from mazegen.cell_state import CellState
+from mazegen.cell_value import CellValue
 from mazegen.direction import Direction
 from mazegen.wall_state import WallState
 
@@ -31,7 +32,8 @@ class Grid:
 
     def init_cells(self) -> None:
         self._cells = [
-            [0 for _x in range(self.width)] for _y in range(self.height)
+            [CellValue.UNMARKED for _x in range(self.width)]
+            for _y in range(self.height)
         ]
 
     def init_walls(self) -> None:
@@ -45,12 +47,12 @@ class Grid:
             for _y in range(self.height)
         ]
 
-    def get_cell(self, x: int, y: int) -> int:
+    def get_cell(self, x: int, y: int) -> CellValue:
         self._validate_coordinates(x, y)
 
         return self._cells[y][x]
 
-    def set_cell(self, x: int, y: int, value: int) -> None:
+    def set_cell(self, x: int, y: int, value: CellValue) -> None:
         self._validate_coordinates(x, y)
 
         self._cells[y][x] = value
