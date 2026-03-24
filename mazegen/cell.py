@@ -41,3 +41,6 @@ class Cell:
                 raise RuntimeError(
                     f"`{neighbor}` is not a neighbor of `{self}`",
                 )
+
+    def into_file_format(self) -> str:
+        return f"{self.x},{self.y}\n"

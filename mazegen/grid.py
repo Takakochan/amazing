@@ -13,8 +13,8 @@ class Grid:
     height: int
 
     def __post_init__(self) -> None:
-        self.init_cells()
-        self.init_walls()
+        self.unmark_cells()
+        self.close_walls()
 
     def _validate_coordinate(
         self,
@@ -22,13 +22,13 @@ class Grid:
     ) -> None:
         cell.validate(self.width, self.height)
 
-    def init_cells(self) -> None:
+    def unmark_cells(self) -> None:
         self._cells = [
             [CellValue.UNMARKED for _x in range(self.width)]
             for _y in range(self.height)
         ]
 
-    def init_walls(self) -> None:
+    def close_walls(self) -> None:
         self._north_walls = [
             [WallState.CLOSED for _x in range(self.width)]
             for _y in range(self.height + 1)
@@ -210,3 +210,12 @@ class Grid:
 
         print("+", end="")
         print()
+
+    def into_file_format(self) -> str:
+        return (
+            "\n".join([
+                "".join([cell.to_hex() for cell in cell_list])
+                for cell_list in self.get_all_cell_states()
+            ])
+            + "\n"
+        )

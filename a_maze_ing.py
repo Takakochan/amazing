@@ -12,16 +12,15 @@ def main() -> None:
     except ConfigError as error:
         raise error
 
-    maze_generator = MazeGenerator(config.width, config.height)
-
-    maze_generator.generate(
+    maze_generator = MazeGenerator(
+        config.width,
+        config.height,
         config.entry,
         config.exit,
-        config.perfect,
-        config.seed,
     )
-    maze_generator.display()
 
+    maze_generator.generate(config.perfect, config.seed)
+    maze_generator.display()
     maze_generator.solve()
     maze_generator.save(config.output_file)
 

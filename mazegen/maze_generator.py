@@ -4,9 +4,13 @@ from mazegen.cell import Cell
 from mazegen.grid import Grid
 
 
-def generate_dfs(grid: Grid, entry: Cell) -> None:
-    grid.init_cells()
-    grid.init_walls()
+def generate_dfs(
+    width: int,
+    height: int,
+    entry: Cell,
+    _exit: Cell,
+) -> Grid:
+    grid = Grid(width, height)
 
     stack: list[Cell] = []
 
@@ -33,39 +37,58 @@ def generate_dfs(grid: Grid, entry: Cell) -> None:
         grid.mark_cell(neighbor)
         stack.append(neighbor)
 
-    grid.init_cells()
+    grid.unmark_cells()
+
+    return grid
 
 
-class MazeGenerator(Grid):
-    def generate(
+class MazeGenerator:
+    def __init__(
         self,
+        width: int,
+        height: int,
         entry: tuple[int, int],
         exit: tuple[int, int],  # noqa: A002
+    ) -> None:
+        self.width = width
+        self.height = height
+        self.entry = Cell(entry[0], entry[1])
+        self.exit = Cell(exit[0], exit[1])
+
+    def generate(
+        self,
         perfect: bool,  # noqa: FBT001
         seed: int | None = None,
     ) -> None:
-        self._entry = entry
-        self._exit = exit
-
         random.seed(seed)
-        generate_dfs(self, Cell(entry[0], entry[1]))
 
-    def solve(
-        self,
-    ) -> None:
+        if perfect:
+            self.grid = generate_dfs(
+                self.width,
+                self.height,
+                self.entry,
+                self.exit,
+            )
+        else:
+            self.grid = generate_dfs(
+                self.width,
+                self.height,
+                self.entry,
+                self.exit,
+            )
+
+    def solve(self) -> None:
         self._solution = None
-        self.init_cells()
+
+    def display(self) -> None:
+        self.grid.display()
 
     def save(self, filename: str) -> None:
         with open(filename, "w", encoding="utf-8") as file:
-            for cell_list in self.get_all_cell_states():
-                for cell in cell_list:
-                    file.write(cell.to_hex())
-                file.write("\n")
+            file.write(self.grid.into_file_format())
             file.write("\n")
-
-            file.write(f"{self._entry[0]},{self._entry[1]}\n")
-            file.write(f"{self._exit[0]},{self._exit[1]}\n")
+            file.write(self.entry.into_file_format())
+            file.write(self.exit.into_file_format())
 
             # TODO: write solution to output file
             file.write("<solution>\n")
