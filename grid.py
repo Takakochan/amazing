@@ -1,4 +1,6 @@
-from cell_state import Direction, WallState
+from cell_state import CellState
+from direction import Direction
+from wall_state import WallState
 
 
 class Grid:
@@ -32,6 +34,20 @@ class Grid:
                 return self._north_walls[y + 1][x]
             case Direction.west:
                 return self._west_walls[y][x]
+
+    def get_cell_state(self, x: int, y: int) -> CellState:
+        north = self.get_cell_wall_state(x, y, Direction.north)
+        east = self.get_cell_wall_state(x, y, Direction.east)
+        south = self.get_cell_wall_state(x, y, Direction.south)
+        west = self.get_cell_wall_state(x, y, Direction.west)
+
+        return CellState(north, east, south, west)
+
+    def get_cell_state_grid(self) -> list[list[CellState]]:
+        return [
+            [self.get_cell_state(x, y) for x in range(self.width)]
+            for y in range(self.height)
+        ]
 
     # TODO: validate x, y within range
     def _set_cell_wall_state(
