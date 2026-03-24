@@ -2,18 +2,24 @@
 
 import sys
 
-from config import ConfigError
-from maze import Maze
+from config import Config, ConfigError
+from mazegen import MazeGenerator
 
 
 def main() -> None:
     try:
-        maze = Maze.from_config_file(sys.argv[1])
+        config = Config.from_file(sys.argv[1])
     except ConfigError as error:
         raise error
 
-    maze.display()
-    maze.save()
+    maze_generator = MazeGenerator(config.width, config.height)
+    maze_generator.generate(
+        config.entry,
+        config.exit,
+        config.perfect,
+    )
+    maze_generator.solve()
+    maze_generator.save(config.output_file)
 
 
 if __name__ == "__main__":
