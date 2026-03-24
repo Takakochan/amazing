@@ -1,30 +1,39 @@
 import random
+import sys
 
 from mazegen.cell import Cell
-from mazegen.grid import Grid
+from mazegen.grid import FortyTwoPatternError, Grid
 
 
 def generate_dfs(
     width: int,
     height: int,
     entry: Cell,
-    _exit: Cell,
+    exit: Cell,  # noqa: A002
 ) -> Grid:
     grid = Grid(width, height)
 
+    try:
+        grid.set_forty_two_pattern([entry, exit])
+    except FortyTwoPatternError as error:
+        print(
+            f"\033[91mcould not draw 42 pattern: {error}\033[0m",
+            file=sys.stderr,
+        )
+
     stack: list[Cell] = []
 
-    grid.mark_cell(entry)
-    stack.append(entry)
+    cell = Cell(0, 0)
+    grid.mark_cell(cell)
+    stack.append(cell)
 
     while stack:
-        current = stack.pop()
+        current = stack[-1]
 
         neighbors = grid.get_unmarked_neighbors(current)
         if not neighbors:
+            stack.pop()
             continue
-
-        stack.append(current)
 
         neighbor = random.choice(neighbors)
 

@@ -6,6 +6,115 @@ from mazegen.cell_value import CellValue
 from mazegen.direction import Direction
 from mazegen.wall_state import WallState
 
+FORTY_TWO = [
+    [1, 0, 1, 0, 1, 1, 1],
+    [1, 0, 1, 0, 0, 0, 1],
+    [1, 1, 1, 0, 1, 1, 1],
+    [0, 0, 1, 0, 1, 0, 0],
+    [0, 0, 1, 0, 1, 1, 1],
+]
+
+FORTY_TWO_WIDTH = len(FORTY_TWO[0])
+FORTY_TWO_HEIGHT = len(FORTY_TWO)
+
+FORTY_TWO_OFFSETS = [
+    (0, 0),
+    (-1, 0),
+    (0, -1),
+    (-1, -1),
+    (-1, 1),
+    (1, -1),
+    (0, 1),
+    (1, 0),
+    (1, 1),
+    (-2, 0),
+    (0, -2),
+    (-2, -1),
+    (-1, -2),
+    (-2, -2),
+    (-2, 1),
+    (1, -2),
+    (-2, 2),
+    (2, -2),
+    (-1, 2),
+    (2, -1),
+    (0, 2),
+    (2, 0),
+    (1, 2),
+    (2, 1),
+    (2, 2),
+]
+
+
+class FortyTwoPatternError(Exception):
+    pass
+
+
+def get_forty_two_cells_at(
+    width: int,
+    height: int,
+    x_start: int,
+    y_start: int,
+    avoid_cells: list[Cell],
+) -> list[Cell] | None:
+    forty_two_cells = [
+        Cell(x_start + x, y_start + y)
+        for x in range(FORTY_TWO_WIDTH)
+        for y in range(FORTY_TWO_HEIGHT)
+        if FORTY_TWO[y][x] == 1
+    ]
+
+    if any(
+        not cell.is_in_range(width, height)
+        or cell.is_at_edge(width, height)
+        or cell in avoid_cells
+        for cell in forty_two_cells
+    ):
+        return None
+
+    return forty_two_cells
+
+
+def get_forty_two_cells(
+    width: int,
+    height: int,
+    avoid_cells: list[Cell],
+) -> list[Cell]:
+    if width < FORTY_TWO_WIDTH + 2:
+        raise FortyTwoPatternError(
+            f"width should be at least `{FORTY_TWO_WIDTH + 2}`: `{width}`",
+        )
+
+    if height < FORTY_TWO_HEIGHT + 2:
+        raise FortyTwoPatternError(
+            f"height should be at least `{FORTY_TWO_HEIGHT + 2}`: `{height}`",
+        )
+
+    x_start = (width - FORTY_TWO_WIDTH) // 2
+    y_start = (height - FORTY_TWO_HEIGHT) // 2
+
+    for x_offset, y_offset in FORTY_TWO_OFFSETS:
+        if abs(x_offset) == 1 and width < FORTY_TWO_WIDTH + 3:
+            continue
+
+        if abs(y_offset) == 1 and height < FORTY_TWO_HEIGHT + 3:
+            continue
+
+        cells = get_forty_two_cells_at(
+            width,
+            height,
+            x_start + x_offset,
+            y_start + y_offset,
+            avoid_cells,
+        )
+
+        if cells is None:
+            continue
+
+        return cells
+
+    raise FortyTwoPatternError("the maze is too small")
+
 
 @dataclass
 class Grid:
@@ -15,6 +124,28 @@ class Grid:
     def __post_init__(self) -> None:
         self.unmark_cells()
         self.close_walls()
+
+    def set_forty_two_pattern(self, avoid_cells: list[Cell]) -> None:
+        self.unmark_cells()
+
+        try:
+            cells = get_forty_two_cells(self.width, self.height, avoid_cells)
+        except FortyTwoPatternError as error:
+            raise error
+
+        for cell in cells:
+            self.mark_cell(cell)
+
+            for neighbor in self.get_unmarked_neighbors(cell):
+                if neighbor not in cells:
+                    continue
+
+                try:
+                    direction = cell.get_direction_to_neighbor(neighbor)
+                except RuntimeError as error:
+                    raise error
+
+                self.open_wall(cell, direction)
 
     def _validate_coordinate(
         self,

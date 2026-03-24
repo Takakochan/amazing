@@ -24,11 +24,38 @@ class Cell:
         if self.y < 0 or self.y >= height:
             raise CellError(f"y coordinate is out of range: `{self.y}`")
 
+    def is_in_range(
+        self,
+        width: int,
+        height: int,
+    ) -> bool:
+        return (
+            self.x >= 0 and self.x < width and self.y >= 0 and self.y < height
+        )
+
+    def is_at_edge(
+        self,
+        width: int,
+        height: int,
+    ) -> bool:
+        return (
+            self.x == 0
+            or self.x == width - 1
+            or self.y == 0
+            or self.y == height - 1
+        )
+
+    def is_neighbor_of(self, neighbor: Self) -> bool:
+        dx = self.x - neighbor.x
+        dy = self.y - neighbor.y
+
+        return abs(dx) + abs(dy) == 1
+
     def get_direction_to_neighbor(self, neighbor: Self) -> Direction:
-        match (
-            self.x - neighbor.x,
-            self.y - neighbor.y,
-        ):
+        dx = self.x - neighbor.x
+        dy = self.y - neighbor.y
+
+        match (dx, dy):
             case (0, 1):
                 return Direction.NORTH
             case (0, -1):
