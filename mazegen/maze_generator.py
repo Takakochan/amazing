@@ -3,36 +3,10 @@ import sys
 
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
+from mazegen.generators.basic import GeneratorBasic
+from mazegen.generators.dfs import GeneratorDFS
 from mazegen.grid import FortyTwoPatternError, Grid
-
-
-def generate_dfs(grid: Grid) -> None:
-    stack: list[Cell] = []
-
-    cell = Cell(0, 0)
-    grid.mark_cell(cell)
-    stack.append(cell)
-
-    while stack:
-        current = stack[-1]
-
-        neighbors = grid.get_unmarked_neighbors(current)
-        if not neighbors:
-            stack.pop()
-            continue
-
-        neighbor = random.choice(neighbors)
-
-        try:
-            direction = current.get_direction_to_neighbor(neighbor)
-        except RuntimeError as error:
-            raise error
-
-        grid.open_wall(current, direction)
-        grid.mark_cell(neighbor)
-        stack.append(neighbor)
-
-    grid.unmark_marked_cells()
+from mazegen.solvers.bfs import SolverBFS
 
 
 class MazeGenerator:
@@ -63,16 +37,15 @@ class MazeGenerator:
     ) -> None:
         random.seed(seed)
 
-        if perfect:
-            generate_dfs(self.grid)
-        else:
-            generate_dfs(self.grid)
+        generator = GeneratorDFS if perfect else GeneratorBasic
+        generator.generate(self.grid)
 
         self.grid.set_cell_value(self.entry, CellValue.ENTRY)
         self.grid.set_cell_value(self.exit, CellValue.EXIT)
 
     def solve(self) -> None:
-        self._solution = None
+        solver = SolverBFS
+        solver.solve(self.grid)
 
     def save(self, filename: str) -> None:
         with open(filename, "w", encoding="utf-8") as file:

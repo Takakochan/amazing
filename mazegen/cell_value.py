@@ -9,6 +9,7 @@ class CellValue(Enum):
     ENTRY = auto()
     EXIT = auto()
     FORTY_TWO = auto()
+    GEN_START = auto()
 
     def into_color(self) -> Color:
         match self:
@@ -22,3 +23,5 @@ class CellValue(Enum):
                 return Color.RED
             case CellValue.FORTY_TWO:
                 return Color.YELLOW
+            case CellValue.GEN_START:
+                return Color.MAGENTA
