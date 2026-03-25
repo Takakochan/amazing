@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum, auto
 
 from mazegen.cell import Cell
 from mazegen.cell_state import CellState
@@ -134,18 +135,18 @@ class Grid:
             raise error
 
         for cell in cells:
-            self.mark_cell(cell)
+            self.set_cell_value(cell, CellValue.FORTY_TWO)
 
-            for neighbor in self.get_unmarked_neighbors(cell):
-                if neighbor not in cells:
-                    continue
-
-                try:
-                    direction = cell.get_direction_to_neighbor(neighbor)
-                except RuntimeError as error:
-                    raise error
-
-                self.open_wall(cell, direction)
+            # for neighbor in self.get_unmarked_neighbors(cell):
+            #     if neighbor not in cells:
+            #         continue
+            #
+            #     try:
+            #         direction = cell.get_direction_to_neighbor(neighbor)
+            #     except RuntimeError as error:
+            #         raise error
+            #
+            #     self.open_wall(cell, direction)
 
     def _validate_coordinate(
         self,
@@ -170,12 +171,24 @@ class Grid:
             for _y in range(self.height)
         ]
 
+    def unmark_marked_cells(self) -> None:
+        for cell in [
+            cell
+            for cell in (
+                Cell(x, y)
+                for x in range(self.width)
+                for y in range(self.height)
+            )
+            if self._get_cell_value(cell) == CellValue.MARKED
+        ]:
+            self.set_cell_value(cell, CellValue.UNMARKED)
+
     def _get_cell_value(self, cell: Cell) -> CellValue:
         self._validate_coordinate(cell)
 
         return self._cells[cell.y][cell.x]
 
-    def _set_cell_value(self, cell: Cell, value: CellValue) -> None:
+    def set_cell_value(self, cell: Cell, value: CellValue) -> None:
         self._validate_coordinate(cell)
 
         self._cells[cell.y][cell.x] = value
@@ -183,12 +196,12 @@ class Grid:
     def unmark_cell(self, cell: Cell) -> None:
         self._validate_coordinate(cell)
 
-        self._set_cell_value(cell, CellValue.UNMARKED)
+        self.set_cell_value(cell, CellValue.UNMARKED)
 
     def mark_cell(self, cell: Cell) -> None:
         self._validate_coordinate(cell)
 
-        self._set_cell_value(cell, CellValue.MARKED)
+        self.set_cell_value(cell, CellValue.MARKED)
 
     def _get_neighbor_cell(
         self,
@@ -299,78 +312,47 @@ class Grid:
             for y in range(self.height)
         ]
 
+    def into_file_format(self) -> str:
+        return (
+            "\n".join([
+                "".join([cell.to_hex() for cell in cell_list])
+                for cell_list in self.get_all_cell_states()
+            ])
+            + "\n"
+        )
+
     def _print_cell_value(self, cell: Cell) -> None:
-        value = self._get_cell_value(cell)
-        print(f" {value} ", end="")
+        match self._get_cell_value(cell):
+            case CellValue.UNMARKED:
+                print_pixel()
+                print_pixel()
+            case CellValue.MARKED:
+                print_pixel(Color.BLUE)
+                print_pixel(Color.BLUE)
+            case CellValue.ENTRY:
+                print_pixel(Color.GREEN)
+                print_pixel(Color.GREEN)
+            case CellValue.EXIT:
+                print_pixel(Color.RED)
+                print_pixel(Color.RED)
+            case CellValue.FORTY_TWO:
+                print_pixel(Color.YELLOW)
+                print_pixel(Color.YELLOW)
 
     def _print_wall(self, cell: Cell, direction: Direction) -> None:
         self._validate_coordinate(cell)
 
         match (self._get_wall_state(cell, direction), direction):
             case (WallState.OPEN, Direction.NORTH | Direction.SOUTH):
-                print("   ", end="")
+                print_pixel()
+                print_pixel()
             case (WallState.OPEN, Direction.WEST | Direction.EAST):
-                print(" ", end="")
+                print_pixel()
             case (WallState.CLOSED, Direction.NORTH | Direction.SOUTH):
-                print("---", end="")
+                print_pixel(Color.BLACK)
+                print_pixel(Color.BLACK)
             case (WallState.CLOSED, Direction.WEST | Direction.EAST):
-                print("|", end="")
-
-    def _print_top_left_corner_wall(self, cell: Cell) -> None:
-        cell_opposite = Cell(cell.x - 1, cell.y - 1)
-
-        if not cell_opposite.is_in_range(self.width, self.height):
-            print("+", end="")
-            return
-
-        _print_corner_wall(
-            self._get_wall_state(cell_opposite, Direction.EAST),
-            self._get_wall_state(cell, Direction.NORTH),
-            self._get_wall_state(cell, Direction.WEST),
-            self._get_wall_state(cell_opposite, Direction.SOUTH),
-        )
-
-    def _print_top_right_corner_wall(self, cell: Cell) -> None:
-        cell_opposite = Cell(cell.x + 1, cell.y - 1)
-
-        if not cell_opposite.is_in_range(self.width, self.height):
-            print("+", end="")
-            return
-
-        _print_corner_wall(
-            self._get_wall_state(cell_opposite, Direction.WEST),
-            self._get_wall_state(cell_opposite, Direction.SOUTH),
-            self._get_wall_state(cell, Direction.EAST),
-            self._get_wall_state(cell, Direction.NORTH),
-        )
-
-    def _print_bottom_left_corner_wall(self, cell: Cell) -> None:
-        cell_opposite = Cell(cell.x - 1, cell.y + 1)
-
-        if not cell_opposite.is_in_range(self.width, self.height):
-            print("+", end="")
-            return
-
-        _print_corner_wall(
-            self._get_wall_state(cell, Direction.WEST),
-            self._get_wall_state(cell, Direction.SOUTH),
-            self._get_wall_state(cell_opposite, Direction.EAST),
-            self._get_wall_state(cell_opposite, Direction.NORTH),
-        )
-
-    def _print_bottom_right_corner_wall(self, cell: Cell) -> None:
-        cell_opposite = Cell(cell.x + 1, cell.y + 1)
-
-        if not cell_opposite.is_in_range(self.width, self.height):
-            print("+", end="")
-            return
-
-        _print_corner_wall(
-            self._get_wall_state(cell, Direction.EAST),
-            self._get_wall_state(cell_opposite, Direction.NORTH),
-            self._get_wall_state(cell_opposite, Direction.WEST),
-            self._get_wall_state(cell, Direction.SOUTH),
-        )
+                print_pixel(Color.BLACK)
 
     def display(self) -> None:
         for y in range(self.height):
@@ -378,9 +360,9 @@ class Grid:
                 for x in range(self.width):
                     cell = Cell(x, y)
                     if x == 0:
-                        self._print_top_left_corner_wall(cell)
+                        print_pixel(Color.BLACK)
                     self._print_wall(cell, Direction.NORTH)
-                    self._print_top_right_corner_wall(cell)
+                    print_pixel(Color.BLACK)
 
                 print()
 
@@ -396,49 +378,51 @@ class Grid:
             for x in range(self.width):
                 cell = Cell(x, y)
                 if x == 0:
-                    self._print_bottom_left_corner_wall(cell)
-                self._print_wall(cell, Direction.SOUTH)
-                self._print_bottom_right_corner_wall(cell)
+                    self._print_wall(cell, Direction.WEST)
+                self._print_cell_value(cell)
+                self._print_wall(cell, Direction.EAST)
 
             print()
 
-    def into_file_format(self) -> str:
-        return (
-            "\n".join([
-                "".join([cell.to_hex() for cell in cell_list])
-                for cell_list in self.get_all_cell_states()
-            ])
-            + "\n"
-        )
+            for x in range(self.width):
+                cell = Cell(x, y)
+                if x == 0:
+                    print_pixel(Color.BLACK)
+                self._print_wall(cell, Direction.SOUTH)
+                print_pixel(Color.BLACK)
+
+            print()
 
 
-def _print_corner_wall(
-    north_wall: WallState,
-    east_wall: WallState,
-    south_wall: WallState,
-    west_wall: WallState,
-) -> None:
-    match (north_wall, east_wall, south_wall, west_wall):
-        case (
-            WallState.OPEN,
-            WallState.OPEN,
-            WallState.OPEN,
-            WallState.OPEN,
-        ):
-            print(" ", end="")
-        case (
-            WallState.OPEN | WallState.CLOSED,
-            WallState.OPEN,
-            WallState.OPEN | WallState.CLOSED,
-            WallState.OPEN,
-        ):
-            print("|", end="")
-        case (
-            WallState.OPEN,
-            WallState.OPEN | WallState.CLOSED,
-            WallState.OPEN,
-            WallState.OPEN | WallState.CLOSED,
-        ):
-            print("-", end="")
-        case _:
-            print("+", end="")
+class Color(Enum):
+    NONE = auto()
+    BLACK = auto()
+    RED = auto()
+    GREEN = auto()
+    YELLOW = auto()
+    BLUE = auto()
+    MAGENTA = auto()
+    CYAN = auto()
+    WHITE = auto()
+
+
+def print_pixel(color: Color = Color.NONE) -> None:
+    match color:
+        case Color.NONE:
+            print("██", end="")
+        case Color.BLACK:
+            print("\033[30m██\033[0m", end="")
+        case Color.RED:
+            print("\033[31m██\033[0m", end="")
+        case Color.GREEN:
+            print("\033[32m██\033[0m", end="")
+        case Color.YELLOW:
+            print("\033[33m██\033[0m", end="")
+        case Color.BLUE:
+            print("\033[34m██\033[0m", end="")
+        case Color.MAGENTA:
+            print("\033[35m██\033[0m", end="")
+        case Color.CYAN:
+            print("\033[36m██\033[0m", end="")
+        case Color.WHITE:
+            print("\033[37m██\033[0m", end="")

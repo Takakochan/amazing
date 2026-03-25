@@ -2,6 +2,7 @@ import random
 import sys
 
 from mazegen.cell import Cell
+from mazegen.cell_value import CellValue
 from mazegen.grid import FortyTwoPatternError, Grid
 
 
@@ -46,7 +47,7 @@ def generate_dfs(
         grid.mark_cell(neighbor)
         stack.append(neighbor)
 
-    grid.unmark_cells()
+    grid.unmark_marked_cells()
 
     return grid
 
@@ -86,11 +87,11 @@ class MazeGenerator:
                 self.exit,
             )
 
+        self.grid.set_cell_value(self.entry, CellValue.ENTRY)
+        self.grid.set_cell_value(self.exit, CellValue.EXIT)
+
     def solve(self) -> None:
         self._solution = None
-
-    def display(self) -> None:
-        self.grid.display()
 
     def save(self, filename: str) -> None:
         with open(filename, "w", encoding="utf-8") as file:
@@ -101,3 +102,6 @@ class MazeGenerator:
 
             # TODO: write solution to output file
             file.write("<solution>\n")
+
+    def display(self) -> None:
+        self.grid.display()
