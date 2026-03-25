@@ -6,22 +6,7 @@ from mazegen.cell_value import CellValue
 from mazegen.grid import FortyTwoPatternError, Grid
 
 
-def generate_dfs(
-    width: int,
-    height: int,
-    entry: Cell,
-    exit: Cell,  # noqa: A002
-) -> Grid:
-    grid = Grid(width, height)
-
-    try:
-        grid.set_forty_two_pattern([entry, exit])
-    except FortyTwoPatternError as error:
-        print(
-            f"\033[91mcould not draw 42 pattern: {error}\033[0m",
-            file=sys.stderr,
-        )
-
+def generate_dfs(grid: Grid) -> None:
     stack: list[Cell] = []
 
     cell = Cell(0, 0)
@@ -49,8 +34,6 @@ def generate_dfs(
 
     grid.unmark_marked_cells()
 
-    return grid
-
 
 class MazeGenerator:
     def __init__(
@@ -60,10 +43,18 @@ class MazeGenerator:
         entry: tuple[int, int],
         exit: tuple[int, int],  # noqa: A002
     ) -> None:
-        self.width = width
-        self.height = height
         self.entry = Cell(entry[0], entry[1])
         self.exit = Cell(exit[0], exit[1])
+
+        self.grid = Grid(width, height)
+
+        try:
+            self.grid.set_forty_two_pattern([self.entry, self.exit])
+        except FortyTwoPatternError as error:
+            print(
+                f"\033[91mcould not draw 42 pattern: {error}\033[0m",
+                file=sys.stderr,
+            )
 
     def generate(
         self,
@@ -73,19 +64,9 @@ class MazeGenerator:
         random.seed(seed)
 
         if perfect:
-            self.grid = generate_dfs(
-                self.width,
-                self.height,
-                self.entry,
-                self.exit,
-            )
+            generate_dfs(self.grid)
         else:
-            self.grid = generate_dfs(
-                self.width,
-                self.height,
-                self.entry,
-                self.exit,
-            )
+            generate_dfs(self.grid)
 
         self.grid.set_cell_value(self.entry, CellValue.ENTRY)
         self.grid.set_cell_value(self.exit, CellValue.EXIT)
