@@ -1,9 +1,9 @@
 from dataclasses import dataclass
-from enum import Enum, auto
 
 from mazegen.cell import Cell
 from mazegen.cell_state import CellState
 from mazegen.cell_value import CellValue
+from mazegen.color import Color, print_pixel
 from mazegen.direction import Direction
 from mazegen.wall_state import WallState
 
@@ -137,16 +137,16 @@ class Grid:
         for cell in cells:
             self.set_cell_value(cell, CellValue.FORTY_TWO)
 
-            # for neighbor in self.get_unmarked_neighbors(cell):
-            #     if neighbor not in cells:
-            #         continue
-            #
-            #     try:
-            #         direction = cell.get_direction_to_neighbor(neighbor)
-            #     except RuntimeError as error:
-            #         raise error
-            #
-            #     self.open_wall(cell, direction)
+            for neighbor in self.get_unmarked_neighbors(cell):
+                if neighbor not in cells:
+                    continue
+
+                try:
+                    direction = cell.get_direction_to_neighbor(neighbor)
+                except RuntimeError as error:
+                    raise error
+
+                self.open_wall(cell, direction)
 
     def _validate_coordinate(
         self,
@@ -322,37 +322,41 @@ class Grid:
         )
 
     def _print_cell_value(self, cell: Cell) -> None:
-        match self._get_cell_value(cell):
-            case CellValue.UNMARKED:
-                print_pixel()
-                print_pixel()
-            case CellValue.MARKED:
-                print_pixel(Color.BLUE)
-                print_pixel(Color.BLUE)
-            case CellValue.ENTRY:
-                print_pixel(Color.GREEN)
-                print_pixel(Color.GREEN)
-            case CellValue.EXIT:
-                print_pixel(Color.RED)
-                print_pixel(Color.RED)
-            case CellValue.FORTY_TWO:
-                print_pixel(Color.YELLOW)
-                print_pixel(Color.YELLOW)
+        value = self._get_cell_value(cell)
+        color = value.into_color()
+        print_pixel(color)
+        print_pixel(color)
 
     def _print_wall(self, cell: Cell, direction: Direction) -> None:
         self._validate_coordinate(cell)
 
-        match (self._get_wall_state(cell, direction), direction):
-            case (WallState.OPEN, Direction.NORTH | Direction.SOUTH):
-                print_pixel()
-                print_pixel()
-            case (WallState.OPEN, Direction.WEST | Direction.EAST):
-                print_pixel()
-            case (WallState.CLOSED, Direction.NORTH | Direction.SOUTH):
-                print_pixel(Color.BLACK)
-                print_pixel(Color.BLACK)
-            case (WallState.CLOSED, Direction.WEST | Direction.EAST):
-                print_pixel(Color.BLACK)
+        def get_color() -> Color:
+            match self._get_wall_state(cell, direction):
+                case WallState.OPEN:
+                    neighbor = self._get_neighbor_cell(cell, direction)
+                    if neighbor is None:
+                        return Color.BLACK
+
+                    _neighbor_cell, neighbor_value = neighbor
+                    if neighbor_value is CellValue.UNMARKED:
+                        return Color.BLACK
+
+                    value = self._get_cell_value(cell)
+                    if value is not neighbor_value:
+                        return Color.BLACK
+
+                    return value.into_color()
+                case WallState.CLOSED:
+                    return Color.WHITE
+
+        color = get_color()
+
+        match direction:
+            case Direction.NORTH | Direction.SOUTH:
+                print_pixel(color)
+                print_pixel(color)
+            case Direction.WEST | Direction.EAST:
+                print_pixel(color)
 
     def display(self) -> None:
         for y in range(self.height):
@@ -360,9 +364,9 @@ class Grid:
                 for x in range(self.width):
                     cell = Cell(x, y)
                     if x == 0:
-                        print_pixel(Color.BLACK)
+                        print_pixel(Color.WHITE)
                     self._print_wall(cell, Direction.NORTH)
-                    print_pixel(Color.BLACK)
+                    print_pixel(Color.WHITE)
 
                 print()
 
@@ -387,42 +391,8 @@ class Grid:
             for x in range(self.width):
                 cell = Cell(x, y)
                 if x == 0:
-                    print_pixel(Color.BLACK)
+                    print_pixel(Color.WHITE)
                 self._print_wall(cell, Direction.SOUTH)
-                print_pixel(Color.BLACK)
+                print_pixel(Color.WHITE)
 
             print()
-
-
-class Color(Enum):
-    NONE = auto()
-    BLACK = auto()
-    RED = auto()
-    GREEN = auto()
-    YELLOW = auto()
-    BLUE = auto()
-    MAGENTA = auto()
-    CYAN = auto()
-    WHITE = auto()
-
-
-def print_pixel(color: Color = Color.NONE) -> None:
-    match color:
-        case Color.NONE:
-            print("██", end="")
-        case Color.BLACK:
-            print("\033[30m██\033[0m", end="")
-        case Color.RED:
-            print("\033[31m██\033[0m", end="")
-        case Color.GREEN:
-            print("\033[32m██\033[0m", end="")
-        case Color.YELLOW:
-            print("\033[33m██\033[0m", end="")
-        case Color.BLUE:
-            print("\033[34m██\033[0m", end="")
-        case Color.MAGENTA:
-            print("\033[35m██\033[0m", end="")
-        case Color.CYAN:
-            print("\033[36m██\033[0m", end="")
-        case Color.WHITE:
-            print("\033[37m██\033[0m", end="")
