@@ -316,31 +316,91 @@ class Grid:
             case (WallState.CLOSED, Direction.WEST | Direction.EAST):
                 print("|", end="")
 
+    def _print_top_left_corner_wall(self, cell: Cell) -> None:
+        cell_opposite = Cell(cell.x - 1, cell.y - 1)
+
+        if not cell_opposite.is_in_range(self.width, self.height):
+            print("+", end="")
+            return
+
+        _print_corner_wall(
+            self._get_wall_state(cell_opposite, Direction.EAST),
+            self._get_wall_state(cell, Direction.NORTH),
+            self._get_wall_state(cell, Direction.WEST),
+            self._get_wall_state(cell_opposite, Direction.SOUTH),
+        )
+
+    def _print_top_right_corner_wall(self, cell: Cell) -> None:
+        cell_opposite = Cell(cell.x + 1, cell.y - 1)
+
+        if not cell_opposite.is_in_range(self.width, self.height):
+            print("+", end="")
+            return
+
+        _print_corner_wall(
+            self._get_wall_state(cell_opposite, Direction.WEST),
+            self._get_wall_state(cell_opposite, Direction.SOUTH),
+            self._get_wall_state(cell, Direction.EAST),
+            self._get_wall_state(cell, Direction.NORTH),
+        )
+
+    def _print_bottom_left_corner_wall(self, cell: Cell) -> None:
+        cell_opposite = Cell(cell.x - 1, cell.y + 1)
+
+        if not cell_opposite.is_in_range(self.width, self.height):
+            print("+", end="")
+            return
+
+        _print_corner_wall(
+            self._get_wall_state(cell, Direction.WEST),
+            self._get_wall_state(cell, Direction.SOUTH),
+            self._get_wall_state(cell_opposite, Direction.EAST),
+            self._get_wall_state(cell_opposite, Direction.NORTH),
+        )
+
+    def _print_bottom_right_corner_wall(self, cell: Cell) -> None:
+        cell_opposite = Cell(cell.x + 1, cell.y + 1)
+
+        if not cell_opposite.is_in_range(self.width, self.height):
+            print("+", end="")
+            return
+
+        _print_corner_wall(
+            self._get_wall_state(cell, Direction.EAST),
+            self._get_wall_state(cell_opposite, Direction.NORTH),
+            self._get_wall_state(cell_opposite, Direction.WEST),
+            self._get_wall_state(cell, Direction.SOUTH),
+        )
+
     def display(self) -> None:
         for y in range(self.height):
-            for x in range(self.width):
-                print("+", end="")
-                self._print_wall(Cell(x, y), Direction.NORTH)
+            if y == 0:
+                for x in range(self.width):
+                    cell = Cell(x, y)
+                    if x == 0:
+                        self._print_top_left_corner_wall(cell)
+                    self._print_wall(cell, Direction.NORTH)
+                    self._print_top_right_corner_wall(cell)
 
-            print("+", end="")
+                print()
+
+            for x in range(self.width):
+                cell = Cell(x, y)
+                if x == 0:
+                    self._print_wall(cell, Direction.WEST)
+                self._print_cell_value(cell)
+                self._print_wall(cell, Direction.EAST)
+
             print()
 
             for x in range(self.width):
-                self._print_wall(Cell(x, y), Direction.WEST)
-                self._print_cell_value(Cell(x, y))
+                cell = Cell(x, y)
+                if x == 0:
+                    self._print_bottom_left_corner_wall(cell)
+                self._print_wall(cell, Direction.SOUTH)
+                self._print_bottom_right_corner_wall(cell)
 
-            self._print_wall(Cell(self.width - 1, y), Direction.EAST)
             print()
-
-        for x in range(self.width):
-            print("+", end="")
-            self._print_wall(
-                Cell(x, self.height - 1),
-                Direction.SOUTH,
-            )
-
-        print("+", end="")
-        print()
 
     def into_file_format(self) -> str:
         return (
@@ -350,3 +410,35 @@ class Grid:
             ])
             + "\n"
         )
+
+
+def _print_corner_wall(
+    north_wall: WallState,
+    east_wall: WallState,
+    south_wall: WallState,
+    west_wall: WallState,
+) -> None:
+    match (north_wall, east_wall, south_wall, west_wall):
+        case (
+            WallState.OPEN,
+            WallState.OPEN,
+            WallState.OPEN,
+            WallState.OPEN,
+        ):
+            print(" ", end="")
+        case (
+            WallState.OPEN | WallState.CLOSED,
+            WallState.OPEN,
+            WallState.OPEN | WallState.CLOSED,
+            WallState.OPEN,
+        ):
+            print("|", end="")
+        case (
+            WallState.OPEN,
+            WallState.OPEN | WallState.CLOSED,
+            WallState.OPEN,
+            WallState.OPEN | WallState.CLOSED,
+        ):
+            print("-", end="")
+        case _:
+            print("+", end="")
