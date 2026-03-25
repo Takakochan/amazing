@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from time import sleep
 
 from mazegen.cell import Cell
 from mazegen.cell_state import CellState
@@ -125,6 +126,7 @@ class Grid:
     def __post_init__(self) -> None:
         self.unmark_cells()
         self.close_walls()
+        self.unset_parents()
 
     def set_forty_two_pattern(self, avoid_cells: list[Cell]) -> None:
         self.unmark_cells()
@@ -171,6 +173,11 @@ class Grid:
             for _y in range(self.height)
         ]
 
+    def unset_parents(self) -> None:
+        self._parents: list[list[Cell | None]] = [
+            [None for _x in range(self.width)] for _y in range(self.height)
+        ]
+
     def unmark_marked_cells(self) -> None:
         for cell in [
             cell
@@ -202,6 +209,12 @@ class Grid:
         self._validate_coordinate(cell)
 
         self.set_cell_value(cell, CellValue.MARKED)
+
+    def get_parent(self, child: Cell) -> Cell | None:
+        return self._parents[child.y][child.x]
+
+    def set_parent(self, child: Cell, parent: Cell) -> None:
+        self._parents[child.y][child.x] = parent
 
     def _get_neighbor_cell(
         self,
@@ -254,6 +267,25 @@ class Grid:
             for neighbor, value in self._get_neighbor_cells(cell)
             if value == CellValue.UNMARKED
         ]
+
+    def get_reachable_unmarked_neighbors(
+        self,
+        cell: Cell,
+    ) -> list[Cell]:
+        neighbors = []
+
+        for neighbor in self.get_unmarked_neighbors(cell):
+            try:
+                direction = cell.get_direction_to_neighbor(neighbor)
+            except RuntimeError:
+                continue
+
+            wall_state = self._get_wall_state(cell, direction)
+
+            if wall_state is WallState.OPEN:
+                neighbors.append(neighbor)
+
+        return neighbors
 
     def _get_wall_state(
         self,
@@ -359,6 +391,8 @@ class Grid:
                 print_pixel(color)
 
     def display(self) -> None:
+        print("\033[2J")
+
         for y in range(self.height):
             if y == 0:
                 for x in range(self.width):
@@ -396,3 +430,5 @@ class Grid:
                 print_pixel(Color.WHITE)
 
             print()
+
+        sleep(0.030)

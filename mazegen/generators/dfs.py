@@ -1,7 +1,6 @@
 import random
 
 from mazegen.cell import Cell
-from mazegen.cell_value import CellValue
 from mazegen.generators.base import Generator
 from mazegen.grid import Grid
 
@@ -28,7 +27,7 @@ class GeneratorDFS(Generator):
 
             neighbors = grid.get_unmarked_neighbors(current)
             if not neighbors:
-                last = stack.pop()
+                stack.pop()
                 continue
 
             neighbor = random.choice(neighbors)
@@ -42,6 +41,8 @@ class GeneratorDFS(Generator):
             grid.mark_cell(neighbor)
             stack.append(neighbor)
 
-        grid.set_cell_value(last, CellValue.GEN_START)
+            grid.display()
 
         grid.unmark_marked_cells()
+
+        grid.display()

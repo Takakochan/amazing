@@ -43,9 +43,13 @@ class MazeGenerator:
         self.grid.set_cell_value(self.entry, CellValue.ENTRY)
         self.grid.set_cell_value(self.exit, CellValue.EXIT)
 
+        self.grid.display()
+
     def solve(self) -> None:
         solver = SolverBFS
-        solver.solve(self.grid)
+        solver.solve(self.grid, self.entry, self.exit)
+
+        self.grid.display()
 
     def save(self, filename: str) -> None:
         with open(filename, "w", encoding="utf-8") as file:
