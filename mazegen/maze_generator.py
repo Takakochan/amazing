@@ -21,6 +21,8 @@ class MazeGenerator:
         self.exit = Cell(exit[0], exit[1])
 
         self.grid = Grid(width, height)
+        self.grid.set_cell_value(self.entry, CellValue.ENTRY)
+        self.grid.set_cell_value(self.exit, CellValue.EXIT)
 
         try:
             self.grid.set_forty_two_pattern([self.entry, self.exit])
@@ -39,9 +41,6 @@ class MazeGenerator:
 
         generator = GeneratorDFS if perfect else GeneratorBasic
         generator.generate(self.grid)
-
-        self.grid.set_cell_value(self.entry, CellValue.ENTRY)
-        self.grid.set_cell_value(self.exit, CellValue.EXIT)
 
         self.grid.display()
 

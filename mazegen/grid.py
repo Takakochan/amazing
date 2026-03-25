@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from time import sleep
 
 from mazegen.cell import Cell
+from mazegen.cell_marking import CellMarking
 from mazegen.cell_state import CellState
 from mazegen.cell_value import CellValue
 from mazegen.color import Color, print_pixel
@@ -124,12 +125,13 @@ class Grid:
     height: int
 
     def __post_init__(self) -> None:
-        self.unmark_cells()
+        self.reset_cell_markings()
+        self.reset_cell_values()
         self.close_walls()
         self.unset_parents()
 
     def set_forty_two_pattern(self, avoid_cells: list[Cell]) -> None:
-        self.unmark_cells()
+        self.reset_cell_markings()
 
         try:
             cells = get_forty_two_cells(self.width, self.height, avoid_cells)
@@ -138,6 +140,7 @@ class Grid:
 
         for cell in cells:
             self.set_cell_value(cell, CellValue.FORTY_TWO)
+            self.mark_cell(cell)
 
             for neighbor in self.get_unmarked_neighbors(cell):
                 if neighbor not in cells:
@@ -156,9 +159,15 @@ class Grid:
     ) -> None:
         cell.validate(self.width, self.height)
 
-    def unmark_cells(self) -> None:
-        self._cells = [
-            [CellValue.UNMARKED for _x in range(self.width)]
+    def reset_cell_markings(self) -> None:
+        self._cell_markings = [
+            [CellMarking.UNMARKED for _x in range(self.width)]
+            for _y in range(self.height)
+        ]
+
+    def reset_cell_values(self) -> None:
+        self._cell_values = [
+            [CellValue.NONE for _x in range(self.width)]
             for _y in range(self.height)
         ]
 
@@ -178,37 +187,35 @@ class Grid:
             [None for _x in range(self.width)] for _y in range(self.height)
         ]
 
-    def unmark_marked_cells(self) -> None:
-        for cell in [
-            cell
-            for cell in (
-                Cell(x, y)
-                for x in range(self.width)
-                for y in range(self.height)
-            )
-            if self._get_cell_value(cell) == CellValue.MARKED
-        ]:
-            self.set_cell_value(cell, CellValue.UNMARKED)
+    def _get_cell_marking(self, cell: Cell) -> CellMarking:
+        self._validate_coordinate(cell)
+
+        return self._cell_markings[cell.y][cell.x]
 
     def _get_cell_value(self, cell: Cell) -> CellValue:
         self._validate_coordinate(cell)
 
-        return self._cells[cell.y][cell.x]
+        return self._cell_values[cell.y][cell.x]
 
-    def set_cell_value(self, cell: Cell, value: CellValue) -> None:
+    def _set_cell_marking(self, cell: Cell, value: CellMarking) -> None:
         self._validate_coordinate(cell)
 
-        self._cells[cell.y][cell.x] = value
+        self._cell_markings[cell.y][cell.x] = value
 
     def unmark_cell(self, cell: Cell) -> None:
         self._validate_coordinate(cell)
 
-        self.set_cell_value(cell, CellValue.UNMARKED)
+        self._set_cell_marking(cell, CellMarking.UNMARKED)
 
     def mark_cell(self, cell: Cell) -> None:
         self._validate_coordinate(cell)
 
-        self.set_cell_value(cell, CellValue.MARKED)
+        self._set_cell_marking(cell, CellMarking.MARKED)
+
+    def set_cell_value(self, cell: Cell, value: CellValue) -> None:
+        self._validate_coordinate(cell)
+
+        self._cell_values[cell.y][cell.x] = value
 
     def get_parent(self, child: Cell) -> Cell | None:
         return self._parents[child.y][child.x]
@@ -220,35 +227,31 @@ class Grid:
         self,
         cell: Cell,
         direction: Direction,
-    ) -> tuple[Cell, CellValue] | None:
+    ) -> Cell | None:
         self._validate_coordinate(cell)
 
         match direction:
             case Direction.NORTH:
                 if cell.y == 0:
                     return None
-                neighbor = Cell(cell.x, cell.y - 1)
-                return neighbor, self._get_cell_value(neighbor)
+                return Cell(cell.x, cell.y - 1)
             case Direction.EAST:
                 if cell.x == self.width - 1:
                     return None
-                neighbor = Cell(cell.x + 1, cell.y)
-                return neighbor, self._get_cell_value(neighbor)
+                return Cell(cell.x + 1, cell.y)
             case Direction.SOUTH:
                 if cell.y == self.height - 1:
                     return None
-                neighbor = Cell(cell.x, cell.y + 1)
-                return neighbor, self._get_cell_value(neighbor)
+                return Cell(cell.x, cell.y + 1)
             case Direction.WEST:
                 if cell.x == 0:
                     return None
-                neighbor = Cell(cell.x - 1, cell.y)
-                return neighbor, self._get_cell_value(neighbor)
+                return Cell(cell.x - 1, cell.y)
 
     def _get_neighbor_cells(
         self,
         cell: Cell,
-    ) -> list[tuple[Cell, CellValue]]:
+    ) -> list[Cell]:
         return [
             neighbor
             for neighbor in (
@@ -264,8 +267,8 @@ class Grid:
     ) -> list[Cell]:
         return [
             neighbor
-            for neighbor, value in self._get_neighbor_cells(cell)
-            if value == CellValue.UNMARKED
+            for neighbor in self._get_neighbor_cells(cell)
+            if self._get_cell_marking(neighbor) == CellMarking.UNMARKED
         ]
 
     def get_reachable_unmarked_neighbors(
@@ -354,8 +357,16 @@ class Grid:
         )
 
     def _print_cell_value(self, cell: Cell) -> None:
+        marking = self._get_cell_marking(cell)
         value = self._get_cell_value(cell)
-        color = value.into_color()
+
+        if value is not CellValue.NONE:
+            color = value.into_color()
+        elif marking is CellMarking.MARKED:
+            color = marking.into_color()
+        else:
+            color = Color.BLACK
+
         print_pixel(color)
         print_pixel(color)
 
@@ -369,15 +380,28 @@ class Grid:
                     if neighbor is None:
                         return Color.BLACK
 
-                    _neighbor_cell, neighbor_value = neighbor
-                    if neighbor_value is CellValue.UNMARKED:
-                        return Color.BLACK
-
+                    marking = self._get_cell_marking(cell)
                     value = self._get_cell_value(cell)
-                    if value is not neighbor_value:
-                        return Color.BLACK
+                    neighbor_marking = self._get_cell_marking(neighbor)
+                    neighbor_value = self._get_cell_value(neighbor)
 
-                    return value.into_color()
+                    if value == neighbor_value and value is not CellValue.NONE:
+                        return value.into_color()
+
+                    if (
+                        marking is CellMarking.MARKED
+                        and neighbor_marking is CellMarking.MARKED
+                        and (
+                            value is CellValue.NONE
+                            or neighbor_value is CellValue.NONE
+                        )
+                    ):
+                        return marking.into_color()
+
+                    if value > neighbor_value:
+                        return value.into_color()
+
+                    return neighbor_value.into_color()
                 case WallState.CLOSED:
                     return Color.WHITE
 
@@ -431,4 +455,4 @@ class Grid:
 
             print()
 
-        sleep(0.030)
+        sleep(0.050)

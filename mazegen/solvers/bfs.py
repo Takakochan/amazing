@@ -10,10 +10,8 @@ class SolverBFS(Solver):
         entry: Cell,
         exit: Cell,  # noqa: A002
     ) -> None:
+        grid.reset_cell_markings()
         grid.unset_parents()
-        grid.unmark_marked_cells()
-        grid.set_cell_value(entry, CellValue.UNMARKED)
-        grid.set_cell_value(exit, CellValue.UNMARKED)
 
         queue: list[Cell] = []
 
@@ -35,18 +33,16 @@ class SolverBFS(Solver):
         current = exit
 
         while current is not entry:
+            if current != exit:
+                grid.set_cell_value(current, CellValue.SOLUTION)
+
             parent = grid.get_parent(current)
             if parent is None:
                 break
 
-            grid.set_cell_value(current, CellValue.SOLUTION)
             current = parent
 
             grid.display()
 
-        grid.set_cell_value(current, CellValue.SOLUTION)
-
-        grid.unmark_marked_cells()
+        grid.reset_cell_markings()
         grid.unset_parents()
-
-        grid.display()

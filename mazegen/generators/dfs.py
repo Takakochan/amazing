@@ -43,6 +43,6 @@ class GeneratorDFS(Generator):
 
             grid.display()
 
-        grid.unmark_marked_cells()
+        grid.reset_cell_markings()
 
         grid.display()
