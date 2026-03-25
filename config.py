@@ -146,8 +146,38 @@ class Config:
                     parse_line(config, line)
 
                 try:
-                    return cls(**config)
+                    cfg = cls(**config)
                 except KeyError as error:
                     raise ConfigError("missing key/value pair") from error
+
+                try:
+                    cfg.validate()
+                except ConfigError as error:
+                    raise error
+
+                return cfg
         except OSError as error:
             raise ConfigError(f"failed to open file: `{filepath}`") from error
+
+    def validate(self) -> None:
+        if self.width <= 0:
+            raise ConfigError(f"width must be positive: `{self.width}`")
+
+        if self.height <= 0:
+            raise ConfigError(f"height must be positive: `{self.height}`")
+
+        if (
+            self.entry[0] < 0
+            or self.entry[0] >= self.width
+            or self.entry[1] < 0
+            or self.entry[1] >= self.height
+        ):
+            raise ConfigError(f"entry must be in grid range: `{self.entry}`")
+
+        if (
+            self.exit[0] < 0
+            or self.exit[0] >= self.width
+            or self.exit[1] < 0
+            or self.exit[1] >= self.height
+        ):
+            raise ConfigError(f"exit must be in grid range: `{self.exit}`")
