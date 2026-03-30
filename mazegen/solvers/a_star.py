@@ -11,13 +11,14 @@ class PriorityQue():
         self.counter: int = 0
 
     def push(self, priority: int, cell: Cell) -> None:
-        heapq.heappush(self._heap, (priority, cell))
+        heapq.heappush(self._heap, (priority, self.counter, cell))
+        self.counter += 1
 
     
     def pop(self) -> Cell:
         if not self._heap:
             raise Exception("Open set is empty → path not found")  # Debug
-        priority, cell = heapq.heappop(self._heap)
+        priority, counter, cell = heapq.heappop(self._heap)
         print("POP:", cell)
         return cell
 
