@@ -455,4 +455,4 @@ class Grid:
 
             print()
 
-        sleep(0.050)
+        # sleep(0.050)

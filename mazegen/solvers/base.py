@@ -7,6 +7,7 @@ from mazegen.grid import Grid
 class Solver(ABC):
     @abstractmethod
     def solve(
+        self,
         grid: Grid,
         entry: Cell,
         exit: Cell,  # noqa: A002

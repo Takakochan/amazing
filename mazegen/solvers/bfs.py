@@ -6,6 +6,7 @@ from mazegen.solvers.base import Solver
 
 class SolverBFS(Solver):
     def solve(
+        self,
         grid: Grid,
         entry: Cell,
         exit: Cell,  # noqa: A002
