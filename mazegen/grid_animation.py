@@ -102,7 +102,12 @@ class GridAnimation(Grid):
         return buffer
 
     def display(self) -> None:
+        start = time.perf_counter()
         buffer = self._recreate_buffer()
         sys.stdout.write(buffer)
         sys.stdout.flush()
-        time.sleep(0.050)
+        end = time.perf_counter()
+        duration = end - start
+        left = 0.050 - duration
+        print(f"duration: {duration * 1000:.3f} + {left * 1000:.3f} = 50 ms")
+        time.sleep(left)
