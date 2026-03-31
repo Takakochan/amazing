@@ -13,9 +13,6 @@ from mazegen.wall_state import WallState
 class GridAnimation(Grid):
     CORNER_WALL_COLOR = Color.WHITE
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
     def _get_cell_color(self, cell: Cell) -> Color:
         self._validate_coordinate(cell)
 
@@ -59,7 +56,6 @@ class GridAnimation(Grid):
 
     def _recreate_buffer(self) -> str:
         buffer = ""
-        buffer += "\033[2J\033[H"
 
         for y in range(self.height):
             if y == 0:
@@ -104,10 +100,13 @@ class GridAnimation(Grid):
     def display(self) -> None:
         start = time.perf_counter()
         buffer = self._recreate_buffer()
+        duration = time.perf_counter() - start
+
+        sys.stdout.write("\033[2J\033[H")
+        sys.stdout.write(f"duration: {duration * 1000:.3f}\n")
         sys.stdout.write(buffer)
         sys.stdout.flush()
-        end = time.perf_counter()
-        duration = end - start
-        left = 0.050 - duration
-        print(f"duration: {duration * 1000:.3f} + {left * 1000:.3f} = 50 ms")
-        time.sleep(left)
+
+        left = start + 0.025 - time.perf_counter()
+        if left > 0:
+            time.sleep(left)

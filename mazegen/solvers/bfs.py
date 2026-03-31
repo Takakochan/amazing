@@ -26,7 +26,7 @@ class SolverBFS(Solver):
                 grid.set_parent(neighbor, current)
                 queue.append(neighbor)
 
-            grid.display()
+                grid.display()
 
         current = exit
 
