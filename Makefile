@@ -1,4 +1,4 @@
-RM := rm -rf
+MAIN_PROGRAM := a_maze_ing.py
 
 FLAKE8_FLAGS += --color always
 MYPY_FLAGS += --color-output
@@ -11,7 +11,7 @@ RUFF_FORMAT_CHECK_FLAGS += --color always
 RUFF_CHECK_FLAGS += --color always
 TY_CHECK_FLAGS += --color always
 
-MAIN_PROGRAM := a_maze_ing.py
+RM := rm -rf
 
 all: install run
 
@@ -29,11 +29,15 @@ debug:
 	# TODO: use pdb
 	uv run $(MAIN_PROGRAM)
 
+test:
+	# TODO: run tests
+
 clean:
 	uvx ruff clean
 	$(RM) .mypy_cache/
 	$(RM) .ruff_cache/
 	$(RM) .venv/
+	find . -type d -name "__pycache__" -exec $(RM) {} +
 
 lint:
 	uvx flake8 $(FLAKE8_FLAGS) .
@@ -50,4 +54,4 @@ format:
 	uvx ruff check --fix --select=I001
 	uvx ruff format
 
-.PHONY: all install run debug clean lint lint-strict format
+.PHONY: all install run debug test clean lint lint-strict format
