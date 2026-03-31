@@ -6,7 +6,7 @@ from mazegen.grid import Grid
 from mazegen.solvers.base import Solver
 
 
-class SolverAstar(Solver):
+class SolverAStar(Solver):
     @staticmethod
     def solve(grid: Grid, entry: Cell, exit: Cell) -> None:  # noqa: A002
         open_set = PriorityQue()

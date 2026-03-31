@@ -6,7 +6,7 @@ from mazegen.cell_value import CellValue
 from mazegen.generators.basic import GeneratorBasic
 from mazegen.generators.dfs import GeneratorDFS
 from mazegen.grid import FortyTwoPatternError, Grid
-from mazegen.solvers.a_star import SolverAstar
+from mazegen.solvers.a_star import SolverAStar
 
 
 class MazeGenerator:
@@ -45,7 +45,7 @@ class MazeGenerator:
         self.grid.display()
 
     def solve(self) -> None:
-        solver = SolverAstar()
+        solver = SolverAStar()
         solver.solve(self.grid, self.entry, self.exit)
 
         self.grid.display()
