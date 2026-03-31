@@ -1,10 +1,9 @@
-from enum import Enum
-from typing import Self
+from enum import IntEnum
 
 from mazegen.color import Color
 
 
-class CellValue(Enum):
+class CellValue(IntEnum):
     NONE = 99
     ENTRY = 1
     EXIT = 2
@@ -23,15 +22,3 @@ class CellValue(Enum):
                 return Color.YELLOW
             case CellValue.SOLUTION:
                 return Color.MAGENTA
-
-    def __gt__(self, other: Self) -> bool:
-        return self.value > other.value
-
-    def __ge__(self, other: Self) -> bool:
-        return self.value >= other.value
-
-    def __lt__(self, other: Self) -> bool:
-        return self.value < other.value
-
-    def __le__(self, other: Self) -> bool:
-        return self.value <= other.value

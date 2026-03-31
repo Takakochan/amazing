@@ -6,7 +6,6 @@ from mazegen.cell_value import CellValue
 from mazegen.generators.basic import GeneratorBasic
 from mazegen.generators.dfs import GeneratorDFS
 from mazegen.grid import FortyTwoPatternError, Grid
-from mazegen.solvers.bfs import SolverBFS
 from mazegen.solvers.a_star import SolverAstar
 
 

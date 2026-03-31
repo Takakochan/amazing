@@ -6,6 +6,7 @@ from mazegen.grid import Grid
 
 
 class GeneratorDFS(Generator):
+    @staticmethod
     def generate(grid: Grid) -> None:
         stack: list[Cell] = []
 
