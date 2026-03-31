@@ -6,6 +6,5 @@ from mazegen.grid import Grid
 
 class Solver(ABC):
     @abstractmethod
-    @staticmethod
     def solve(grid: Grid, entry: Cell, exit: Cell) -> None:  # noqa: A002
         pass
