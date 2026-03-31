@@ -1,11 +1,11 @@
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
-from mazegen.grid import Grid
+from mazegen.grid_animation import GridAnimation
 from mazegen.solvers.base import Solver
 
 
 class SolverBFS(Solver):
-    def solve(self, grid: Grid, entry: Cell, exit: Cell) -> None:  # noqa: A002
+    def solve(self, grid: GridAnimation, entry: Cell, exit: Cell) -> None:  # noqa: A002
         self._foo = None
 
         grid.reset_cell_markings()

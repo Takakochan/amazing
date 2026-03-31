@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
 from mazegen.cell import Cell
-from mazegen.grid import Grid
+from mazegen.grid_animation import GridAnimation
 
 
 class Solver(ABC):
     @abstractmethod
-    def solve(self, grid: Grid, entry: Cell, exit: Cell) -> None:  # noqa: A002
+    def solve(self, grid: GridAnimation, entry: Cell, exit: Cell) -> None:  # noqa: A002
         pass

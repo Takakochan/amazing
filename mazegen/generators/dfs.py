@@ -2,11 +2,11 @@ import random
 
 from mazegen.cell import Cell
 from mazegen.generators.base import Generator
-from mazegen.grid import Grid
+from mazegen.grid_animation import GridAnimation
 
 
 class GeneratorDFS(Generator):
-    def generate(self, grid: Grid) -> None:
+    def generate(self, grid: GridAnimation) -> None:
         self._foo = None
 
         stack: list[Cell] = []
