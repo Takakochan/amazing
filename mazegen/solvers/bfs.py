@@ -5,7 +5,12 @@ from mazegen.solvers.base import Solver
 
 
 class SolverBFS(Solver):
-    def solve(self, grid: GridAnimation, entry: Cell, exit: Cell) -> None:  # noqa: A002
+    def solve(
+        self,
+        grid: GridAnimation,
+        entry: Cell,
+        exit: Cell,  # noqa: A002
+    ) -> None:
         self._foo = None
 
         grid.reset_cell_markings()
