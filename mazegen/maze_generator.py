@@ -40,13 +40,13 @@ class MazeGenerator:
         random.seed(seed)
 
         generator = GeneratorDFS if perfect else GeneratorBasic
-        generator.generate(self.grid)
+        generator().generate(self.grid)
 
         self.grid.display()
 
     def solve(self) -> None:
-        solver = SolverAStar()
-        solver.solve(self.grid, self.entry, self.exit)
+        solver = SolverAStar
+        solver().solve(self.grid, self.entry, self.exit)
 
         self.grid.display()
 

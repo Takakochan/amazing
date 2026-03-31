@@ -6,8 +6,9 @@ from mazegen.grid import Grid
 
 
 class GeneratorDFS(Generator):
-    @staticmethod
-    def generate(grid: Grid) -> None:
+    def generate(self, grid: Grid) -> None:
+        self._foo = None
+
         stack: list[Cell] = []
 
         edge = [

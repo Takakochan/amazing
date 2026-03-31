@@ -7,8 +7,9 @@ from mazegen.solvers.base import Solver
 
 
 class SolverAStar(Solver):
-    @staticmethod
-    def solve(grid: Grid, entry: Cell, exit: Cell) -> None:  # noqa: A002
+    def solve(self, grid: Grid, entry: Cell, exit: Cell) -> None:  # noqa: A002
+        self._foo = None
+
         open_set = PriorityQue()
         # hopeful condidates list which we gonna check
         open_set.push(0, entry)

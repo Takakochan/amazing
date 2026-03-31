@@ -4,6 +4,7 @@ from mazegen.grid import Grid
 
 
 class GeneratorBasic(Generator):
-    @staticmethod
-    def generate(grid: Grid) -> None:
-        GeneratorDFS.generate(grid)
+    def generate(self, grid: Grid) -> None:
+        self._foo = None
+
+        GeneratorDFS().generate(grid)

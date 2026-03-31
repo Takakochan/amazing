@@ -5,5 +5,5 @@ from mazegen.grid import Grid
 
 class Generator(ABC):
     @abstractmethod
-    def generate(grid: Grid) -> None:
+    def generate(self, grid: Grid) -> None:
         pass

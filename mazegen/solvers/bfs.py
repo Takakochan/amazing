@@ -5,8 +5,9 @@ from mazegen.solvers.base import Solver
 
 
 class SolverBFS(Solver):
-    @staticmethod
-    def solve(grid: Grid, entry: Cell, exit: Cell) -> None:  # noqa: A002
+    def solve(self, grid: Grid, entry: Cell, exit: Cell) -> None:  # noqa: A002
+        self._foo = None
+
         grid.reset_cell_markings()
         grid.unset_parents()
 
