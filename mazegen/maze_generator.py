@@ -5,8 +5,9 @@ from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
 from mazegen.generators.basic import GeneratorBasic
 from mazegen.generators.dfs import GeneratorDFS
-from mazegen.grid import FortyTwoPatternError, Grid
-from mazegen.solvers.a_star import SolverAStar
+from mazegen.grid import FortyTwoPatternError
+from mazegen.grid_animation import GridAnimation
+from mazegen.solvers.bfs import SolverBFS
 
 
 class MazeGenerator:
@@ -20,7 +21,7 @@ class MazeGenerator:
         self.entry = Cell(entry[0], entry[1])
         self.exit = Cell(exit[0], exit[1])
 
-        self.grid = Grid(width, height)
+        self.grid = GridAnimation(width, height)
         self.grid.set_cell_value(self.entry, CellValue.ENTRY)
         self.grid.set_cell_value(self.exit, CellValue.EXIT)
 
@@ -45,7 +46,7 @@ class MazeGenerator:
         self.grid.display()
 
     def solve(self) -> None:
-        solver = SolverAStar
+        solver = SolverBFS
         solver().solve(self.grid, self.entry, self.exit)
 
         self.grid.display()
