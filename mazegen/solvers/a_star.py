@@ -1,15 +1,15 @@
 import heapq
 
+from mazegen.animation import GridDisplayer
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
-from mazegen.grid_animation import GridAnimation
 from mazegen.solvers.base import Solver
 
 
 class SolverAStar(Solver):
     def solve(
         self,
-        grid: GridAnimation,
+        grid: GridDisplayer,
         entry: Cell,
         exit: Cell,  # noqa: A002
     ) -> None:
@@ -55,7 +55,7 @@ class SolverAStar(Solver):
 
             current = parent
 
-            grid.display()
+            grid.display_cell(current)
 
         grid.reset_cell_markings()
         grid.unset_parents()

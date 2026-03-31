@@ -1,13 +1,13 @@
+from mazegen.animation import GridDisplayer
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
-from mazegen.grid_animation import GridAnimation
 from mazegen.solvers.base import Solver
 
 
 class SolverBFS(Solver):
     def solve(
         self,
-        grid: GridAnimation,
+        grid: GridDisplayer,
         entry: Cell,
         exit: Cell,  # noqa: A002
     ) -> None:
@@ -21,6 +21,8 @@ class SolverBFS(Solver):
         grid.mark_cell(entry)
         queue.append(entry)
 
+        grid.display_cell(entry)
+
         while queue:
             current = queue.pop(0)
             if current == exit:
@@ -31,7 +33,7 @@ class SolverBFS(Solver):
                 grid.set_parent(neighbor, current)
                 queue.append(neighbor)
 
-                grid.display()
+                grid.display_cell(neighbor)
 
         current = exit
 
@@ -39,13 +41,13 @@ class SolverBFS(Solver):
             if current != exit:
                 grid.set_cell_value(current, CellValue.SOLUTION)
 
+            grid.display_cell(current)
+
             parent = grid.get_parent(current)
             if parent is None:
                 break
 
             current = parent
-
-            grid.display()
 
         grid.reset_cell_markings()
         grid.unset_parents()
