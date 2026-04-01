@@ -151,7 +151,7 @@ class Grid:
 
                 self.open_wall(cell, direction)
 
-    def _validate_coordinate(
+    def validate_coordinate(
         self,
         cell: Cell,
     ) -> None:
@@ -185,33 +185,33 @@ class Grid:
             [None for _x in range(self.width)] for _y in range(self.height)
         ]
 
-    def _get_cell_marking(self, cell: Cell) -> CellMarking:
-        self._validate_coordinate(cell)
+    def get_cell_marking(self, cell: Cell) -> CellMarking:
+        self.validate_coordinate(cell)
 
         return self._cell_markings[cell.y][cell.x]
 
-    def _get_cell_value(self, cell: Cell) -> CellValue:
-        self._validate_coordinate(cell)
+    def get_cell_value(self, cell: Cell) -> CellValue:
+        self.validate_coordinate(cell)
 
         return self._cell_values[cell.y][cell.x]
 
-    def _set_cell_marking(self, cell: Cell, value: CellMarking) -> None:
-        self._validate_coordinate(cell)
+    def set_cell_marking(self, cell: Cell, value: CellMarking) -> None:
+        self.validate_coordinate(cell)
 
         self._cell_markings[cell.y][cell.x] = value
 
     def unmark_cell(self, cell: Cell) -> None:
-        self._validate_coordinate(cell)
+        self.validate_coordinate(cell)
 
-        self._set_cell_marking(cell, CellMarking.UNMARKED)
+        self.set_cell_marking(cell, CellMarking.UNMARKED)
 
     def mark_cell(self, cell: Cell) -> None:
-        self._validate_coordinate(cell)
+        self.validate_coordinate(cell)
 
-        self._set_cell_marking(cell, CellMarking.MARKED)
+        self.set_cell_marking(cell, CellMarking.MARKED)
 
     def set_cell_value(self, cell: Cell, value: CellValue) -> None:
-        self._validate_coordinate(cell)
+        self.validate_coordinate(cell)
 
         self._cell_values[cell.y][cell.x] = value
 
@@ -221,12 +221,12 @@ class Grid:
     def set_parent(self, child: Cell, parent: Cell) -> None:
         self._parents[child.y][child.x] = parent
 
-    def _get_neighbor_cell(
+    def get_neighbor_cell(
         self,
         cell: Cell,
         direction: Direction,
     ) -> Cell | None:
-        self._validate_coordinate(cell)
+        self.validate_coordinate(cell)
 
         match direction:
             case Direction.NORTH:
@@ -246,14 +246,14 @@ class Grid:
                     return None
                 return Cell(cell.x - 1, cell.y)
 
-    def _get_neighbor_cells(
+    def get_neighbor_cells(
         self,
         cell: Cell,
     ) -> list[Cell]:
         return [
             neighbor
             for neighbor in (
-                self._get_neighbor_cell(cell, direction)
+                self.get_neighbor_cell(cell, direction)
                 for direction in Direction
             )
             if neighbor is not None
@@ -265,8 +265,8 @@ class Grid:
     ) -> list[Cell]:
         return [
             neighbor
-            for neighbor in self._get_neighbor_cells(cell)
-            if self._get_cell_marking(neighbor) == CellMarking.UNMARKED
+            for neighbor in self.get_neighbor_cells(cell)
+            if self.get_cell_marking(neighbor) == CellMarking.UNMARKED
         ]
 
     def get_reachable_unmarked_neighbors(
@@ -281,19 +281,19 @@ class Grid:
             except RuntimeError:
                 continue
 
-            wall_state = self._get_wall_state(cell, direction)
+            wall_state = self.get_wall_state(cell, direction)
 
             if wall_state is WallState.OPEN:
                 neighbors.append(neighbor)
 
         return neighbors
 
-    def _get_wall_state(
+    def get_wall_state(
         self,
         cell: Cell,
         direction: Direction,
     ) -> WallState:
-        self._validate_coordinate(cell)
+        self.validate_coordinate(cell)
 
         match direction:
             case Direction.NORTH:
@@ -305,13 +305,13 @@ class Grid:
             case Direction.WEST:
                 return self._west_walls[cell.y][cell.x]
 
-    def _set_wall_state(
+    def set_wall_state(
         self,
         cell: Cell,
         direction: Direction,
         state: WallState,
     ) -> None:
-        self._validate_coordinate(cell)
+        self.validate_coordinate(cell)
 
         match direction:
             case Direction.NORTH:
@@ -324,24 +324,24 @@ class Grid:
                 self._west_walls[cell.y][cell.x] = state
 
     def open_wall(self, cell: Cell, direction: Direction) -> None:
-        self._set_wall_state(cell, direction, WallState.OPEN)
+        self.set_wall_state(cell, direction, WallState.OPEN)
 
     def close_wall(self, cell: Cell, direction: Direction) -> None:
-        self._set_wall_state(cell, direction, WallState.CLOSED)
+        self.set_wall_state(cell, direction, WallState.CLOSED)
 
-    def _get_cell_state(self, cell: Cell) -> CellState:
-        self._validate_coordinate(cell)
+    def get_cell_state(self, cell: Cell) -> CellState:
+        self.validate_coordinate(cell)
 
-        north = self._get_wall_state(cell, Direction.NORTH)
-        east = self._get_wall_state(cell, Direction.EAST)
-        south = self._get_wall_state(cell, Direction.SOUTH)
-        west = self._get_wall_state(cell, Direction.WEST)
+        north = self.get_wall_state(cell, Direction.NORTH)
+        east = self.get_wall_state(cell, Direction.EAST)
+        south = self.get_wall_state(cell, Direction.SOUTH)
+        west = self.get_wall_state(cell, Direction.WEST)
 
         return CellState(north, east, south, west)
 
     def get_all_cell_states(self) -> list[list[CellState]]:
         return [
-            [self._get_cell_state(Cell(x, y)) for x in range(self.width)]
+            [self.get_cell_state(Cell(x, y)) for x in range(self.width)]
             for y in range(self.height)
         ]
 
