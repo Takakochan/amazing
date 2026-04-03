@@ -26,8 +26,6 @@ class MazeGenerator:
         self.grid.set_cell_value(self.entry, CellValue.ENTRY)
         self.grid.set_cell_value(self.exit, CellValue.EXIT)
 
-        self.renderer = AsciiRenderer()
-
         try:
             self.grid.set_forty_two_pattern([self.entry, self.exit])
         except FortyTwoPatternError as error:
@@ -35,6 +33,11 @@ class MazeGenerator:
                 f"\033[91mcould not draw 42 pattern: {error}\033[0m",
                 file=sys.stderr,
             )
+
+        self.renderer = AsciiRenderer()
+
+    def display(self) -> None:
+        self.renderer.display_grid(self.grid)
 
     def generate(
         self,
@@ -44,9 +47,7 @@ class MazeGenerator:
         random.seed(seed)
         generator = GeneratorDFS() if perfect else GeneratorBasic()
 
-        self.renderer.display_grid(self.grid)
         generator.generate(self.grid, self.renderer)
-        self.renderer.display_grid(self.grid)
 
     def solve(self, algorithm: str | None = None) -> None:
         match algorithm:
@@ -61,14 +62,12 @@ class MazeGenerator:
                 # fallback to BFS
                 solver = SolverBFS()
 
-        self.renderer.display_grid(self.grid)
         self.solution = solver.solve(
             self.grid,
             self.entry,
             self.exit,
             self.renderer,
         )
-        self.renderer.display_grid(self.grid)
 
     def save(self, filename: str) -> None:
         with open(filename, "w", encoding="utf-8") as file:

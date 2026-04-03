@@ -43,8 +43,6 @@ class SolverAStar(Solver):
 
                 renderer.display_cell(grid, neighbor)
 
-        renderer.display_grid(grid)
-
         current = exit
 
         while current is not entry:
@@ -73,6 +71,7 @@ class PriorityQueue:
         self._heap: list[tuple[int, int, Cell]] = []
         self._counter: int = 0
 
+    # TODO: calculate priority using distance_to exit
     def push(self, priority: int, cell: Cell) -> None:
         heapq.heappush(self._heap, (priority, self._counter, cell))
         self._counter += 1

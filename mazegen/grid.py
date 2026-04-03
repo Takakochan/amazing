@@ -140,15 +140,12 @@ class Grid:
             self.set_cell_value(cell, CellValue.FORTY_TWO)
             self.mark_cell(cell)
 
-            for neighbor in self.get_unmarked_neighbors(cell):
-                if neighbor not in cells:
-                    continue
-
-                try:
-                    direction = cell.get_direction_to_neighbor(neighbor)
-                except RuntimeError as error:
-                    raise error
-
+            for neighbor in [
+                neighbor
+                for neighbor in self.get_unmarked_neighbors(cell)
+                if neighbor in cells
+            ]:
+                direction = cell.get_direction_to_neighbor(neighbor)
                 self.open_wall(cell, direction)
 
     def validate_coordinate(self, cell: Cell) -> None:

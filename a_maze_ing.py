@@ -19,8 +19,11 @@ def main() -> None:
         config.exit,
     )
 
+    maze_generator.display()
     maze_generator.generate(config.perfect, config.seed)
+    maze_generator.display()
     maze_generator.solve(config.algorithm)
+    maze_generator.display()
     maze_generator.save(config.output_file)
 
 
