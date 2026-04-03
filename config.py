@@ -1,6 +1,6 @@
 from collections.abc import Callable
 from dataclasses import dataclass, fields
-from typing import Any, Self, get_args, get_type_hints
+from typing import Any, Literal, Self, get_args, get_type_hints
 
 type ParserFn = Callable[[str], Any]
 
@@ -71,6 +71,17 @@ def parse_str(value: str) -> str:
     return value
 
 
+@register_parser
+def parse_algorithm(value: str) -> Literal["BFS", "A*"]:
+    match value:
+        case "BFS":
+            return "BFS"
+        case "A*":
+            return "A*"
+        case _:
+            raise ConfigError(f"invalid algorithm: `{value}`")
+
+
 def get_parser(key: str) -> ParserFn:
     field_names: list[str] = [field.name.upper() for field in fields(Config)]
     field_types: list[Any] = [field.type for field in fields(Config)]
@@ -134,7 +145,7 @@ class Config:
     exit: tuple[int, int]
     output_file: str
     perfect: bool
-    algorithm: str | None = None
+    algorithm: Literal["BFS", "A*"] | None = None
     seed: int | None = None
 
     @classmethod

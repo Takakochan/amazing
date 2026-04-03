@@ -1,5 +1,5 @@
-import random
 import sys
+from typing import Literal
 
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
@@ -44,21 +44,17 @@ class MazeGenerator:
         perfect: bool,  # noqa: FBT001
         seed: int | None = None,
     ) -> None:
-        random.seed(seed)
         generator = GeneratorDFS() if perfect else GeneratorBasic()
 
-        generator.generate(self.grid, self.renderer)
+        generator.generate(self.grid, self.renderer, seed)
 
-    def solve(self, algorithm: str | None = None) -> None:
+    def solve(self, algorithm: Literal["BFS", "A*"] | None = None) -> None:
         match algorithm:
-            case "A*":
-                solver = SolverAStar()
             case "BFS":
                 solver = SolverBFS()
+            case "A*":
+                solver = SolverAStar()
             case None:
-                # fallback to BFS
-                solver = SolverBFS()
-            case _:
                 # fallback to BFS
                 solver = SolverBFS()
 

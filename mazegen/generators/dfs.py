@@ -7,8 +7,15 @@ from mazegen.render.base import Renderer
 
 
 class GeneratorDFS(Generator):
-    def generate(self, grid: Grid, renderer: Renderer) -> None:
+    def generate(
+        self,
+        grid: Grid,
+        renderer: Renderer,
+        seed: int | None = None,
+    ) -> None:
         self._foo = None
+
+        random.seed(seed)
 
         stack: list[Cell] = []
 
