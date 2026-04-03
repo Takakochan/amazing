@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 
-from mazegen.animation import GridDisplayer
+from mazegen.grid import Grid
+from mazegen.render.base import Renderer
 
 
 class Generator(ABC):
     @abstractmethod
-    def generate(self, grid: GridDisplayer) -> None:
+    def generate(self, grid: Grid, renderer: Renderer) -> None:
         pass

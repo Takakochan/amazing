@@ -49,6 +49,13 @@ class AnsiWriter:
     def write_current_position(self) -> None:
         self.write_cursor_position(self._line, self._column)
 
+    def write_color_pixel(self, color: Color, width: int = 1) -> None:
+        self.write(color.escape_code())
+        self.write(PIXEL * width)
+
+    def write_color_reset(self) -> None:
+        self.write(Color.reset())
+
     def write_box(self, color: Color, width: int, height: int) -> None:
         self.write_current_position()
 
@@ -57,7 +64,7 @@ class AnsiWriter:
                 self.write_cursor_down(1)
                 self.write_cursor_backward(2 * width)
 
-            self.write(color.escape_code() + PIXEL * width)
+            self.write_color_pixel(color, width)
 
     def flush(self) -> None:
         sys.stdout.write(self._buffer)

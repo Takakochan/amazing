@@ -1,12 +1,12 @@
 import random
 import sys
 
-from mazegen.animation import GridDisplayer
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
 from mazegen.generators.basic import GeneratorBasic
 from mazegen.generators.dfs import GeneratorDFS
-from mazegen.grid import FortyTwoPatternError
+from mazegen.grid import FortyTwoPatternError, Grid
+from mazegen.render.ascii_renderer import AsciiRenderer
 from mazegen.solvers.bfs import SolverBFS
 
 
@@ -21,9 +21,11 @@ class MazeGenerator:
         self.entry = Cell(entry[0], entry[1])
         self.exit = Cell(exit[0], exit[1])
 
-        self.grid = GridDisplayer(width, height)
+        self.grid = Grid(width, height)
         self.grid.set_cell_value(self.entry, CellValue.ENTRY)
         self.grid.set_cell_value(self.exit, CellValue.EXIT)
+
+        self.renderer = AsciiRenderer()
 
         try:
             self.grid.set_forty_two_pattern([self.entry, self.exit])
@@ -40,20 +42,24 @@ class MazeGenerator:
     ) -> None:
         random.seed(seed)
 
-        self.grid.display()
+        self.renderer.write_grid(self.grid)
+        self.renderer.flush()
 
-        generator = GeneratorDFS if perfect else GeneratorBasic
-        generator().generate(self.grid)
+        generator = GeneratorDFS() if perfect else GeneratorBasic()
+        generator.generate(self.grid, self.renderer)
 
-        self.grid.display()
+        self.renderer.write_grid(self.grid)
+        self.renderer.flush()
 
     def solve(self) -> None:
-        self.grid.display()
+        self.renderer.write_grid(self.grid)
+        self.renderer.flush()
 
-        solver = SolverBFS
-        solver().solve(self.grid, self.entry, self.exit)
+        solver = SolverBFS()
+        solver.solve(self.grid, self.entry, self.exit, self.renderer)
 
-        self.grid.display()
+        self.renderer.write_grid(self.grid)
+        self.renderer.flush()
 
     def save(self, filename: str) -> None:
         with open(filename, "w", encoding="utf-8") as file:

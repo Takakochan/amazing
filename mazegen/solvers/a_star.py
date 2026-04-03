@@ -1,17 +1,19 @@
 import heapq
 
-from mazegen.animation import GridDisplayer
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
+from mazegen.grid import Grid
+from mazegen.render.base import Renderer
 from mazegen.solvers.base import Solver
 
 
 class SolverAStar(Solver):
     def solve(
         self,
-        grid: GridDisplayer,
+        grid: Grid,
         entry: Cell,
         exit: Cell,  # noqa: A002
+        renderer: Renderer,
     ) -> None:
         self._foo = None
 
@@ -43,8 +45,10 @@ class SolverAStar(Solver):
                     neighbor,
                 )
                 print("PUSH:", neighbor)
+                renderer.display_cell(grid, neighbor)
 
             current = exit
+
         while current is not entry:
             if current != exit:
                 grid.set_cell_value(current, CellValue.SOLUTION)
@@ -55,7 +59,7 @@ class SolverAStar(Solver):
 
             current = parent
 
-            grid.display_cell(current)
+            renderer.display_cell(grid, current)
 
         grid.reset_cell_markings()
         grid.unset_parents()
