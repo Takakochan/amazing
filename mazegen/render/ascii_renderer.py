@@ -105,7 +105,8 @@ class AsciiRenderer(Renderer):
 
         self._writer.flush()
 
-        time.sleep(max(0, 0.010 - duration))
+        duration = time.perf_counter() - start
+        time.sleep(max(0, 0.001 - duration))
 
     def display_grid(self, grid: Grid) -> None:
         start = time.perf_counter()
@@ -113,17 +114,24 @@ class AsciiRenderer(Renderer):
         duration = time.perf_counter() - start
 
         self.write_duration(duration)
+        self._writer.move_to_position(
+            Cell(0, grid.height - 1),
+            2,
+            0,
+        )
+        self._writer.write_current_position()
+        self._writer.write("\n")
 
         self._writer.flush()
 
+        duration = time.perf_counter() - start
         time.sleep(max(0, 0.500 - duration))
 
     def write_duration(self, duration: float) -> None:
         self._writer.write_cursor_position(1, 1)
         self._writer.write_clear_line()
-        self._writer.write(
-            f"{Color.reset()}rendering frame took {duration * 1000:.3f} ms",
-        )
+        self._writer.write_color_reset()
+        self._writer.write(f"rendering frame took {duration * 1000:.3f} ms\n")
 
 
 def get_cell_color(grid: Grid, cell: Cell) -> Color:

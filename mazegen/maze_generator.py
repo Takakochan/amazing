@@ -42,17 +42,13 @@ class MazeGenerator:
         seed: int | None = None,
     ) -> None:
         random.seed(seed)
+        generator = GeneratorDFS() if perfect else GeneratorBasic()
 
         self.renderer.display_grid(self.grid)
-
-        generator = GeneratorDFS() if perfect else GeneratorBasic()
         generator.generate(self.grid, self.renderer)
-
         self.renderer.display_grid(self.grid)
 
     def solve(self, algorithm: str | None = None) -> None:
-        self.renderer.display_grid(self.grid)
-
         match algorithm:
             case "A*":
                 solver = SolverAStar()
@@ -65,8 +61,8 @@ class MazeGenerator:
                 # fallback to BFS
                 solver = SolverBFS()
 
+        self.renderer.display_grid(self.grid)
         solver.solve(self.grid, self.entry, self.exit, self.renderer)
-
         self.renderer.display_grid(self.grid)
 
     def save(self, filename: str) -> None:
