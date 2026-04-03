@@ -18,10 +18,15 @@ class SolverAStar(Solver):
     ) -> list[Direction]:
         self._foo = None
 
-        solution: list[Direction] = []
+        grid.reset_cell_markings()
+        grid.unset_parents()
 
+        solution: list[Direction] = []
         queue = PriorityQueue()
-        queue.push(0, entry)
+        queue.push(entry.distance_to(exit), entry)
+
+        grid.mark_cell(entry)
+        renderer.display_cell(grid, entry)
 
         while not queue.is_empty():
             current = queue.pop()

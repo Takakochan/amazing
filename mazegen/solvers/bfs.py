@@ -16,16 +16,14 @@ class SolverBFS(Solver):
     ) -> list[Direction]:
         self._foo = None
 
-        solution: list[Direction] = []
-
         grid.reset_cell_markings()
         grid.unset_parents()
 
+        solution: list[Direction] = []
         queue: list[Cell] = []
-
-        grid.mark_cell(entry)
         queue.append(entry)
 
+        grid.mark_cell(entry)
         renderer.display_cell(grid, entry)
 
         while queue:
