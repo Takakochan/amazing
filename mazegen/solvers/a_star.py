@@ -21,45 +21,51 @@ class SolverAStar(Solver):
         # hopeful condidates list which we gonna check
         open_set.push(0, entry)
         g_score = {(entry.x, entry.y): 0}
-        # g_score: actual cost sntry to current cell
+        # g_score: actual cost entry to current cell
 
         closed_set = set()
         while not open_set.is_empty():
             current = open_set.pop()  # 一番有望なのをPOP
-            print("CURRENT", current)
+            # print("CURRENT", current)
+            if current == exit:
+                break
 
             if (current.x, current.y) in closed_set:  # 入っていたらもう見てる
                 continue
             closed_set.add((current.x, current.y))
             # TODO 隣セルの処理
 
-            for n, neighbor in enumerate(
-                grid.get_reachable_unmarked_neighbors(current),
-            ):
-                print(f"In the for loop {n}th time")
+            for neighbor in grid.get_reachable_unmarked_neighbors(current):
+                # print("In the for loop nth time")
                 temp = g_score[current.x, current.y] + 1
                 g_score[neighbor.x, neighbor.y] = temp
+
+                grid.mark_cell(neighbor)
                 grid.set_parent(neighbor, current)
+
                 open_set.push(
                     f_score(temp, manhattan_heuristic(neighbor, exit)),
                     neighbor,
                 )
-                print("PUSH:", neighbor)
+                # print("PUSH:", neighbor)
+
                 renderer.display_cell(grid, neighbor)
 
-            current = exit
+        renderer.display_grid(grid)
+
+        current = exit
 
         while current is not entry:
             if current != exit:
                 grid.set_cell_value(current, CellValue.SOLUTION)
+
+            renderer.display_cell(grid, current)
 
             parent = grid.get_parent(current)
             if parent is None:
                 break
 
             current = parent
-
-            renderer.display_cell(grid, current)
 
         grid.reset_cell_markings()
         grid.unset_parents()
@@ -78,7 +84,7 @@ class PriorityQue:
         if not self._heap:
             raise Exception("Open set is empty → path not found")  # Debug
         _priority, _counter, cell = heapq.heappop(self._heap)
-        print("POP:", cell)
+        # print("POP:", cell)
         return cell
 
     def is_empty(self) -> bool:
