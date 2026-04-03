@@ -8,6 +8,7 @@ from mazegen.generators.dfs import GeneratorDFS
 from mazegen.grid import FortyTwoPatternError, Grid
 from mazegen.render.ascii_renderer import AsciiRenderer
 from mazegen.solvers.a_star import SolverAStar
+from mazegen.solvers.bfs import SolverBFS
 
 
 class MazeGenerator:
@@ -49,10 +50,21 @@ class MazeGenerator:
 
         self.renderer.display_grid(self.grid)
 
-    def solve(self) -> None:
+    def solve(self, algorithm: str | None = None) -> None:
         self.renderer.display_grid(self.grid)
 
-        solver = SolverAStar()
+        match algorithm:
+            case "A*":
+                solver = SolverAStar()
+            case "BFS":
+                solver = SolverBFS()
+            case None:
+                # fallback to BFS
+                solver = SolverBFS()
+            case _:
+                # fallback to BFS
+                solver = SolverBFS()
+
         solver.solve(self.grid, self.entry, self.exit, self.renderer)
 
         self.renderer.display_grid(self.grid)

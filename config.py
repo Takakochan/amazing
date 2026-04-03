@@ -134,6 +134,7 @@ class Config:
     exit: tuple[int, int]
     output_file: str
     perfect: bool
+    algorithm: str | None = None
     seed: int | None = None
 
     @classmethod

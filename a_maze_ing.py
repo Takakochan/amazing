@@ -20,7 +20,7 @@ def main() -> None:
     )
 
     maze_generator.generate(config.perfect, config.seed)
-    maze_generator.solve()
+    maze_generator.solve(config.algorithm)
     maze_generator.save(config.output_file)
 
 
