@@ -17,37 +17,28 @@ class SolverAStar(Solver):
     ) -> None:
         self._foo = None
 
-        open_set = PriorityQue()
-        # hopeful condidates list which we gonna check
-        open_set.push(0, entry)
+        queue = PriorityQueue()
+        queue.push(0, entry)
         g_score = {(entry.x, entry.y): 0}
-        # g_score: actual cost entry to current cell
 
-        closed_set = set()
-        while not open_set.is_empty():
-            current = open_set.pop()  # 一番有望なのをPOP
-            # print("CURRENT", current)
+        while not queue.is_empty():
+            current = queue.pop()
+            if current is None:
+                break
             if current == exit:
                 break
 
-            if (current.x, current.y) in closed_set:  # 入っていたらもう見てる
-                continue
-            closed_set.add((current.x, current.y))
-            # TODO 隣セルの処理
-
             for neighbor in grid.get_reachable_unmarked_neighbors(current):
-                # print("In the for loop nth time")
                 temp = g_score[current.x, current.y] + 1
                 g_score[neighbor.x, neighbor.y] = temp
 
                 grid.mark_cell(neighbor)
                 grid.set_parent(neighbor, current)
 
-                open_set.push(
-                    f_score(temp, manhattan_heuristic(neighbor, exit)),
+                queue.push(
+                    temp + distance(neighbor, exit),
                     neighbor,
                 )
-                # print("PUSH:", neighbor)
 
                 renderer.display_cell(grid, neighbor)
 
@@ -71,29 +62,27 @@ class SolverAStar(Solver):
         grid.unset_parents()
 
 
-class PriorityQue:
+class PriorityQueue:
     def __init__(self) -> None:
         self._heap: list[tuple[int, int, Cell]] = []
-        self.counter: int = 0
+        self._counter: int = 0
 
     def push(self, priority: int, cell: Cell) -> None:
-        heapq.heappush(self._heap, (priority, self.counter, cell))
-        self.counter += 1
+        heapq.heappush(self._heap, (priority, self._counter, cell))
+        self._counter += 1
 
-    def pop(self) -> Cell:
+    def pop(self) -> Cell | None:
         if not self._heap:
-            raise Exception("Open set is empty → path not found")  # Debug
+            return None
+
         _priority, _counter, cell = heapq.heappop(self._heap)
-        # print("POP:", cell)
+
         return cell
 
     def is_empty(self) -> bool:
         return len(self._heap) == 0
 
 
-def f_score(g_score: int, manhattan_heuristic: int) -> int:
-    return g_score + manhattan_heuristic
-
-
-def manhattan_heuristic(current: Cell, exit: Cell) -> int:  # noqa: A002
+# TODO: convert to Cell method
+def distance(current: Cell, exit: Cell) -> int:  # noqa: A002
     return abs(current.x - exit.x) + abs(current.y - exit.y)
