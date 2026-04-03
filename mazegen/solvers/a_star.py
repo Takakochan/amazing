@@ -2,6 +2,7 @@ import heapq
 
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
+from mazegen.direction import Direction
 from mazegen.grid import Grid
 from mazegen.render.base import Renderer
 from mazegen.solvers.base import Solver
@@ -14,8 +15,10 @@ class SolverAStar(Solver):
         entry: Cell,
         exit: Cell,  # noqa: A002
         renderer: Renderer,
-    ) -> None:
+    ) -> list[Direction]:
         self._foo = None
+
+        solution: list[Direction] = []
 
         queue = PriorityQueue()
         queue.push(0, entry)
@@ -53,10 +56,15 @@ class SolverAStar(Solver):
             if parent is None:
                 break
 
+            direction = parent.get_direction_to_neighbor(current)
+            solution.insert(0, direction)
+
             current = parent
 
         grid.reset_cell_markings()
         grid.unset_parents()
+
+        return solution
 
 
 class PriorityQueue:

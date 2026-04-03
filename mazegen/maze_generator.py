@@ -62,7 +62,12 @@ class MazeGenerator:
                 solver = SolverBFS()
 
         self.renderer.display_grid(self.grid)
-        solver.solve(self.grid, self.entry, self.exit, self.renderer)
+        self.solution = solver.solve(
+            self.grid,
+            self.entry,
+            self.exit,
+            self.renderer,
+        )
         self.renderer.display_grid(self.grid)
 
     def save(self, filename: str) -> None:
@@ -71,6 +76,9 @@ class MazeGenerator:
             file.write("\n")
             file.write(self.entry.into_file_format())
             file.write(self.exit.into_file_format())
-
-            # TODO: write solution to output file
-            file.write("<solution>\n")
+            file.write(
+                "".join([
+                    direction.into_file_format() for direction in self.solution
+                ])
+                + "\n",
+            )
