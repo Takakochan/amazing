@@ -26,8 +26,7 @@ run:
 	uv run $(MAIN_PROGRAM) config.txt
 
 debug:
-	# TODO: use pdb
-	uv run $(MAIN_PROGRAM)
+	uv run python -m pdb $(MAIN_PROGRAM) config.txt
 
 test:
 	# TODO: run tests
