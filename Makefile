@@ -20,6 +20,7 @@ install:
 	uv tool install mypy
 	uv tool install ruff
 	uv tool install ty
+	uv tool install pytest
 	uv add numpy
 
 run:
@@ -29,7 +30,7 @@ debug:
 	uv run python -m pdb $(MAIN_PROGRAM) config.txt
 
 test:
-	# TODO: run tests
+	uvx pytest
 
 clean:
 	uvx ruff clean
