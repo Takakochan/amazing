@@ -91,66 +91,37 @@ class AsciiRenderer(Renderer):
                 self._writer.write_color_pixel(get_corner_color())
             self._writer.write("\n")
 
-    def flush(self) -> None:
+    def display_cell(self, grid: Grid, cell: Cell) -> None:
+        start = time.perf_counter()
+        self.write_cell(grid, cell)
+        for direction in Direction:
+            self.write_wall(grid, cell, direction)
+        duration = time.perf_counter() - start
+
+        self.write_duration(duration)
+
         self._writer.flush()
 
-        time.sleep(0.010)
+        time.sleep(max(0, 0.010 - duration))
 
-    # ------------- #
-    # extra methods #
-    # ------------- #
+    def display_grid(self, grid: Grid) -> None:
+        start = time.perf_counter()
+        self.write_grid(grid)
+        duration = time.perf_counter() - start
 
-    # def write_corners(self, cell: Cell) -> None:
-    #     color = get_corner_color()
-    #
-    #     self._writer.move_to_position(cell, -1, -2)
-    #     self._writer.write_box(color, 1, 1)
-    #     self._writer.move_to_position(cell, -1, 4)
-    #     self._writer.write_box(color, 1, 1)
-    #     self._writer.move_to_position(cell, 2, -2)
-    #     self._writer.write_box(color, 1, 1)
-    #     self._writer.move_to_position(cell, 2, 4)
-    #     self._writer.write_box(color, 1, 1)
+        self.write_duration(duration)
 
-    # def write_all_cells(self, grid: Grid) -> None:
-    #     for cell in [
-    #         Cell(x, y) for x in range(grid.width) for y in range(grid.height)
-    #     ]:
-    #         self.write_cell_with_walls(grid, cell)
-    #         self.write_corners(cell)
-    #
-    #     self._writer.write("\n")
-    #
-    # def write_duration(self, duration: float) -> None:
-    #     self._writer.write_cursor_position(1000, 1)
-    #     self._writer.write_cursor_up(2)
-    #     self._writer.write_clear_line()
-    #     self._writer.write(
-    #         f"{Color.reset()}duration: {duration * 1000:.3f} ms",
-    #     )
-    #
-    # def display_cell(self, grid: Grid, cell: Cell) -> None:
-    #     start = time.perf_counter()
-    #     self.write_cell_with_walls(grid, cell)
-    #     duration = time.perf_counter() - start
-    #     self.write_duration(duration)
-    #
-    #     self.flush()
-    #
-    #     # if duration < 0.010:
-    #     #     time.sleep(0.010 - duration)
-    #
-    # def display_grid(self, grid: Grid) -> None:
-    #     start = time.perf_counter()
-    #     self._writer.write_clear_screen()
-    #     self.write_grid(grid)
-    #     duration = time.perf_counter() - start
-    #     self.write_duration(duration)
-    #
-    #     self.flush()
-    #
-    #     # if duration < 0.010:
-    #     #     time.sleep(0.010 - duration)
+        self._writer.flush()
+
+        time.sleep(max(0, 0.500 - duration))
+
+    def write_duration(self, duration: float) -> None:
+        self._writer.write_cursor_position(1000, 1)
+        self._writer.write_cursor_up(2)
+        self._writer.write_clear_line()
+        self._writer.write(
+            f"{Color.reset()}duration: {duration * 1000:.3f} ms",
+        )
 
 
 def get_cell_color(grid: Grid, cell: Cell) -> Color:

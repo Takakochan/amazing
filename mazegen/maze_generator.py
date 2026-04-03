@@ -42,24 +42,20 @@ class MazeGenerator:
     ) -> None:
         random.seed(seed)
 
-        self.renderer.write_grid(self.grid)
-        self.renderer.flush()
+        self.renderer.display_grid(self.grid)
 
         generator = GeneratorDFS() if perfect else GeneratorBasic()
         generator.generate(self.grid, self.renderer)
 
-        self.renderer.write_grid(self.grid)
-        self.renderer.flush()
+        self.renderer.display_grid(self.grid)
 
     def solve(self) -> None:
-        self.renderer.write_grid(self.grid)
-        self.renderer.flush()
+        self.renderer.display_grid(self.grid)
 
         solver = SolverBFS()
         solver.solve(self.grid, self.entry, self.exit, self.renderer)
 
-        self.renderer.write_grid(self.grid)
-        self.renderer.flush()
+        self.renderer.display_grid(self.grid)
 
     def save(self, filename: str) -> None:
         with open(filename, "w", encoding="utf-8") as file:

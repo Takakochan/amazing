@@ -37,6 +37,8 @@ class SolverBFS(Solver):
 
                 renderer.display_cell(grid, neighbor)
 
+        renderer.display_grid(grid)
+
         current = exit
 
         while current is not entry:

@@ -25,6 +25,9 @@ class AnsiWriter:
     def write(self, string: str) -> None:
         self._buffer += string
 
+    def prepend_write(self, string: str) -> None:
+        self._buffer = string + self._buffer
+
     def write_clear_screen(self) -> None:
         self.write("\033[2J\033[H")
 
