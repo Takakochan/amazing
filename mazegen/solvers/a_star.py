@@ -22,7 +22,6 @@ class SolverAStar(Solver):
 
         queue = PriorityQueue()
         queue.push(0, entry)
-        g_score = {(entry.x, entry.y): 0}
 
         while not queue.is_empty():
             current = queue.pop()
@@ -32,13 +31,10 @@ class SolverAStar(Solver):
                 break
 
             for neighbor in grid.get_reachable_unmarked_neighbors(current):
-                score = g_score[current.x, current.y] + 1
-                g_score[neighbor.x, neighbor.y] = score
-
                 grid.mark_cell(neighbor)
                 grid.set_parent(neighbor, current)
 
-                queue.push(score + neighbor.distance_to(exit), neighbor)
+                queue.push(neighbor.distance_to(exit), neighbor)
 
                 renderer.display_cell(grid, neighbor)
 
