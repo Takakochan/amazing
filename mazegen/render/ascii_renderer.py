@@ -14,8 +14,7 @@ from mazegen.wall_state import WallState
 
 class AsciiRenderer(Renderer):
     def __init__(self) -> None:
-        self._line_offset = 1
-        self._writer = AnsiWriter(self._line_offset)
+        self._writer = AnsiWriter()
 
     def write_cell(self, grid: Grid, cell: Cell) -> None:
         color = get_cell_color(grid, cell)
@@ -42,7 +41,6 @@ class AsciiRenderer(Renderer):
 
     def write_grid(self, grid: Grid) -> None:
         self._writer.write_clear_screen()
-        self._writer.write_cursor_position(self._line_offset + 1, 1)
 
         for y in range(grid.height):
             if y == 0:
@@ -101,7 +99,7 @@ class AsciiRenderer(Renderer):
             self.write_wall(grid, cell, direction)
         duration = time.perf_counter() - start
 
-        self.write_duration(duration)
+        self.write_duration(grid, duration)
 
         self._writer.flush()
 
@@ -113,22 +111,16 @@ class AsciiRenderer(Renderer):
         self.write_grid(grid)
         duration = time.perf_counter() - start
 
-        self.write_duration(duration)
-        self._writer.move_to_position(
-            Cell(0, grid.height - 1),
-            2,
-            0,
-        )
-        self._writer.write_current_position()
-        self._writer.write("\n")
+        self.write_duration(grid, duration)
 
         self._writer.flush()
 
         duration = time.perf_counter() - start
         time.sleep(max(0, 0.500 - duration))
 
-    def write_duration(self, duration: float) -> None:
-        self._writer.write_cursor_position(1, 1)
+    def write_duration(self, grid: Grid, duration: float) -> None:
+        self._writer.move_to_position(Cell(0, grid.height), 0, -2)
+        self._writer.write_current_position()
         self._writer.write_clear_line()
         self._writer.write_color_reset()
         self._writer.write(f"rendering frame took {duration * 1000:.3f} ms\n")
@@ -186,10 +178,6 @@ class AnsiWriter:
     _buffer: str = ""
     _line: int = 1
     _column: int = 1
-    _line_offset: int = 0
-
-    def __init__(self, line_offset: int = 0) -> None:
-        self._line_offset = line_offset
 
     def move_to_position(
         self,
@@ -197,7 +185,7 @@ class AnsiWriter:
         line_offset: int = 0,
         column_offset: int = 0,
     ) -> None:
-        self._line = cell.y * 3 + 2 + line_offset + self._line_offset
+        self._line = cell.y * 3 + 2 + line_offset
         self._column = cell.x * 6 + 3 + column_offset
 
     def write(self, string: str) -> None:
