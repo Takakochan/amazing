@@ -45,11 +45,14 @@ class Cell:
             or self.y == height - 1
         )
 
-    def is_neighbor_of(self, neighbor: Self) -> bool:
-        dx = self.x - neighbor.x
-        dy = self.y - neighbor.y
+    def distance_to(self, other: Self) -> int:
+        dx = self.x - other.x
+        dy = self.y - other.y
 
-        return abs(dx) + abs(dy) == 1
+        return abs(dx) + abs(dy)
+
+    def is_neighbor_of(self, neighbor: Self) -> bool:
+        return self.distance_to(neighbor) == 1
 
     def get_direction_to_neighbor(self, neighbor: Self) -> Direction:
         dx = self.x - neighbor.x
