@@ -22,8 +22,8 @@ class SolverAStar(Solver):
         grid.unset_parents()
 
         solution: list[Direction] = []
-        queue = PriorityQueue()
-        queue.push(entry.distance_to(exit), entry)
+        queue = PriorityQueue(exit)
+        queue.push(entry)
 
         grid.mark_cell(entry)
         renderer.display_cell(grid, entry)
@@ -39,7 +39,7 @@ class SolverAStar(Solver):
                 grid.mark_cell(neighbor)
                 grid.set_parent(neighbor, current)
 
-                queue.push(neighbor.distance_to(exit), neighbor)
+                queue.push(neighbor)
 
                 renderer.display_cell(grid, neighbor)
 
@@ -67,12 +67,13 @@ class SolverAStar(Solver):
 
 
 class PriorityQueue:
-    def __init__(self) -> None:
+    def __init__(self, target: Cell) -> None:
         self._heap: list[tuple[int, int, Cell]] = []
         self._counter: int = 0
+        self.target = target
 
-    # TODO: calculate priority using distance_to exit
-    def push(self, priority: int, cell: Cell) -> None:
+    def push(self, cell: Cell) -> None:
+        priority = cell.distance_to(self.target)
         heapq.heappush(self._heap, (priority, self._counter, cell))
         self._counter += 1
 
