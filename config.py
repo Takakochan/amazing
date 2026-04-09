@@ -72,8 +72,10 @@ def parse_str(value: str) -> str:
 
 
 @register_parser
-def parse_algorithm(value: str) -> Literal["BFS", "A*"]:
+def parse_algorithm(value: str) -> Literal["DFS", "BFS", "A*"]:
     match value:
+        case "DFS":
+            return "DFS"
         case "BFS":
             return "BFS"
         case "A*":
@@ -145,7 +147,7 @@ class Config:
     exit: tuple[int, int]
     output_file: str
     perfect: bool
-    algorithm: Literal["BFS", "A*"] | None = None
+    algorithm: Literal["DFS", "BFS", "A*"] | None = None
     animation: bool = False
     animation_speed: int = 100
     seed: int | None = None

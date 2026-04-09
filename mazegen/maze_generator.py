@@ -9,6 +9,7 @@ from mazegen.grid import FortyTwoPatternError, Grid
 from mazegen.render.ascii_renderer import AsciiRenderer
 from mazegen.solvers.a_star import SolverAStar
 from mazegen.solvers.bfs import SolverBFS
+from mazegen.solvers.dfs import SolverDFS
 
 if TYPE_CHECKING:
     from mazegen.solvers.base import Solver
@@ -60,12 +61,14 @@ class MazeGenerator:
 
     def solve(
         self,
-        algorithm: Literal["BFS", "A*"] | None,
+        algorithm: Literal["DFS", "BFS", "A*"] | None,
         animation: bool,
     ) -> None:
         solver: Solver = SolverBFS()
 
         match algorithm:
+            case "DFS":
+                solver = SolverDFS()
             case "BFS":
                 solver = SolverBFS()
             case "A*":
