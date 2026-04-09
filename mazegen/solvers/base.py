@@ -14,5 +14,6 @@ class Solver(ABC):
         entry: Cell,
         exit: Cell,  # noqa: A002
         renderer: Renderer,
+        animation: bool,
     ) -> list[Direction]:
         pass

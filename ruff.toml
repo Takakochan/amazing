@@ -17,7 +17,6 @@ select = [
 
   "ANN", # flake8-annotations
   "BLE", # flake8-blind-except
-  "FBT", # flake8-boolean-trap
   "B",   # flake8-bugbear
   "A",   # flake8-builtins
   "COM", # flake8-commas
@@ -47,6 +46,8 @@ ignore = [
   # "D213", # multi-line-summary-second-line
 
   "EM", # flake8-errmsg
+
+  "FBT", # flake8-boolean-trap
 
   "FIX",    # flake8-fixme
   "FIX002", # resolve todo

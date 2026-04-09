@@ -1,5 +1,5 @@
 import sys
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
@@ -9,6 +9,9 @@ from mazegen.grid import FortyTwoPatternError, Grid
 from mazegen.render.ascii_renderer import AsciiRenderer
 from mazegen.solvers.a_star import SolverAStar
 from mazegen.solvers.bfs import SolverBFS
+
+if TYPE_CHECKING:
+    from mazegen.solvers.base import Solver
 
 
 class MazeGenerator:
@@ -42,28 +45,38 @@ class MazeGenerator:
 
     def generate(
         self,
-        perfect: bool,  # noqa: FBT001
-        seed: int | None = None,
+        perfect: bool,
+        seed: int | None,
+        animation: bool,
     ) -> None:
         generator = GeneratorDFS() if perfect else GeneratorBasic()
 
-        generator.generate(self.grid, self.renderer, seed)
+        generator.generate(
+            self.grid,
+            seed,
+            self.renderer,
+            animation,
+        )
 
-    def solve(self, algorithm: Literal["BFS", "A*"] | None = None) -> None:
+    def solve(
+        self,
+        algorithm: Literal["BFS", "A*"] | None,
+        animation: bool,
+    ) -> None:
+        solver: Solver = SolverBFS()
+
         match algorithm:
             case "BFS":
                 solver = SolverBFS()
             case "A*":
                 solver = SolverAStar()
-            case None:
-                # fallback to BFS
-                solver = SolverBFS()
 
         self.solution = solver.solve(
             self.grid,
             self.entry,
             self.exit,
             self.renderer,
+            animation,
         )
 
     def save(self, filename: str) -> None:

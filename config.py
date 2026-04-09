@@ -146,6 +146,7 @@ class Config:
     output_file: str
     perfect: bool
     algorithm: Literal["BFS", "A*"] | None = None
+    animation: bool = False
     animation_speed: int = 100
     seed: int | None = None
 

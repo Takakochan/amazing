@@ -15,6 +15,7 @@ class SolverAStar(Solver):
         entry: Cell,
         exit: Cell,  # noqa: A002
         renderer: Renderer,
+        animation: bool,
     ) -> list[Direction]:
         self._foo = None
 
@@ -26,7 +27,8 @@ class SolverAStar(Solver):
         queue.push(entry)
 
         grid.mark_cell(entry)
-        renderer.display_cell(grid, entry)
+        if animation:
+            renderer.display_cell(grid, entry)
 
         while not queue.is_empty():
             current = queue.pop()
@@ -41,7 +43,8 @@ class SolverAStar(Solver):
 
                 queue.push(neighbor)
 
-                renderer.display_cell(grid, neighbor)
+                if animation:
+                    renderer.display_cell(grid, neighbor)
 
         current = exit
 
@@ -49,7 +52,8 @@ class SolverAStar(Solver):
             if current != exit:
                 grid.set_cell_value(current, CellValue.SOLUTION)
 
-            renderer.display_cell(grid, current)
+            if animation:
+                renderer.display_cell(grid, current)
 
             parent = grid.get_parent(current)
             if parent is None:

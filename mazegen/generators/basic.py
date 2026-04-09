@@ -8,9 +8,10 @@ class GeneratorBasic(Generator):
     def generate(
         self,
         grid: Grid,
+        seed: int | None,
         renderer: Renderer,
-        seed: int | None = None,
+        animation: bool,
     ) -> None:
         self._foo = None
 
-        GeneratorDFS().generate(grid, renderer, seed)
+        GeneratorDFS().generate(grid, seed, renderer, animation)
