@@ -46,7 +46,7 @@ class GenerateState(State):
 
         maze_generator.display()
 
-        print(f"Generated maze (seed: {config.seed})")
+        print(f"Generated maze (seed: {maze_generator.seed})")
         print()
         print("[g]enerate | [s]olve | [q]uit")
 
@@ -74,7 +74,7 @@ class SolveState(State):
 
         generated.maze_generator.display()
 
-        print(f"Solved maze (seed: {generated.config.seed})")
+        print(f"Solved maze (seed: {generated.maze_generator.seed})")
         print()
         print("[g]enerate | [S]ave | [q]uit")
 

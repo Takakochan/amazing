@@ -52,7 +52,7 @@ class MazeGenerator:
     ) -> None:
         generator = GeneratorDFS() if perfect else GeneratorBasic()
 
-        generator.generate(
+        self.seed = generator.generate(
             self.grid,
             seed,
             self.renderer,

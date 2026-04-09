@@ -12,5 +12,5 @@ class Generator(ABC):
         seed: int | None,
         renderer: Renderer,
         animation: bool,
-    ) -> None:
+    ) -> int:
         pass
