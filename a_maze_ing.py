@@ -17,6 +17,7 @@ def main() -> None:
         config.height,
         config.entry,
         config.exit,
+        config.animation_speed,
     )
 
     maze_generator.display()

@@ -13,7 +13,8 @@ from mazegen.wall_state import WallState
 
 
 class AsciiRenderer(Renderer):
-    def __init__(self) -> None:
+    def __init__(self, animation_speed: int) -> None:
+        self._animation_speed = animation_speed
         self._writer = AnsiWriter()
 
     def write_cell(self, grid: Grid, cell: Cell) -> None:
@@ -104,7 +105,7 @@ class AsciiRenderer(Renderer):
         self._writer.flush()
 
         duration = time.perf_counter() - start
-        time.sleep(max(0, 0.001 - duration))
+        time.sleep(max(0, 1.0 / self._animation_speed - duration))
 
     def display_grid(self, grid: Grid) -> None:
         start = time.perf_counter()
@@ -116,7 +117,7 @@ class AsciiRenderer(Renderer):
         self._writer.flush()
 
         duration = time.perf_counter() - start
-        time.sleep(max(0, 0.500 - duration))
+        time.sleep(max(0, 1.0 / self._animation_speed - duration))
 
     def write_duration(self, grid: Grid, duration: float) -> None:
         self._writer.move_to_position(Cell(0, grid.height), 0, -2)

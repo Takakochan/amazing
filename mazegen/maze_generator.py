@@ -18,6 +18,7 @@ class MazeGenerator:
         height: int,
         entry: tuple[int, int],
         exit: tuple[int, int],  # noqa: A002
+        animation_speed: int,
     ) -> None:
         self.entry = Cell(entry[0], entry[1])
         self.exit = Cell(exit[0], exit[1])
@@ -34,7 +35,7 @@ class MazeGenerator:
                 file=sys.stderr,
             )
 
-        self.renderer = AsciiRenderer()
+        self.renderer = AsciiRenderer(animation_speed)
 
     def display(self) -> None:
         self.renderer.display_grid(self.grid)
