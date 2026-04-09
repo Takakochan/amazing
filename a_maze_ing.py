@@ -1,9 +1,29 @@
 """The main A-Maze-ing program."""
 
+import select
 import sys
+import termios
+from types import TracebackType
 
 from config import Config, ConfigError
-from mazegen import MazeGenerator
+from state import Generated
+
+
+class NonBlockingInput:
+    def __enter__(self) -> None:
+        self._old = termios.tcgetattr(sys.stdin)
+        new = self._old
+        new[3] &= ~termios.ECHO
+        new[3] &= ~termios.ICANON
+        termios.tcsetattr(sys.stdin, termios.TCSANOW, new)
+
+    def __exit__(
+        self,
+        _type: type[BaseException] | None,
+        _value: BaseException | None,
+        _traceback: TracebackType | None,
+    ) -> bool | None:
+        termios.tcsetattr(sys.stdin, termios.TCSANOW, self._old)
 
 
 def main() -> None:
@@ -12,27 +32,26 @@ def main() -> None:
     except ConfigError as error:
         raise error
 
-    maze_generator = MazeGenerator(
-        config.width,
-        config.height,
-        config.entry,
-        config.exit,
-        config.animation_speed,
-    )
+    state = Generated.from_config(config)
 
-    maze_generator.display()
-    maze_generator.generate(
-        config.perfect,
-        config.seed,
-        config.animation,
-    )
-    maze_generator.display()
-    maze_generator.solve(
-        config.algorithm,
-        config.animation,
-    )
-    maze_generator.display()
-    maze_generator.save(config.output_file)
+    with NonBlockingInput():
+        while True:
+            read_fd, _, _ = select.select([sys.stdin], [], [], 0)
+            if not read_fd:
+                continue
+
+            character = sys.stdin.read(1)
+
+            if not character:
+                break
+
+            match character:
+                case "q":
+                    break
+                case "\x04":
+                    break
+                case "g" | "s" | "S":
+                    state = state.on_event(character)
 
 
 if __name__ == "__main__":
