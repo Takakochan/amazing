@@ -88,6 +88,7 @@ class Saved(State):
     @classmethod
     def from_solved(cls, solved: Solved) -> Self:
         solved.maze_generator.save(solved.config.output_file)
+        solved.maze_generator.display()
 
         print(f"Saved maze to `{solved.config.output_file}`")
         print()

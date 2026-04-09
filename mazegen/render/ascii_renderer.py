@@ -1,7 +1,6 @@
-import sys
 import time
-from dataclasses import dataclass
 
+from mazegen.ansi_writer import AnsiWriter
 from mazegen.cell import Cell
 from mazegen.cell_marking import CellMarking
 from mazegen.cell_value import CellValue
@@ -93,38 +92,46 @@ class AsciiRenderer(Renderer):
                 self._writer.write_color_pixel(get_corner_color())
             self._writer.write("\n")
 
-    def display_cell(self, grid: Grid, cell: Cell) -> None:
-        start = time.perf_counter()
-        self.write_cell(grid, cell)
-        for direction in Direction:
-            self.write_wall(grid, cell, direction)
-        duration = time.perf_counter() - start
-
-        self.write_duration(grid, duration)
-
-        self._writer.flush()
-
-        duration = time.perf_counter() - start
-        time.sleep(max(0, 1.0 / self._animation_speed - duration))
-
-    def display_grid(self, grid: Grid) -> None:
-        start = time.perf_counter()
-        self.write_grid(grid)
-        duration = time.perf_counter() - start
-
-        self.write_duration(grid, duration)
-
-        self._writer.flush()
-
-        duration = time.perf_counter() - start
-        time.sleep(max(0, 1.0 / self._animation_speed - duration))
-
     def write_duration(self, grid: Grid, duration: float) -> None:
         self._writer.move_to_position(Cell(0, grid.height), 0, -2)
         self._writer.write_current_position()
         self._writer.write_clear_line()
         self._writer.write_color_reset()
         self._writer.write(f"rendering frame took {duration * 1000:.3f} ms\n")
+
+    def display_cell(self, grid: Grid, cell: Cell) -> None:
+        start = time.perf_counter()
+
+        self.write_cell(grid, cell)
+        for direction in Direction:
+            self.write_wall(grid, cell, direction)
+
+        # self.write_duration(grid, time.perf_counter() - start)
+
+        self._writer.flush()
+
+        time.sleep(
+            max(
+                0,
+                1.0 / self._animation_speed - (time.perf_counter() - start),
+            ),
+        )
+
+    def display_grid(self, grid: Grid) -> None:
+        start = time.perf_counter()
+
+        self.write_grid(grid)
+
+        # self.write_duration(grid, time.perf_counter() - start)
+
+        self._writer.flush()
+
+        time.sleep(
+            max(
+                0,
+                1.0 / self._animation_speed - (time.perf_counter() - start),
+            ),
+        )
 
 
 def get_cell_color(grid: Grid, cell: Cell) -> Color:
@@ -172,72 +179,3 @@ def get_wall_color(grid: Grid, cell: Cell, direction: Direction) -> Color:
 
 def get_corner_color() -> Color:
     return Color.WHITE
-
-
-@dataclass
-class AnsiWriter:
-    _buffer: str = ""
-    _line: int = 1
-    _column: int = 1
-
-    def move_to_position(
-        self,
-        cell: Cell,
-        line_offset: int = 0,
-        column_offset: int = 0,
-    ) -> None:
-        self._line = cell.y * 3 + 2 + line_offset
-        self._column = cell.x * 6 + 3 + column_offset
-
-    def write(self, string: str) -> None:
-        self._buffer += string
-
-    def prepend_write(self, string: str) -> None:
-        self._buffer = string + self._buffer
-
-    def write_clear_screen(self) -> None:
-        self.write("\033[2J\033[H")
-
-    def write_clear_line(self) -> None:
-        self.write("\033[2K")
-
-    def write_cursor_up(self, lines: int) -> None:
-        self.write(f"\033[{lines}A")
-
-    def write_cursor_down(self, lines: int) -> None:
-        self.write(f"\033[{lines}B")
-
-    def write_cursor_forward(self, columns: int) -> None:
-        self.write(f"\033[{columns}C")
-
-    def write_cursor_backward(self, columns: int) -> None:
-        self.write(f"\033[{columns}D")
-
-    def write_cursor_position(self, line: int, column: int) -> None:
-        self.write(f"\033[{line};{column}H")
-
-    def write_current_position(self) -> None:
-        self.write_cursor_position(self._line, self._column)
-
-    def write_color_pixel(self, color: Color, width: int = 1) -> None:
-        PIXEL = "██"
-        self.write(color.escape_code())
-        self.write(PIXEL * width)
-
-    def write_color_reset(self) -> None:
-        self.write(Color.reset())
-
-    def write_box(self, color: Color, width: int, height: int) -> None:
-        self.write_current_position()
-
-        for i in range(height):
-            if i > 0:
-                self.write_cursor_down(1)
-                self.write_cursor_backward(2 * width)
-
-            self.write_color_pixel(color, width)
-
-    def flush(self) -> None:
-        sys.stdout.write(self._buffer)
-        sys.stdout.flush()
-        self._buffer = ""

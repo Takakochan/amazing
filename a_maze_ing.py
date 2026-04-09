@@ -6,6 +6,7 @@ import termios
 from types import TracebackType
 
 from config import Config, ConfigError
+from mazegen.ansi_writer import AnsiWriter
 from state import Generated
 
 
@@ -31,6 +32,10 @@ def main() -> None:
         config = Config.from_file(sys.argv[1])
     except ConfigError as error:
         raise error
+
+    writer = AnsiWriter()
+    writer.write_hide_cursor()
+    writer.flush()
 
     state = Generated.from_config(config)
 
