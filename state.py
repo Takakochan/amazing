@@ -19,9 +19,6 @@ class State(ABC):
     maze_generator: MazeGenerator
     config: Config
 
-    def display(self) -> None:
-        self.maze_generator.display()
-
     @abstractmethod
     def on_event(self, event: Event) -> Self:
         pass
@@ -38,7 +35,8 @@ class GenerateState(State):
             config.animation_speed,
         )
 
-        maze_generator.display()
+        if config.animation:
+            maze_generator.display()
 
         maze_generator.generate(
             config.perfect,
