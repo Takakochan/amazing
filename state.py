@@ -1,11 +1,17 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from enum import StrEnum
 from typing import Self
 
 from config import Config
 from mazegen import MazeGenerator
 
-# TODO: create Event enum
+
+class Event(StrEnum):
+    GENERATE = "g"
+    SOLVE = "s"
+    SAVE = "S"
+    QUIT = "q"
 
 
 @dataclass
@@ -17,11 +23,11 @@ class State(ABC):
         self.maze_generator.display()
 
     @abstractmethod
-    def on_event(self, event: str) -> Self:
+    def on_event(self, event: Event) -> Self:
         pass
 
 
-class Generated(State):
+class GenerateState(State):
     @classmethod
     def from_config(cls, config: Config) -> Self:
         maze_generator = MazeGenerator(
@@ -48,19 +54,21 @@ class Generated(State):
 
         return cls(maze_generator, config)
 
-    def on_event(self, event: str) -> State:
+    def on_event(self, event: Event) -> State:
         match event:
-            case "g":
-                return Generated.from_config(self.config)
-            case "s":
-                return Solved.from_generated(self)
-            case _:
+            case Event.GENERATE:
+                return GenerateState.from_config(self.config)
+            case Event.SOLVE:
+                return SolveState.from_generated(self)
+            case Event.SAVE:
+                return self
+            case Event.QUIT:
                 return self
 
 
-class Solved(State):
+class SolveState(State):
     @classmethod
-    def from_generated(cls, generated: Generated) -> Self:
+    def from_generated(cls, generated: GenerateState) -> Self:
         generated.maze_generator.solve(
             generated.config.algorithm,
             generated.config.animation,
@@ -74,19 +82,21 @@ class Solved(State):
 
         return cls(generated.maze_generator, generated.config)
 
-    def on_event(self, event: str) -> State:
+    def on_event(self, event: Event) -> State:
         match event:
-            case "g":
-                return Generated.from_config(self.config)
-            case "S":
-                return Saved.from_solved(self)
-            case _:
+            case Event.GENERATE:
+                return GenerateState.from_config(self.config)
+            case Event.SOLVE:
+                return self
+            case Event.SAVE:
+                return SaveState.from_solved(self)
+            case Event.QUIT:
                 return self
 
 
-class Saved(State):
+class SaveState(State):
     @classmethod
-    def from_solved(cls, solved: Solved) -> Self:
+    def from_solved(cls, solved: SolveState) -> Self:
         solved.maze_generator.save(solved.config.output_file)
         solved.maze_generator.display()
 
@@ -96,9 +106,13 @@ class Saved(State):
 
         return cls(solved.maze_generator, solved.config)
 
-    def on_event(self, event: str) -> State:
+    def on_event(self, event: Event) -> State:
         match event:
-            case "g":
-                return Generated.from_config(self.config)
-            case _:
+            case Event.GENERATE:
+                return GenerateState.from_config(self.config)
+            case Event.SOLVE:
+                return self
+            case Event.SAVE:
+                return self
+            case Event.QUIT:
                 return self

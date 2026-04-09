@@ -6,8 +6,7 @@ import termios
 from types import TracebackType
 
 from config import Config, ConfigError
-from mazegen.ansi_writer import AnsiWriter
-from state import Generated
+from state import Event, GenerateState
 
 
 class NonBlockingInput:
@@ -33,11 +32,7 @@ def main() -> None:
     except ConfigError as error:
         raise error
 
-    writer = AnsiWriter()
-    writer.write_hide_cursor()
-    writer.flush()
-
-    state = Generated.from_config(config)
+    state = GenerateState.from_config(config)
 
     with NonBlockingInput():
         while True:
@@ -50,14 +45,18 @@ def main() -> None:
             if not character:
                 break
 
-            match character:
-                case "q":
-                    break
-                case "\x04":
-                    break
-                case "g" | "s" | "S":
-                    state = state.on_event(character)
+            try:
+                event = Event(character)
+            except ValueError:
+                continue
+
+            if event is Event.QUIT:
+                break
+
+            state = state.on_event(event)
 
 
 if __name__ == "__main__":
+    # hide cursor
+    print("\033[?25l")
     main()
