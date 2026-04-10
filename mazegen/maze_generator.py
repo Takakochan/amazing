@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Literal
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
 from mazegen.generators.basic import GeneratorBasic
+from mazegen.generators.imperfect import GeneratorImperfect
 from mazegen.generators.dfs import GeneratorDFS
 from mazegen.grid import FortyTwoPatternError, Grid
 from mazegen.render.ascii_renderer import AsciiRenderer
@@ -50,7 +51,7 @@ class MazeGenerator:
         seed: int | None,
         animation: bool,
     ) -> None:
-        generator = GeneratorDFS() if perfect else GeneratorBasic()
+        generator = GeneratorDFS() if perfect else GeneratorImperfect()
 
         self.seed = generator.generate(
             self.grid,

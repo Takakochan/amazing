@@ -13,7 +13,7 @@ class GeneratorDFS(Generator):
         grid: Grid,
         seed: int | None,
         renderer: Renderer,
-        animation: bool,
+        animation: bool
     ) -> int:
         self._foo = None
 
