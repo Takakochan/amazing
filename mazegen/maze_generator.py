@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, Literal
 
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
-from mazegen.generators.basic import GeneratorBasic
 from mazegen.generators.imperfect import GeneratorImperfect
 from mazegen.generators.dfs import GeneratorDFS
 from mazegen.grid import FortyTwoPatternError, Grid
