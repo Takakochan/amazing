@@ -33,11 +33,10 @@ class SolverBFS(Solver):
                 break
 
             for neighbor in grid.get_reachable_unmarked_neighbors(current):
-                grid.mark_cell(neighbor)
-                grid.set_parent(neighbor, current)
-
                 queue.append(neighbor)
 
+                grid.set_parent(neighbor, current)
+                grid.mark_cell(neighbor)
                 if renderer.animate():
                     renderer.display_cell(grid, neighbor)
 
