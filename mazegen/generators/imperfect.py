@@ -1,4 +1,5 @@
 import random
+import time
 
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
@@ -17,11 +18,13 @@ class GeneratorImperfect(Generator):
         seed: int | None,
         renderer: Renderer,
     ) -> int:
+        if seed is None:
+            seed = time.time_ns()
         generator = GeneratorDFS()
         generator.generate(grid, seed, renderer)
         closed_walls = self._collect_closed_walls(grid)
         self._open_random_walls(grid, renderer, closed_walls)
-        return 0
+        return seed
 
     @staticmethod
     def _collect_closed_walls(grid: Grid) -> list:
@@ -54,10 +57,10 @@ class GeneratorImperfect(Generator):
         grid: Grid,
         renderer: Renderer,
         closed_walls: list,
-        # ratio: float = 0.
+        ratio: float = 0.2,
     ) -> None:
-        # count = max(1, int(len(closed_walls) * ratio))
-        chosen = random.sample(closed_walls, min(5, len(closed_walls)))
+        count = max(1, int(len(closed_walls) * ratio))
+        chosen = random.sample(closed_walls, min(count, len(closed_walls)))
         for cell, direction in chosen:
             grid.open_wall(cell, direction)
             renderer.display_cell(grid, cell)

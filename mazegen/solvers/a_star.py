@@ -1,5 +1,4 @@
 import heapq
-import time
 
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
@@ -18,8 +17,7 @@ class SolverAStar(Solver):
         renderer: Renderer,
     ) -> list[Direction]:
         self._foo = None
-        if seed is None:
-            seed = time.time_ns()
+        
         grid.reset_cell_markings()
         grid.unset_parents()
 
@@ -73,7 +71,7 @@ class SolverAStar(Solver):
         grid.reset_cell_markings()
         grid.unset_parents()
 
-        return seed
+        return solution
 
 
 class PriorityQueue:

@@ -9,10 +9,7 @@ from mazegen.render.base import Renderer
 
 class GeneratorDFS(Generator):
     def generate(
-        self,
-        grid: Grid,
-        seed: int | None,
-        renderer: Renderer,
+        self, grid: Grid, seed: int | None, renderer: Renderer
     ) -> int:
         self._foo = None
 
