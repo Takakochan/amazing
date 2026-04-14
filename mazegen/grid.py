@@ -250,6 +250,17 @@ class Grid:
             if neighbor is not None
         ]
 
+    def get_reachable_neighbors(self, cell: Cell) -> list[Cell]:
+        return [
+            neighbor
+            for neighbor in self._get_neighbor_cells(cell)
+            if self.get_wall_state(
+                cell,
+                cell.get_direction_to_neighbor(neighbor),
+            )
+            is WallState.OPEN
+        ]
+
     def get_unmarked_neighbors(self, cell: Cell) -> list[Cell]:
         return [
             neighbor
@@ -258,20 +269,11 @@ class Grid:
         ]
 
     def get_reachable_unmarked_neighbors(self, cell: Cell) -> list[Cell]:
-        neighbors = []
-
-        for neighbor in self.get_unmarked_neighbors(cell):
-            try:
-                direction = cell.get_direction_to_neighbor(neighbor)
-            except RuntimeError:
-                continue
-
-            wall_state = self.get_wall_state(cell, direction)
-
-            if wall_state is WallState.OPEN:
-                neighbors.append(neighbor)
-
-        return neighbors
+        return [
+            neighbor
+            for neighbor in self.get_reachable_neighbors(cell)
+            if self.get_cell_marking(neighbor) == CellMarking.UNMARKED
+        ]
 
     def get_wall_state(self, cell: Cell, direction: Direction) -> WallState:
         self.validate_coordinate(cell)

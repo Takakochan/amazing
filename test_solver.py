@@ -50,3 +50,5 @@ def test_solver() -> None:
 
     for seed in range(100):
         run(config, seed)
+
+    run(config, 1776190330919183478)

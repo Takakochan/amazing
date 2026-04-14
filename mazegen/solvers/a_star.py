@@ -23,7 +23,10 @@ class SolverAStar(Solver):
 
         solution: list[Direction] = []
         queue = PriorityQueue(dest)
-        queue.push(src, None)
+        queue.push(src, 0)
+
+        distance_from_src: dict[Cell, int] = {}
+        distance_from_src[src] = 0
 
         grid.mark_cell(src)
         if renderer.animate():
@@ -36,10 +39,17 @@ class SolverAStar(Solver):
             if current == dest:
                 break
 
-            for neighbor in grid.get_reachable_unmarked_neighbors(current):
-                queue.push(neighbor, current)
+            for neighbor in grid.get_reachable_neighbors(current):
+                dist_old = distance_from_src.get(neighbor)
+                dist_new = distance_from_src[current] + 1
 
+                if dist_old is not None and dist_old <= dist_new:
+                    continue
+
+                distance_from_src[neighbor] = dist_new
+                queue.push(neighbor, dist_new)
                 grid.set_parent(neighbor, current)
+
                 grid.mark_cell(neighbor)
                 if renderer.animate():
                     renderer.display_cell(grid, neighbor)
@@ -75,22 +85,8 @@ class PriorityQueue:
         self._counter: int = 0
         self._dest = dest
 
-    def push(self, cell: Cell, parent: Cell | None) -> None:
-        assert self._distance.get(cell) is None, (
-            f"already visited cell `{cell}`"
-        )
-
-        distance = 0
-        if parent is not None:
-            distance_parent = self._distance.get(parent)
-            assert distance_parent is not None, (
-                f"not yet visited parent cell `{parent}`"
-            )
-            distance = distance_parent + 1
-
-        self._distance[cell] = distance
-
-        priority = self._distance[cell] + cell.distance_to(self._dest)
+    def push(self, cell: Cell, distance: int) -> None:
+        priority = distance + cell.distance_to(self._dest)
         heapq.heappush(self._heap, (priority, self._counter, cell))
         self._counter += 1
 
