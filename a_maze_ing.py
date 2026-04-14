@@ -32,9 +32,9 @@ def main() -> None:
     except ConfigError as error:
         raise error
 
-    state = GenerateState.from_config(config)
-
     with NonBlockingInput():
+        state = GenerateState.from_config(config)
+
         while True:
             read_fd, _, _ = select.select([sys.stdin], [], [], 0)
             if not read_fd:
