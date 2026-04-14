@@ -341,8 +341,8 @@ class Grid:
             for x in range(self.width)
             for y in range(self.height)
             if y < self.height - 1
-            and self.get_wall_state(Cell(x, y),
-                                    Direction.SOUTH) == WallState.CLOSED
+            and self.get_wall_state(Cell(x, y), Direction.SOUTH)
+            == WallState.CLOSED
             and self.get_cell_value(Cell(x, y + 1)) != CellValue.FORTY_TWO
             and self.get_cell_value(Cell(x, y)) != CellValue.FORTY_TWO
         ]
@@ -351,8 +351,8 @@ class Grid:
             for x in range(self.width)
             for y in range(self.height)
             if x > 0
-            and self.get_wall_state(Cell(x, y),
-                                    Direction.WEST) == WallState.CLOSED
+            and self.get_wall_state(Cell(x, y), Direction.WEST)
+            == WallState.CLOSED
             and self.get_cell_value(Cell(x - 1, y)) != CellValue.FORTY_TWO
             and self.get_cell_value(Cell(x, y)) != CellValue.FORTY_TWO
         ]

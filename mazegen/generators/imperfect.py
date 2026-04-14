@@ -33,4 +33,5 @@ class GeneratorImperfect(Generator):
         chosen = random.sample(closed_walls, min(count, len(closed_walls)))
         for cell, direction in chosen:
             grid.open_wall(cell, direction)
-            renderer.display_cell(grid, cell)
+            if renderer.animate():
+                renderer.display_cell(grid, cell)
