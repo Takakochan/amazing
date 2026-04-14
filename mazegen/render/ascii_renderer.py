@@ -19,6 +19,7 @@ from mazegen.wall_state import WallState
 class AsciiRenderer(Renderer):
     _config: RenderConfig
     _writer: AnsiWriter = field(default_factory=AnsiWriter)
+    _show_solution: bool = True
 
     @classmethod
     def from_config(cls, config: Config) -> Self:
@@ -27,13 +28,30 @@ class AsciiRenderer(Renderer):
     def animate(self) -> bool:
         return self._config.animation
 
+    def show_solution(self) -> bool:
+        if not self._show_solution:
+            self._show_solution = True
+            return True
+
+        return False
+
+    def hide_solution(self) -> bool:
+        if self._show_solution:
+            self._show_solution = False
+            return True
+
+        return False
+
     def get_cell_color(self, grid: Grid, cell: Cell) -> Color:
         grid.validate_coordinate(cell)
 
         marking = grid.get_cell_marking(cell)
         value = grid.get_cell_value(cell)
 
-        if value is not CellValue.NONE:
+        if value is CellValue.SOLUTION and self._show_solution:
+            return value.into_color(self._config)
+
+        if value is not CellValue.NONE and value is not CellValue.SOLUTION:
             return value.into_color(self._config)
 
         if marking is CellMarking.MARKED:
@@ -61,7 +79,18 @@ class AsciiRenderer(Renderer):
         neighbor_marking = grid.get_cell_marking(neighbor)
         neighbor_value = grid.get_cell_value(neighbor)
 
-        if value == neighbor_value and value is not CellValue.NONE:
+        if (
+            value == neighbor_value
+            and value is CellValue.SOLUTION
+            and self._show_solution
+        ):
+            return value.into_color(self._config)
+
+        if (
+            value == neighbor_value
+            and value is not CellValue.NONE
+            and value is not CellValue.SOLUTION
+        ):
             return value.into_color(self._config)
 
         if (
@@ -71,7 +100,11 @@ class AsciiRenderer(Renderer):
         ):
             return marking.into_color(self._config)
 
-        return max(value, neighbor_value).into_color(self._config)
+        max_value = max(value, neighbor_value)
+        if max_value is CellValue.SOLUTION and self._show_solution:
+            return max_value.into_color(self._config)
+
+        return CellValue.NONE.into_color(self._config)
 
     def get_corner_color(self) -> Color:
         return self._config.wall_color

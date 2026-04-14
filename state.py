@@ -9,7 +9,8 @@ from mazegen import MazeGenerator
 
 class Event(StrEnum):
     GENERATE = "g"
-    SOLVE = "s"
+    SHOW_SOLUTION = "s"
+    HIDE_SOLUTION = "h"
     SAVE = "S"
     QUIT = "q"
 
@@ -45,8 +46,10 @@ class GenerateState(State):
         match event:
             case Event.GENERATE:
                 return GenerateState.from_config(self.config)
-            case Event.SOLVE:
+            case Event.SHOW_SOLUTION:
                 return SolveState.from_generated(self)
+            case Event.HIDE_SOLUTION:
+                return self
             case Event.SAVE:
                 return self
             case Event.QUIT:
@@ -61,7 +64,7 @@ class SolveState(State):
 
         print(f"Solved maze (seed: {generated.maze_generator.seed})")
         print()
-        print("[g]enerate | [S]ave | [q]uit")
+        print("[g]enerate | [h]ide solution | [S]ave | [q]uit")
 
         return cls(generated.maze_generator, generated.config)
 
@@ -69,7 +72,25 @@ class SolveState(State):
         match event:
             case Event.GENERATE:
                 return GenerateState.from_config(self.config)
-            case Event.SOLVE:
+            case Event.SHOW_SOLUTION:
+                if not self.maze_generator.renderer.show_solution():
+                    return self
+
+                self.maze_generator.display()
+
+                print(f"Solved maze (seed: {self.maze_generator.seed})")
+                print()
+                print("[g]enerate | [h]ide solution | [S]ave | [q]uit")
+                return self
+            case Event.HIDE_SOLUTION:
+                if not self.maze_generator.renderer.hide_solution():
+                    return self
+
+                self.maze_generator.display()
+
+                print(f"Solved maze (seed: {self.maze_generator.seed})")
+                print()
+                print("[g]enerate | [s]how solution | [S]ave | [q]uit")
                 return self
             case Event.SAVE:
                 return SaveState.from_solved(self)
@@ -93,7 +114,9 @@ class SaveState(State):
         match event:
             case Event.GENERATE:
                 return GenerateState.from_config(self.config)
-            case Event.SOLVE:
+            case Event.SHOW_SOLUTION:
+                return self
+            case Event.HIDE_SOLUTION:
                 return self
             case Event.SAVE:
                 return self
