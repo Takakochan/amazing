@@ -1,4 +1,5 @@
 import heapq
+import time
 
 from mazegen.cell import Cell
 from mazegen.cell_value import CellValue
@@ -17,13 +18,15 @@ class SolverAStar(Solver):
         renderer: Renderer,
     ) -> list[Direction]:
         self._foo = None
-
+        if seed is None:
+            seed = time.time_ns()
         grid.reset_cell_markings()
         grid.unset_parents()
 
         solution: list[Direction] = []
         queue = PriorityQueue(dest)
         queue.push(src)
+        # g_score = {(dest.x, dest.y): 0}
 
         grid.mark_cell(src)
         if renderer.animate():
@@ -37,9 +40,13 @@ class SolverAStar(Solver):
                 break
 
             for neighbor in grid.get_reachable_unmarked_neighbors(current):
+                # score = g_score[current.x, current.y] + 1
+                # g_score[neighbor.x, neighbor.y] = score
+
                 grid.mark_cell(neighbor)
                 grid.set_parent(neighbor, current)
 
+                # queue.push(score + neighbor.distance_to(exit), neighbor)
                 queue.push(neighbor)
 
                 if renderer.animate():
@@ -66,7 +73,7 @@ class SolverAStar(Solver):
         grid.reset_cell_markings()
         grid.unset_parents()
 
-        return solution
+        return seed
 
 
 class PriorityQueue:

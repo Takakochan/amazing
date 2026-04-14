@@ -23,7 +23,8 @@ class GeneratorImperfect(Generator):
         self._open_random_walls(grid, renderer, closed_walls)
         return 0
 
-    def _collect_closed_walls(self, grid: Grid) -> list:
+    @staticmethod
+    def _collect_closed_walls(grid: Grid) -> list:
         closed_walls = []
         for x in range(grid.width):
             for y in range(grid.height):
@@ -48,8 +49,8 @@ class GeneratorImperfect(Generator):
                     closed_walls.append((cell, Direction.WEST))
         return closed_walls
 
+    @staticmethod
     def _open_random_walls(
-        self,
         grid: Grid,
         renderer: Renderer,
         closed_walls: list,
