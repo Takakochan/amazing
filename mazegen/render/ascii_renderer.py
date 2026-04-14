@@ -185,21 +185,12 @@ class AsciiRenderer(Renderer):
                 self._writer.write_color_pixel(self.get_corner_color())
             self._writer.write("\n")
 
-    def write_duration(self, grid: Grid, duration: float) -> None:
-        self._writer.move_to_position(Cell(0, grid.height), 0, -2)
-        self._writer.write_current_position()
-        self._writer.write_clear_line()
-        self._writer.write_color_reset()
-        self._writer.write(f"rendering frame took {duration * 1000:.3f} ms\n")
-
     def display_cell(self, grid: Grid, cell: Cell) -> None:
         start = time.perf_counter()
 
         self.write_cell(grid, cell)
         for direction in Direction:
             self.write_wall(grid, cell, direction)
-
-        # self.write_duration(grid, time.perf_counter() - start)
 
         self._writer.flush()
 
@@ -215,8 +206,6 @@ class AsciiRenderer(Renderer):
         start = time.perf_counter()
 
         self.write_grid(grid)
-
-        # self.write_duration(grid, time.perf_counter() - start)
 
         self._writer.flush()
 
