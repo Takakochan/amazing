@@ -8,7 +8,7 @@ class CellError(Exception):
     pass
 
 
-@dataclass
+@dataclass(frozen=True, order=True)
 class Cell:
     x: int
     y: int
