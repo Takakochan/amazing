@@ -2,14 +2,18 @@ WIDTH=18
 HEIGHT=18
 ENTRY=0,0
 EXIT=17,17
+
 OUTPUT_FILE=maze.txt
 PERFECT=False
-#SEED=50
 ALGORITHM=A*
+#SEED=50
 
-#SOUND=ON
-#DISPLAY MODE=
-
-
-#Lines starting with # are comments and must be ignored.
-
+#ANIMATION=True
+#ANIMATION_SPEED=1000
+#BACKGROUND_COLOR=white
+#WALL_COLOR=black
+#ENTRY_COLOR=red
+#EXIT_COLOR=green
+#FORTY_TWO_COLOR=magenta
+#SOLUTION_COLOR=yellow
+#ANIMATION_COLOR=blue

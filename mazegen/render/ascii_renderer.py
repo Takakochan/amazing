@@ -1,29 +1,89 @@
 import time
+from dataclasses import dataclass, field
+from typing import Self
 
+from color import Color
+from config import Config
 from mazegen.ansi_writer import AnsiWriter
 from mazegen.cell import Cell
 from mazegen.cell_marking import CellMarking
 from mazegen.cell_value import CellValue
-from mazegen.color import Color
 from mazegen.direction import Direction
 from mazegen.grid import Grid
 from mazegen.render.base import Renderer
+from mazegen.render.config import RenderConfig
 from mazegen.wall_state import WallState
 
 
+@dataclass
 class AsciiRenderer(Renderer):
-    def __init__(self, animation_speed: int) -> None:
-        self._animation_speed = animation_speed
-        self._writer = AnsiWriter()
+    _config: RenderConfig
+    _writer: AnsiWriter = field(default_factory=AnsiWriter)
+
+    @classmethod
+    def from_config(cls, config: Config) -> Self:
+        return cls(RenderConfig.from_config(config))
+
+    def animate(self) -> bool:
+        return self._config.animation
+
+    def get_cell_color(self, grid: Grid, cell: Cell) -> Color:
+        grid.validate_coordinate(cell)
+
+        marking = grid.get_cell_marking(cell)
+        value = grid.get_cell_value(cell)
+
+        if value is not CellValue.NONE:
+            return value.into_color(self._config)
+
+        if marking is CellMarking.MARKED:
+            return marking.into_color(self._config)
+
+        return self._config.background_color
+
+    def get_wall_color(
+        self,
+        grid: Grid,
+        cell: Cell,
+        direction: Direction,
+    ) -> Color:
+        grid.validate_coordinate(cell)
+
+        if grid.get_wall_state(cell, direction) is WallState.CLOSED:
+            return self._config.wall_color
+
+        neighbor = grid.get_neighbor_cell(cell, direction)
+        if neighbor is None:
+            return self._config.background_color
+
+        marking = grid.get_cell_marking(cell)
+        value = grid.get_cell_value(cell)
+        neighbor_marking = grid.get_cell_marking(neighbor)
+        neighbor_value = grid.get_cell_value(neighbor)
+
+        if value == neighbor_value and value is not CellValue.NONE:
+            return value.into_color(self._config)
+
+        if (
+            marking is CellMarking.MARKED
+            and neighbor_marking is CellMarking.MARKED
+            and (value is CellValue.NONE or neighbor_value is CellValue.NONE)
+        ):
+            return marking.into_color(self._config)
+
+        return max(value, neighbor_value).into_color(self._config)
+
+    def get_corner_color(self) -> Color:
+        return self._config.wall_color
 
     def write_cell(self, grid: Grid, cell: Cell) -> None:
-        color = get_cell_color(grid, cell)
+        color = self.get_cell_color(grid, cell)
 
         self._writer.move_to_position(cell)
         self._writer.write_box(color, 2, 2)
 
     def write_wall(self, grid: Grid, cell: Cell, direction: Direction) -> None:
-        color = get_wall_color(grid, cell, direction)
+        color = self.get_wall_color(grid, cell, direction)
 
         match direction:
             case Direction.NORTH:
@@ -47,12 +107,12 @@ class AsciiRenderer(Renderer):
                 for x in range(grid.width):
                     cell = Cell(x, y)
                     if x == 0:
-                        self._writer.write_color_pixel(get_corner_color())
+                        self._writer.write_color_pixel(self.get_corner_color())
                     self._writer.write_color_pixel(
-                        get_wall_color(grid, cell, Direction.NORTH),
+                        self.get_wall_color(grid, cell, Direction.NORTH),
                         2,
                     )
-                    self._writer.write_color_pixel(get_corner_color())
+                    self._writer.write_color_pixel(self.get_corner_color())
                 self._writer.write("\n")
 
             for _ in range(2):
@@ -60,7 +120,7 @@ class AsciiRenderer(Renderer):
                     cell = Cell(x, y)
                     if x == 0:
                         self._writer.write_color_pixel(
-                            get_wall_color(
+                            self.get_wall_color(
                                 grid,
                                 cell,
                                 Direction.WEST,
@@ -68,11 +128,11 @@ class AsciiRenderer(Renderer):
                             1,
                         )
                     self._writer.write_color_pixel(
-                        get_cell_color(grid, cell),
+                        self.get_cell_color(grid, cell),
                         2,
                     )
                     self._writer.write_color_pixel(
-                        get_wall_color(
+                        self.get_wall_color(
                             grid,
                             cell,
                             Direction.EAST,
@@ -84,12 +144,12 @@ class AsciiRenderer(Renderer):
             for x in range(grid.width):
                 cell = Cell(x, y)
                 if x == 0:
-                    self._writer.write_color_pixel(get_corner_color())
+                    self._writer.write_color_pixel(self.get_corner_color())
                 self._writer.write_color_pixel(
-                    get_wall_color(grid, cell, Direction.SOUTH),
+                    self.get_wall_color(grid, cell, Direction.SOUTH),
                     2,
                 )
-                self._writer.write_color_pixel(get_corner_color())
+                self._writer.write_color_pixel(self.get_corner_color())
             self._writer.write("\n")
 
     def write_duration(self, grid: Grid, duration: float) -> None:
@@ -113,7 +173,8 @@ class AsciiRenderer(Renderer):
         time.sleep(
             max(
                 0,
-                1.0 / self._animation_speed - (time.perf_counter() - start),
+                1.0 / self._config.animation_speed
+                - (time.perf_counter() - start),
             ),
         )
 
@@ -129,53 +190,7 @@ class AsciiRenderer(Renderer):
         time.sleep(
             max(
                 0,
-                1.0 / self._animation_speed - (time.perf_counter() - start),
+                1.0 / self._config.animation_speed
+                - (time.perf_counter() - start),
             ),
         )
-
-
-def get_cell_color(grid: Grid, cell: Cell) -> Color:
-    grid.validate_coordinate(cell)
-
-    marking = grid.get_cell_marking(cell)
-    value = grid.get_cell_value(cell)
-
-    if value is not CellValue.NONE:
-        return value.into_color()
-
-    if marking is CellMarking.MARKED:
-        return marking.into_color()
-
-    return Color.BLACK
-
-
-def get_wall_color(grid: Grid, cell: Cell, direction: Direction) -> Color:
-    grid.validate_coordinate(cell)
-
-    if grid.get_wall_state(cell, direction) is WallState.CLOSED:
-        return Color.WHITE
-
-    neighbor = grid.get_neighbor_cell(cell, direction)
-    if neighbor is None:
-        return Color.BLACK
-
-    marking = grid.get_cell_marking(cell)
-    value = grid.get_cell_value(cell)
-    neighbor_marking = grid.get_cell_marking(neighbor)
-    neighbor_value = grid.get_cell_value(neighbor)
-
-    if value == neighbor_value and value is not CellValue.NONE:
-        return value.into_color()
-
-    if (
-        marking is CellMarking.MARKED
-        and neighbor_marking is CellMarking.MARKED
-        and (value is CellValue.NONE or neighbor_value is CellValue.NONE)
-    ):
-        return marking.into_color()
-
-    return max(value, neighbor_value).into_color()
-
-
-def get_corner_color() -> Color:
-    return Color.WHITE

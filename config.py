@@ -2,6 +2,8 @@ from collections.abc import Callable
 from dataclasses import dataclass, fields
 from typing import Any, Literal, Self, get_args, get_type_hints
 
+from color import Color
+
 type ParserFn = Callable[[str], Any]
 
 PARSERS: dict[str, ParserFn] = {}
@@ -84,6 +86,14 @@ def parse_algorithm(value: str) -> Literal["DFS", "BFS", "A*"]:
             raise ConfigError(f"invalid algorithm: `{value}`")
 
 
+@register_parser
+def parse_color(value: str) -> Color:
+    try:
+        return Color(value)
+    except (KeyError, ValueError) as error:
+        raise ConfigError(f"invalid color: `{value}`") from error
+
+
 def get_parser(key: str) -> ParserFn:
     field_names: list[str] = [field.name.upper() for field in fields(Config)]
     field_types: list[Any] = [field.type for field in fields(Config)]
@@ -146,11 +156,20 @@ class Config:
     entry: tuple[int, int]
     exit: tuple[int, int]
     output_file: str
+
     perfect: bool
     algorithm: Literal["DFS", "BFS", "A*"] | None = None
+    seed: int | None = None
+
     animation: bool = False
     animation_speed: int = 100
-    seed: int | None = None
+    background_color: Color = Color.BLACK
+    wall_color: Color = Color.WHITE
+    entry_color: Color = Color.GREEN
+    exit_color: Color = Color.RED
+    forty_two_color: Color = Color.YELLOW
+    solution_color: Color = Color.MAGENTA
+    animation_color: Color = Color.BLUE
 
     @classmethod
     def from_file(cls, filepath: str) -> Self:

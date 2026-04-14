@@ -1,9 +1,7 @@
-from enum import Enum, auto
-
-PIXEL = "██"
+from enum import StrEnum, auto
 
 
-class Color(Enum):
+class Color(StrEnum):
     BLACK = auto()
     RED = auto()
     GREEN = auto()
@@ -35,6 +33,3 @@ class Color(Enum):
                 return "\033[36m"
             case Color.WHITE:
                 return "\033[37m"
-
-    def to_string(self, string: str = PIXEL) -> str:
-        return f"{self.escape_code()}{string}{Color.reset()}"

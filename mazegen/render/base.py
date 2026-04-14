@@ -7,6 +7,10 @@ from mazegen.grid import Grid
 
 class Renderer(ABC):
     @abstractmethod
+    def animate(self) -> bool:
+        pass
+
+    @abstractmethod
     def write_cell(self, grid: Grid, cell: Cell) -> None:
         pass
 

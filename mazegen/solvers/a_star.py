@@ -12,10 +12,9 @@ class SolverAStar(Solver):
     def solve(
         self,
         grid: Grid,
-        entry: Cell,
-        exit: Cell,  # noqa: A002
+        src: Cell,
+        dest: Cell,
         renderer: Renderer,
-        animation: bool,
     ) -> list[Direction]:
         self._foo = None
 
@@ -23,18 +22,18 @@ class SolverAStar(Solver):
         grid.unset_parents()
 
         solution: list[Direction] = []
-        queue = PriorityQueue(exit)
-        queue.push(entry)
+        queue = PriorityQueue(dest)
+        queue.push(src)
 
-        grid.mark_cell(entry)
-        if animation:
-            renderer.display_cell(grid, entry)
+        grid.mark_cell(src)
+        if renderer.animate():
+            renderer.display_cell(grid, src)
 
         while not queue.is_empty():
             current = queue.pop()
             if current is None:
                 break
-            if current == exit:
+            if current == dest:
                 break
 
             for neighbor in grid.get_reachable_unmarked_neighbors(current):
@@ -43,16 +42,16 @@ class SolverAStar(Solver):
 
                 queue.push(neighbor)
 
-                if animation:
+                if renderer.animate():
                     renderer.display_cell(grid, neighbor)
 
-        current = exit
+        current = dest
 
-        while current is not entry:
-            if current != exit:
+        while current is not src:
+            if current != dest:
                 grid.set_cell_value(current, CellValue.SOLUTION)
 
-            if animation:
+            if renderer.animate():
                 renderer.display_cell(grid, current)
 
             parent = grid.get_parent(current)

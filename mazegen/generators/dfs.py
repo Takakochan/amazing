@@ -13,7 +13,6 @@ class GeneratorDFS(Generator):
         grid: Grid,
         seed: int | None,
         renderer: Renderer,
-        animation: bool
     ) -> int:
         self._foo = None
 
@@ -37,7 +36,7 @@ class GeneratorDFS(Generator):
         grid.mark_cell(cell)
         stack.append(cell)
 
-        if animation:
+        if renderer.animate():
             renderer.display_cell(grid, cell)
 
         while stack:
@@ -59,7 +58,7 @@ class GeneratorDFS(Generator):
             grid.mark_cell(neighbor)
             stack.append(neighbor)
 
-            if animation:
+            if renderer.animate():
                 renderer.display_cell(grid, neighbor)
 
         grid.reset_cell_markings()

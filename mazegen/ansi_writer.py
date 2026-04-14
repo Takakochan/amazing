@@ -1,8 +1,8 @@
 import sys
 from dataclasses import dataclass
 
+from color import Color
 from mazegen.cell import Cell
-from mazegen.color import Color
 
 
 @dataclass

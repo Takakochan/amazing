@@ -10,10 +10,9 @@ class SolverDFS(Solver):
     def solve(
         self,
         grid: Grid,
-        entry: Cell,
-        exit: Cell,  # noqa: A002
+        src: Cell,
+        dest: Cell,
         renderer: Renderer,
-        animation: bool,
     ) -> list[Direction]:
         self._foo = None
 
@@ -22,16 +21,16 @@ class SolverDFS(Solver):
 
         solution: list[Direction] = []
         stack: list[Cell] = []
-        stack.append(entry)
+        stack.append(src)
 
-        grid.mark_cell(entry)
-        if animation:
-            renderer.display_cell(grid, entry)
+        grid.mark_cell(src)
+        if renderer.animate():
+            renderer.display_cell(grid, src)
 
         while stack:
             current = stack.pop()
 
-            if current == exit:
+            if current == dest:
                 break
 
             for neighbor in grid.get_reachable_unmarked_neighbors(current):
@@ -40,16 +39,16 @@ class SolverDFS(Solver):
 
                 stack.append(neighbor)
 
-                if animation:
+                if renderer.animate():
                     renderer.display_cell(grid, neighbor)
 
-        current = exit
+        current = dest
 
-        while current is not entry:
-            if current != exit:
+        while current is not src:
+            if current != dest:
                 grid.set_cell_value(current, CellValue.SOLUTION)
 
-            if animation:
+            if renderer.animate():
                 renderer.display_cell(grid, current)
 
             parent = grid.get_parent(current)

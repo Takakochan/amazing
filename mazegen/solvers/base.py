@@ -11,9 +11,8 @@ class Solver(ABC):
     def solve(
         self,
         grid: Grid,
-        entry: Cell,
-        exit: Cell,  # noqa: A002
+        src: Cell,
+        dest: Cell,
         renderer: Renderer,
-        animation: bool,
     ) -> list[Direction]:
         pass

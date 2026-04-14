@@ -1,13 +1,13 @@
 import random
 
 from mazegen.cell import Cell
+from mazegen.cell_value import CellValue
 from mazegen.direction import Direction
 from mazegen.generators.base import Generator
 from mazegen.generators.dfs import GeneratorDFS
 from mazegen.grid import Grid
 from mazegen.render.base import Renderer
 from mazegen.wall_state import WallState
-from mazegen.cell_value import CellValue
 
 
 class GeneratorImperfect(Generator):
@@ -16,10 +16,9 @@ class GeneratorImperfect(Generator):
         grid: Grid,
         seed: int | None,
         renderer: Renderer,
-        animation: bool,
     ) -> int:
         generator = GeneratorDFS()
-        generator.generate(grid, seed, renderer, animation)
+        generator.generate(grid, seed, renderer)
         closed_walls = self._collect_closed_walls(grid)
         self._open_random_walls(grid, renderer, closed_walls)
         return 0
@@ -30,23 +29,21 @@ class GeneratorImperfect(Generator):
             for y in range(grid.height):
                 cell = Cell(x, y)
                 if (
-                    y < grid.height - 1 and
-                    grid.get_wall_state(cell, Direction.SOUTH) ==
-                    WallState.CLOSED and
-                    grid.get_cell_value(Cell(x, y+1)) !=
-                    CellValue.FORTY_TWO and
-                    grid.get_cell_value(cell) !=
-                    CellValue.FORTY_TWO
+                    y < grid.height - 1
+                    and grid.get_wall_state(cell, Direction.SOUTH)
+                    == WallState.CLOSED
+                    and grid.get_cell_value(Cell(x, y + 1))
+                    != CellValue.FORTY_TWO
+                    and grid.get_cell_value(cell) != CellValue.FORTY_TWO
                 ):
                     closed_walls.append((cell, Direction.SOUTH))
                 if (
-                    x > 0 and
-                    grid.get_wall_state(cell, Direction.WEST) ==
-                    WallState.CLOSED and
-                    grid.get_cell_value(Cell(x-1, y)) !=
-                    CellValue.FORTY_TWO and
-                    grid.get_cell_value(cell) !=
-                    CellValue.FORTY_TWO
+                    x > 0
+                    and grid.get_wall_state(cell, Direction.WEST)
+                    == WallState.CLOSED
+                    and grid.get_cell_value(Cell(x - 1, y))
+                    != CellValue.FORTY_TWO
+                    and grid.get_cell_value(cell) != CellValue.FORTY_TWO
                 ):
                     closed_walls.append((cell, Direction.WEST))
         return closed_walls

@@ -1,6 +1,7 @@
 from enum import IntEnum
 
-from mazegen.color import Color
+from color import Color
+from mazegen.render.config import RenderConfig
 
 
 class CellValue(IntEnum):
@@ -10,15 +11,15 @@ class CellValue(IntEnum):
     FORTY_TWO = 3
     SOLUTION = 4
 
-    def into_color(self) -> Color:
+    def into_color(self, config: RenderConfig) -> Color:
         match self:
             case CellValue.NONE:
-                return Color.BLACK
+                return config.background_color
             case CellValue.ENTRY:
-                return Color.GREEN
+                return config.entry_color
             case CellValue.EXIT:
-                return Color.RED
+                return config.exit_color
             case CellValue.FORTY_TWO:
-                return Color.YELLOW
+                return config.forty_two_color
             case CellValue.SOLUTION:
-                return Color.MAGENTA
+                return config.solution_color

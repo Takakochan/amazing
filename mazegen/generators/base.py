@@ -11,6 +11,5 @@ class Generator(ABC):
         grid: Grid,
         seed: int | None,
         renderer: Renderer,
-        animation: bool,
     ) -> int:
         pass
