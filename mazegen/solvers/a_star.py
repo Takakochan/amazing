@@ -17,7 +17,7 @@ class SolverAStar(Solver):
         renderer: Renderer,
     ) -> list[Direction]:
         self._foo = None
-        
+
         grid.reset_cell_markings()
         grid.unset_parents()
 
