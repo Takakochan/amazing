@@ -1,6 +1,8 @@
 import random
 import time
 
+from mazegen.cell import Cell
+from mazegen.direction import Direction
 from mazegen.generators.base import Generator
 from mazegen.generators.dfs import GeneratorDFS
 from mazegen.grid import Grid
@@ -26,7 +28,7 @@ class GeneratorImperfect(Generator):
     def _open_random_walls(
         grid: Grid,
         renderer: Renderer,
-        closed_walls: list,
+        closed_walls: list[tuple[Cell, Direction]],
         ratio: float = 0.2,
     ) -> None:
         count = max(1, int(len(closed_walls) * ratio))
