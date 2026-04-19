@@ -2,13 +2,14 @@ from typing import Literal
 
 from config import Config
 from mazegen import MazeGenerator
+from mazegen.direction import Direction
 
 
 def solve(
     maze_generator: MazeGenerator,
     algorithm: Literal["DFS", "BFS", "A*"],
     output_file: str,
-) -> list:
+) -> list[Direction]:
     maze_generator.solve(algorithm)
     solution_bfs = maze_generator.solution
     maze_generator.save(output_file + algorithm)
