@@ -4,6 +4,15 @@ from config import Config
 from mazegen import MazeGenerator
 from mazegen.direction import Direction
 
+CONFIG = Config(
+    18,
+    18,
+    (0, 0),
+    (17, 17),
+    "/tmp/test_maze_",
+    False,
+)
+
 
 def solve(
     maze_generator: MazeGenerator,
@@ -39,17 +48,25 @@ def run(config: Config, seed: int) -> None:
     )
 
 
-def test_solver() -> None:
-    config = Config(
-        18,
-        18,
-        (0, 0),
-        (17, 17),
-        "/tmp/test_maze_",
-        False,
-    )
+def test_solver_seed() -> None:
+    run(CONFIG, 1776190330919183478)
 
-    for seed in range(100):
-        run(config, seed)
 
-    run(config, 1776190330919183478)
+def test_solver_range_0_50() -> None:
+    for seed in range(0, 50):
+        run(CONFIG, seed)
+
+
+def test_solver_range_50_100() -> None:
+    for seed in range(50, 100):
+        run(CONFIG, seed)
+
+
+def test_solver_range_100_150() -> None:
+    for seed in range(100, 150):
+        run(CONFIG, seed)
+
+
+def test_solver_range_150_200() -> None:
+    for seed in range(100, 150):
+        run(CONFIG, seed)
