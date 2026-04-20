@@ -19,7 +19,7 @@ class GeneratorImperfect(Generator):
         generator = GeneratorDFS()
         generator.generate(grid, seed, renderer)
         closed_walls = grid.get_collect_closed_walls()
-        self._open_random_walls(grid, renderer, closed_walls)
+        self._open_walls_by_areas(grid, renderer, closed_walls)
         with open('/tmp/closed_walls.txt', 'w') as f:
             for cell, direction in closed_walls:
                 f.write(f"Cell({cell.x}, {cell.y}) - {direction.name}\n")
