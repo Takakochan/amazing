@@ -1,3 +1,4 @@
+import random
 from dataclasses import dataclass
 from typing import Self
 
@@ -30,3 +31,15 @@ class RenderConfig:
             config.solution_color,
             config.animation_color,
         )
+
+    def randomize(self) -> None:
+        colors = random.sample(list(Color), 7)
+        (
+            self.background_color,
+            self.wall_color,
+            self.entry_color,
+            self.exit_color,
+            self.forty_two_color,
+            self.solution_color,
+            self.animation_color,
+        ) = colors

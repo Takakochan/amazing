@@ -37,3 +37,7 @@ class Renderer(ABC):
     @abstractmethod
     def display_grid(self, grid: Grid) -> None:
         pass
+
+    @abstractmethod
+    def random_color(self, grid: Grid) -> None:
+        pass

@@ -216,3 +216,7 @@ class AsciiRenderer(Renderer):
                 - (time.perf_counter() - start),
             ),
         )
+
+    def random_color(self, grid: Grid) -> None:
+        self._config.randomize()
+        self.display_grid(grid)

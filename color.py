@@ -1,4 +1,6 @@
+import random
 from enum import StrEnum, auto
+
 
 
 class Color(StrEnum):
@@ -33,3 +35,7 @@ class Color(StrEnum):
                 return "\033[36m"
             case Color.WHITE:
                 return "\033[37m"
+
+    @staticmethod
+    def ramdom() -> "Color":
+        return random.choice(list(Color))
