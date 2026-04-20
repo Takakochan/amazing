@@ -2,7 +2,6 @@ import random
 import time
 
 from mazegen.cell import Cell
-from mazegen.direction import Direction
 from mazegen.generators.base import Generator
 from mazegen.generators.dfs import GeneratorDFS
 from mazegen.grid import Grid
@@ -22,6 +21,9 @@ class GeneratorImperfect(Generator):
         generator.generate(grid, seed, renderer)
         closed_walls = grid.get_collect_closed_walls()
         self._open_random_walls(grid, renderer, closed_walls)
+        with open('/tmp/closed_walls.txt', 'w') as f:
+            for cell, direction in closed_walls:
+                f.write(f"Cell({cell.x}, {cell.y}) - {direction.name}\n")
         return seed
 
     @staticmethod
@@ -37,3 +39,12 @@ class GeneratorImperfect(Generator):
             grid.open_wall(cell, direction)
             if renderer.animate():
                 renderer.display_cell(grid, cell)
+
+    # @staticmethod
+    # def _open_walls_by_areas(
+    #     grid: Grid,
+    #     renderer: Renderer,
+    #     closed_walls: list,
+    # ) -> None:
+        
+    #     area_a = [Cell(x, y) for x, y in 

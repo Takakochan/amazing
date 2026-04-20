@@ -337,8 +337,8 @@ class Grid:
             + "\n"
         )
 
-    def get_collect_closed_walls(self) -> list[tuple[Cell, Direction]]:
-        closed_south_walls = [
+    def get_collect_closed_walls(self) -> list:
+        closed_walls_south = [
             (Cell(x, y), Direction.SOUTH)
             for x in range(self.width)
             for y in range(self.height - 1)
@@ -347,15 +347,14 @@ class Grid:
             and self.get_cell_value(Cell(x, y + 1)) != CellValue.FORTY_TWO
             and self.get_cell_value(Cell(x, y)) != CellValue.FORTY_TWO
         ]
-
-        closed_east_walls = [
-            (Cell(x, y), Direction.EAST)
-            for x in range(self.width - 1)
+        closed_walls_west = [
+            (Cell(x, y), Direction.WEST)
+            for x in range(self.width)
             for y in range(self.height)
             if self.get_wall_state(Cell(x, y), Direction.EAST)
             == WallState.CLOSED
             and self.get_cell_value(Cell(x + 1, y)) != CellValue.FORTY_TWO
             and self.get_cell_value(Cell(x, y)) != CellValue.FORTY_TWO
         ]
-
-        return closed_south_walls + closed_east_walls
+        closed_walls = closed_walls_south + closed_walls_west
+        return closed_walls
