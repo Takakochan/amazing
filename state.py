@@ -56,7 +56,9 @@ class GenerateState(State):
             case Event.QUIT:
                 return self
             case Event.COLORS:
-                self.maze_generator.renderer.random_color(self.maze_generator.grid)
+                self.maze_generator.renderer.random_color(
+                    self.maze_generator.grid
+                )
                 return self
             case _:
                 return self
@@ -103,7 +105,9 @@ class SolveState(State):
             case Event.QUIT:
                 return self
             case Event.COLORS:
-                self.maze_generator.renderer.ramdom_color(self.maze_generator.grid)
+                self.maze_generator.renderer.ramdom_color(
+                    self.maze_generator.grid
+                )
                 return self
             case _:
                 return self
@@ -134,5 +138,7 @@ class SaveState(State):
             case Event.QUIT:
                 return self
             case Event.COLORS:
-                self.maze_generator.renderer.random_color(self.maze_generator.grid)
+                self.maze_generator.renderer.random_color(
+                    self.maze_generator.grid
+                )
                 return self

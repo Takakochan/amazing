@@ -20,7 +20,7 @@ class GeneratorImperfect(Generator):
         generator.generate(grid, seed, renderer)
         closed_walls = grid.get_collect_closed_walls()
         self._open_walls_by_areas(grid, renderer, closed_walls)
-        with open('/tmp/closed_walls.txt', 'w') as f:
+        with open("/tmp/closed_walls.txt", "w") as f:
             for cell, direction in closed_walls:
                 f.write(f"Cell({cell.x}, {cell.y}) - {direction.name}\n")
         return seed
@@ -47,15 +47,26 @@ class GeneratorImperfect(Generator):
     ) -> None:
         mid_x = grid.width // 2
         mid_y = grid.height // 2
-        area_a = [(cell, direction) for cell, direction in closed_walls
-                  if 0 < cell.x <= mid_x and 0 < cell.y <= mid_y]
-        area_b = [(cell, direction) for cell, direction in closed_walls
-                  if mid_x < cell.x < grid.width
-                  and mid_y < cell.y < grid.height]
-        area_c = [(cell, direction) for cell, direction in closed_walls
-                  if 0 < cell.x <= mid_x and mid_y < cell.y < grid.height]
-        area_d = [(cell, direction) for cell, direction in closed_walls
-                  if mid_x < cell.x < grid.width and 0 < cell.y <= mid_y]
+        area_a = [
+            (cell, direction)
+            for cell, direction in closed_walls
+            if 0 < cell.x <= mid_x and 0 < cell.y <= mid_y
+        ]
+        area_b = [
+            (cell, direction)
+            for cell, direction in closed_walls
+            if mid_x < cell.x < grid.width and mid_y < cell.y < grid.height
+        ]
+        area_c = [
+            (cell, direction)
+            for cell, direction in closed_walls
+            if 0 < cell.x <= mid_x and mid_y < cell.y < grid.height
+        ]
+        area_d = [
+            (cell, direction)
+            for cell, direction in closed_walls
+            if mid_x < cell.x < grid.width and 0 < cell.y <= mid_y
+        ]
         areas = [area_a, area_b, area_c, area_d]
         for a in areas:
             if not a:

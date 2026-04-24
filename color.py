@@ -2,7 +2,6 @@ import random
 from enum import StrEnum, auto
 
 
-
 class Color(StrEnum):
     BLACK = auto()
     RED = auto()
