@@ -8,12 +8,12 @@ from types import TracebackType
 from config import Config, ConfigError
 from state import Event, GenerateState, State
 from statemachine import (
-    sm,
     Event,
+    sm,
+    InvalidTransition,
     MazeContext,
     MazeGenerator,
     MazeState,
-    InvalidTransition,
 )
 
 

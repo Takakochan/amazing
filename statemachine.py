@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
-from enum import Enum, auto, StrEnum
+from enum import Enum, StrEnum, auto
 from typing import Callable, Iterable
+
 from config import Config
 from mazegen import MazeGenerator
 
@@ -59,7 +60,7 @@ class StateMachine[S: Enum, E: Enum, C]:
 
     def transition(
         self, from_state: S | Iterable[S], event: E, to_state: S
-    ) -> Action:
+    ) -> Callable[[Action[C]], Action[C]]:
         if not isinstance(from_state, Iterable):
             from_state = (from_state,)
 
@@ -108,6 +109,9 @@ def do_hide_solution(ctx: MazeContext) -> None:
     if not ctx.maze_generator.renderer.hide_solution():
         return
     ctx.maze_generator.display()
+    print(f"Generated maze (seed: {ctx.maze_generator.seed})")
+    print()
+    print("[g]enerate | [s]how solution | [q]uit | [c]olor")
 
 
 @sm.transition(MazeState.SOLVE, Event.SHOW_SOLUTION, MazeState.SOLVE)
@@ -115,6 +119,9 @@ def do_show_solution(ctx: MazeContext) -> None:
     if not ctx.maze_generator.renderer.show_solution():
         return
     ctx.maze_generator.display()
+    print(f"Solved maze (seed: {ctx.maze_generator.seed})")
+    print()
+    print("[g]enerate | [h]ide solution | [S]ave | [q]uit")
 
 
 @sm.transition(MazeState.GENERATE, Event.COLORS, MazeState.GENERATE)
@@ -123,3 +130,6 @@ def do_show_solution(ctx: MazeContext) -> None:
 def do_colors(ctx: MazeContext) -> None:
     ctx.maze_generator.renderer.random_color(ctx.maze_generator.grid)
     ctx.maze_generator.display()
+    print(f"Generated maze (seed: {ctx.maze_generator.seed})")
+    print()
+    print("[g]enerate | [s]olve | [h]ide solution | [S]ave | [c]olor | [q]uit")
