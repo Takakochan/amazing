@@ -125,11 +125,21 @@ def do_show_solution(ctx: MazeContext) -> None:
 
 
 @sm.transition(MazeState.GENERATE, Event.COLORS, MazeState.GENERATE)
-@sm.transition(MazeState.SOLVE, Event.COLORS, MazeState.SOLVE)
-@sm.transition(MazeState.SAVE, Event.COLORS, MazeState.SAVE)
-def do_colors(ctx: MazeContext) -> None:
+def do_colors_generate(ctx: MazeContext) -> None:
     ctx.maze_generator.renderer.random_color(ctx.maze_generator.grid)
     ctx.maze_generator.display()
-    print(f"Generated maze (seed: {ctx.maze_generator.seed})")
-    print()
-    print("[g]enerate | [s]olve | [h]ide solution | [S]ave | [c]olor | [q]uit")
+    print("[g]enerate | [s]olve | [q]uit | [c]olor")
+
+
+@sm.transition(MazeState.SOLVE, Event.COLORS, MazeState.SOLVE)
+def do_colors_solve(ctx: MazeContext) -> None:
+    ctx.maze_generator.renderer.random_color(ctx.maze_generator.grid)
+    ctx.maze_generator.display()
+    print("[g]enerate | [h]ide solution | [S]ave | [q]uit | [c]olor")
+
+
+@sm.transition(MazeState.SAVE, Event.COLORS, MazeState.SAVE)
+def do_colors_save(ctx: MazeContext) -> None:
+    ctx.maze_generator.renderer.random_color(ctx.maze_generator.grid)
+    ctx.maze_generator.display()
+    print("[g]enerate | [q]uit | [c]olor")

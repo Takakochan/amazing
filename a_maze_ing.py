@@ -45,6 +45,8 @@ def main() -> None:
     with NonBlockingInput():
         # state: State = GenerateState.from_config(config)
         ctx = MazeContext(MazeGenerator.from_config(config), config)
+        if config.animation:
+            ctx.maze_generator.display()
         ctx.maze_generator.generate(config.perfect, config.seed)
         ctx.maze_generator.display()
         current_state = MazeState.GENERATE
