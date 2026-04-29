@@ -49,6 +49,9 @@ def main() -> None:
             ctx.maze_generator.display()
         ctx.maze_generator.generate(config.perfect, config.seed)
         ctx.maze_generator.display()
+        print(f"Generated maze (seed: {ctx.maze_generator.seed})")
+        print()
+        print("[g]enerate | [s]olve | [q]uit | [c]olor")
         current_state = MazeState.GENERATE
         while True:
             read_fd, _, _ = select.select([sys.stdin], [], [], 0)
