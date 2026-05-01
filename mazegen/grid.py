@@ -348,8 +348,8 @@ class Grid:
             and self.get_cell_value(Cell(x, y)) != CellValue.FORTY_TWO
         ]
 
-        closed_walls_west = [
-            (Cell(x, y), Direction.WEST)
+        closed_walls_east = [
+            (Cell(x, y), Direction.EAST)
             for x in range(self.width - 1)
             for y in range(self.height)
             if self.get_wall_state(Cell(x, y), Direction.EAST)
@@ -358,4 +358,4 @@ class Grid:
             and self.get_cell_value(Cell(x, y)) != CellValue.FORTY_TWO
         ]
 
-        return closed_walls_south + closed_walls_west
+        return closed_walls_south + closed_walls_east

@@ -42,5 +42,5 @@ def test_solver_range_100_150() -> None:
 
 
 def test_solver_range_150_200() -> None:
-    for seed in range(100, 150):
+    for seed in range(150, 200):
         run(CONFIG, seed)
