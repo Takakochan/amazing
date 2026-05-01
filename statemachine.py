@@ -1,4 +1,4 @@
-from collections.abc import Callable, Iterable
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum, StrEnum, auto
 
@@ -63,16 +63,12 @@ class StateMachine[S: Enum, E: Enum, C]:
 
     def transition(
         self,
-        from_state: S | Iterable[S],
+        from_state: S,
         event: E,
         to_state: S,
     ) -> Callable[[Action[C]], Action[C]]:
-        if not isinstance(from_state, Iterable):
-            from_state = (from_state,)
-
         def decorator(func: Action[C]) -> Action[C]:
-            for s in from_state:
-                self.add_transition(s, event, to_state, func)
+            self.add_transition(from_state, event, to_state, func)
             return func
 
         return decorator
