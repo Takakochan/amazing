@@ -19,6 +19,20 @@ class RenderConfig:
     animation_color: Color
 
     @classmethod
+    def default(cls) -> Self:
+        return cls(
+            False,
+            100,
+            Color.BLACK,
+            Color.WHITE,
+            Color.GREEN,
+            Color.RED,
+            Color.YELLOW,
+            Color.MAGENTA,
+            Color.BLUE,
+        )
+
+    @classmethod
     def from_config(cls, config: Config) -> Self:
         return cls(
             config.animation,

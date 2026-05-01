@@ -22,6 +22,10 @@ class AsciiRenderer(Renderer):
     _show_solution: bool = True
 
     @classmethod
+    def default(cls) -> Self:
+        return cls(RenderConfig.default())
+
+    @classmethod
     def from_config(cls, config: Config) -> Self:
         return cls(RenderConfig.from_config(config))
 
