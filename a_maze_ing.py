@@ -8,11 +8,11 @@ from types import TracebackType
 from config import Config, ConfigError
 from mazegen import MazeGenerator
 from statemachine import (
+    STATE_MACHINE,
     Event,
     InvalidTransition,
     MazeContext,
     MazeState,
-    sm,
 )
 
 
@@ -72,7 +72,7 @@ def main() -> None:
 
             # state = state.on_event(event)
             try:
-                current_state = sm.handle(ctx, current_state, event)
+                current_state = STATE_MACHINE.handle(ctx, current_state, event)
             except InvalidTransition:
                 continue
 
