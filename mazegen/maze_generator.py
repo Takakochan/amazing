@@ -19,17 +19,34 @@ if TYPE_CHECKING:
     from mazegen.solvers.base import Solver
 
 
+def validate(
+    src: tuple[int, int],
+    dest: tuple[int, int],
+    width: int,
+    height: int,
+) -> None:
+    if width <= 0:
+        raise ValueError(f"width must be positive: `{width}`")
+
+    if height <= 0:
+        raise ValueError(f"height must be positive: `{height}`")
+
+    if src[0] < 0 or src[0] >= width or src[1] < 0 or src[1] >= height:
+        raise ValueError(f"src must be in grid range: `{src}`")
+
+    if dest[0] < 0 or dest[0] >= width or dest[1] < 0 or dest[1] >= height:
+        raise ValueError(f"dest must be in grid range: `{dest}`")
+
+
 @dataclass
 class MazeGenerator:
-    """[TODO:description]
+    """Generate and solve a maze.
 
     Attributes:
-        src: [TODO:attribute]
-        dest: [TODO:attribute]
-        grid: [TODO:attribute]
-        renderer: [TODO:attribute]
-        seed: [TODO:attribute]
-        solution: [TODO:attribute]
+        src: the starting coordinates
+        dest: the ending coordinates
+        width: the width of the maze
+        height: the height of the maze
     """
 
     src: Cell
@@ -46,6 +63,8 @@ class MazeGenerator:
         width: int,
         height: int,
     ) -> None:
+        validate(src, dest, width, height)
+
         self.src = Cell(src[0], src[1])
         self.dest = Cell(dest[0], dest[1])
 
