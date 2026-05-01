@@ -1,3 +1,5 @@
+# TODO: move file to separate directory
+
 from enum import StrEnum, auto
 
 

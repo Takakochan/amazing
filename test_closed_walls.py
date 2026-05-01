@@ -1,3 +1,5 @@
+# TODO: move test file to test directory
+
 from config import Config
 from mazegen import MazeGenerator
 from mazegen.wall_state import WallState

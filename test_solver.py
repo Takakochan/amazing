@@ -1,3 +1,5 @@
+# TODO: move test file to test directory
+
 from typing import Literal
 
 from config import Config
