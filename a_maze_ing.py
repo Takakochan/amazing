@@ -9,10 +9,10 @@ from config import Config, ConfigError
 from mazegen import MazeGenerator
 from statemachine import (
     STATE_MACHINE,
+    Context,
     Event,
     InvalidTransition,
-    MazeContext,
-    MazeState,
+    State,
 )
 
 
@@ -42,11 +42,11 @@ def main() -> None:
         sys.exit(1)
 
     with NonBlockingInput():
-        ctx = MazeContext(MazeGenerator.from_config(config), config)
-        current_state = MazeState.GENERATE
+        ctx = Context(MazeGenerator.from_config(config), config)
+        current_state = State.GENERATE
         STATE_MACHINE.handle(ctx, current_state, Event.GENERATE)
 
-        while current_state is not MazeState.QUIT:
+        while current_state is not State.QUIT:
             read_fd, _, _ = select.select([sys.stdin], [], [], 0)
             if not read_fd:
                 continue

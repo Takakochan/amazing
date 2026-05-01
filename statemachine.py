@@ -13,12 +13,12 @@ class InvalidTransition(Exception):
 
 
 @dataclass
-class MazeContext:
+class Context:
     maze_generator: MazeGenerator
     config: Config
 
 
-class MazeState(Enum):
+class State(Enum):
     GENERATE = auto()
     SOLVE = auto()
     SAVE = auto()
@@ -33,59 +33,111 @@ class Event(StrEnum):
     COLORS = "c"
     QUIT = "q"
 
+    def message(self, ctx: Context) -> str:
+        match self:
+            case Event.GENERATE:
+                return f"Generated maze (seed: {ctx.maze_generator.seed})"
+            case Event.SHOW_SOLUTION:
+                return f"Solved maze (seed: {ctx.maze_generator.seed})"
+            case Event.HIDE_SOLUTION:
+                return "Hidden solution"
+            case Event.SAVE:
+                return f"Saved solution to '{ctx.config.output_file}'"
+            case Event.COLORS:
+                return "Changed colors"
+            case Event.QUIT:
+                return "Quit"
+
+    def to_string(self) -> str:
+        match self:
+            case Event.GENERATE:
+                return "[g]enerate"
+            case Event.SHOW_SOLUTION:
+                return "[s]how"
+            case Event.HIDE_SOLUTION:
+                return "[h]ide"
+            case Event.SAVE:
+                return "[S]ave"
+            case Event.COLORS:
+                return "[c]olor"
+            case Event.QUIT:
+                return "[q]uit"
+
 
 @dataclass
-class StateMachine[S: Enum, E: Enum, C]:
-    transitions: dict[tuple[S, E], tuple[S, Action[C]]] = field(
-        default_factory=dict[tuple[S, E], tuple[S, Action[C]]],
+class StateMachine:
+    transitions: dict[
+        tuple[State, Event],
+        tuple[State, Action[Context]],
+    ] = field(
+        default_factory=dict[
+            tuple[State, Event],
+            tuple[State, Action[Context]],
+        ],
     )
 
     def add_transition(
         self,
-        from_state: S,
-        event: E,
-        to_state: S,
-        func: Action[C],
+        from_state: State,
+        event: Event,
+        to_state: State,
+        func: Action[Context],
     ) -> None:
         self.transitions[from_state, event] = (to_state, func)
 
-    def next_transition(self, state: S, event: E) -> tuple[S, Action[C]]:
+    def next_transition(
+        self,
+        state: State,
+        event: Event,
+    ) -> tuple[State, Action[Context]]:
         try:
             return self.transitions[state, event]
-        except KeyError as e:
+        except KeyError as error:
             raise InvalidTransition(
                 f"Can not {event.name} when {state.name}",
-            ) from e
+            ) from error
 
-    def handle(self, ctx: C, state: S, event: E) -> S:
+    def handle(self, ctx: Context, state: State, event: Event) -> State:
         next_state, action = self.next_transition(state, event)
+
         action(ctx)
+
+        ctx.maze_generator.display()
+
+        print(event.message(ctx))
+
+        if next_state is not State.QUIT:
+            print()
+            print(
+                " | ".join([
+                    e.to_string()
+                    for s, e in self.transitions
+                    if s == next_state
+                ]),
+            )
+
         return next_state
 
     def transition(
         self,
-        from_state: S,
-        event: E,
-        to_state: S,
-    ) -> Callable[[Action[C]], Action[C]]:
-        def decorator(func: Action[C]) -> Action[C]:
+        from_state: State,
+        event: Event,
+        to_state: State,
+    ) -> Callable[[Action[Context]], Action[Context]]:
+        def decorator(func: Action[Context]) -> Action[Context]:
             self.add_transition(from_state, event, to_state, func)
             return func
 
         return decorator
 
 
-STATE_MACHINE: StateMachine[MazeState, Event, MazeContext] = StateMachine()
+STATE_MACHINE: StateMachine = StateMachine()
 
 
-@STATE_MACHINE.transition(
-    MazeState.GENERATE,
-    Event.GENERATE,
-    MazeState.GENERATE,
-)
-@STATE_MACHINE.transition(MazeState.SOLVE, Event.GENERATE, MazeState.GENERATE)
-@STATE_MACHINE.transition(MazeState.SAVE, Event.GENERATE, MazeState.GENERATE)
-def do_generate(ctx: MazeContext) -> None:
+@STATE_MACHINE.transition(State.GENERATE, Event.GENERATE, State.GENERATE)
+@STATE_MACHINE.transition(State.SOLVE, Event.GENERATE, State.GENERATE)
+@STATE_MACHINE.transition(State.SAVE, Event.GENERATE, State.GENERATE)
+def do_generate(ctx: Context) -> None:
     ctx.maze_generator = MazeGenerator.from_config(ctx.config)
 
     if ctx.config.animation:
@@ -93,106 +145,46 @@ def do_generate(ctx: MazeContext) -> None:
 
     ctx.maze_generator.generate(ctx.config.perfect, ctx.config.seed)
 
-    ctx.maze_generator.display()
 
-    print(f"Generated maze (seed: {ctx.maze_generator.seed})")
-    print()
-    print("[g]enerate | [s]olve | [c]olor | [q]uit")
-
-
-@STATE_MACHINE.transition(
-    MazeState.GENERATE,
-    Event.SHOW_SOLUTION,
-    MazeState.SOLVE,
-)
-def do_solve(ctx: MazeContext) -> None:
+@STATE_MACHINE.transition(State.GENERATE, Event.SHOW_SOLUTION, State.SOLVE)
+def do_solve(ctx: Context) -> None:
     ctx.maze_generator.solve(ctx.config.algorithm)
 
-    ctx.maze_generator.display()
 
-    print(f"Solved maze (seed: {ctx.maze_generator.seed})")
-    print()
-    print("[g]enerate | [h]ide solution | [S]ave | [c]olor | [q]uit")
-
-
-@STATE_MACHINE.transition(MazeState.SOLVE, Event.SAVE, MazeState.SAVE)
-def do_save(ctx: MazeContext) -> None:
+@STATE_MACHINE.transition(State.SOLVE, Event.SAVE, State.SAVE)
+def do_save(ctx: Context) -> None:
     ctx.maze_generator.save(ctx.config.output_file)
 
-    ctx.maze_generator.display()
 
-    print(f"Generated maze (seed: {ctx.maze_generator.seed})")
-    print()
-    print("[g]enerate | [q]uit | [c]olor | [q]uit")
-
-
-@STATE_MACHINE.transition(
-    MazeState.SOLVE,
-    Event.HIDE_SOLUTION,
-    MazeState.SOLVE,
-)
-def do_hide_solution(ctx: MazeContext) -> None:
+@STATE_MACHINE.transition(State.SOLVE, Event.HIDE_SOLUTION, State.SOLVE)
+def do_hide_solution(ctx: Context) -> None:
     if not ctx.maze_generator.renderer.hide_solution():
         return
 
-    ctx.maze_generator.display()
 
-    print(f"Solved maze (seed: {ctx.maze_generator.seed})")
-    print()
-    print("[g]enerate | [s]how solution | [S]ave | [c]olor | [q]uit")
-
-
-@STATE_MACHINE.transition(
-    MazeState.SOLVE,
-    Event.SHOW_SOLUTION,
-    MazeState.SOLVE,
-)
-def do_show_solution(ctx: MazeContext) -> None:
+@STATE_MACHINE.transition(State.SOLVE, Event.SHOW_SOLUTION, State.SOLVE)
+def do_show_solution(ctx: Context) -> None:
     if not ctx.maze_generator.renderer.show_solution():
         return
 
-    ctx.maze_generator.display()
 
-    print(f"Solved maze (seed: {ctx.maze_generator.seed})")
-    print()
-    print("[g]enerate | [h]ide solution | [S]ave | [c]olor | [q]uit")
-
-
-@STATE_MACHINE.transition(MazeState.GENERATE, Event.COLORS, MazeState.GENERATE)
-def do_colors_generate(ctx: MazeContext) -> None:
+@STATE_MACHINE.transition(State.GENERATE, Event.COLORS, State.GENERATE)
+def do_colors_generate(ctx: Context) -> None:
     ctx.maze_generator.renderer.random_color(ctx.maze_generator.grid)
 
-    ctx.maze_generator.display()
 
-    print(f"Generated maze (seed: {ctx.maze_generator.seed})")
-    print()
-    print("[g]enerate | [s]olve | [c]olor | [q]uit")
-
-
-@STATE_MACHINE.transition(MazeState.SOLVE, Event.COLORS, MazeState.SOLVE)
-def do_colors_solve(ctx: MazeContext) -> None:
+@STATE_MACHINE.transition(State.SOLVE, Event.COLORS, State.SOLVE)
+def do_colors_solve(ctx: Context) -> None:
     ctx.maze_generator.renderer.random_color(ctx.maze_generator.grid)
 
-    ctx.maze_generator.display()
 
-    print(f"Solved maze (seed: {ctx.maze_generator.seed})")
-    print()
-    print("[g]enerate | [h]ide solution | [S]ave | [c]olor | [q]uit")
-
-
-@STATE_MACHINE.transition(MazeState.SAVE, Event.COLORS, MazeState.SAVE)
-def do_colors_save(ctx: MazeContext) -> None:
+@STATE_MACHINE.transition(State.SAVE, Event.COLORS, State.SAVE)
+def do_colors_save(ctx: Context) -> None:
     ctx.maze_generator.renderer.random_color(ctx.maze_generator.grid)
 
-    ctx.maze_generator.display()
 
-    print(f"Generated maze (seed: {ctx.maze_generator.seed})")
-    print()
-    print("[g]enerate | [c]olor | [q]uit")
-
-
-@STATE_MACHINE.transition(MazeState.GENERATE, Event.QUIT, MazeState.QUIT)
-@STATE_MACHINE.transition(MazeState.SOLVE, Event.QUIT, MazeState.QUIT)
-@STATE_MACHINE.transition(MazeState.SAVE, Event.QUIT, MazeState.QUIT)
-def do_quit(ctx: MazeContext) -> None:
+@STATE_MACHINE.transition(State.GENERATE, Event.QUIT, State.QUIT)
+@STATE_MACHINE.transition(State.SOLVE, Event.QUIT, State.QUIT)
+@STATE_MACHINE.transition(State.SAVE, Event.QUIT, State.QUIT)
+def do_quit(ctx: Context) -> None:
     pass
