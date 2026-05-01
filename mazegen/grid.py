@@ -350,7 +350,7 @@ class Grid:
 
         closed_walls_west = [
             (Cell(x, y), Direction.WEST)
-            for x in range(self.width)
+            for x in range(self.width - 1)
             for y in range(self.height)
             if self.get_wall_state(Cell(x, y), Direction.EAST)
             == WallState.CLOSED
