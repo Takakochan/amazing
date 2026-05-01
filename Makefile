@@ -21,7 +21,7 @@ install:
 	uv tool install ruff
 	uv tool install ty
 	uv tool install pytest
-	uv add numpy
+	uv tool install build
 
 run:
 	uv run $(MAIN_PROGRAM) config.txt
@@ -35,8 +35,11 @@ test:
 clean:
 	uvx ruff clean
 	$(RM) .mypy_cache/
+	$(RM) .pytest_cache/
 	$(RM) .ruff_cache/
 	$(RM) .venv/
+	$(RM) mazegen.egg-info/
+
 	find . -type d -name "__pycache__" -exec $(RM) {} +
 
 lint:
@@ -54,4 +57,7 @@ format:
 	uvx ruff check --fix --select=I001
 	uvx ruff format
 
-.PHONY: all install run debug test clean lint lint-strict format
+build:
+	uvx --from build pyproject-build --outdir ./
+
+.PHONY: all install run debug test clean lint lint-strict format build

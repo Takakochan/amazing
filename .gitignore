@@ -2,5 +2,6 @@
 .ruff_cache/
 .venv/
 __pycache__/
+mazegen.egg-info/
 
 maze.txt
