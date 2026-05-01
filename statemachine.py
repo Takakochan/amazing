@@ -5,7 +5,6 @@ from typing import Callable, Iterable
 from config import Config
 from mazegen import MazeGenerator
 
-
 type Action[C] = Callable[[C], None]
 
 
@@ -41,7 +40,11 @@ class StateMachine[S: Enum, E: Enum, C]:
     )
 
     def add_transition(
-        self, from_state: S, event: E, to_state: S, func: Action[C],
+        self,
+        from_state: S,
+        event: E,
+        to_state: S,
+        func: Action[C],
     ) -> None:
         self.transitions[(from_state, event)] = (to_state, func)
 
@@ -59,7 +62,10 @@ class StateMachine[S: Enum, E: Enum, C]:
         return next_state
 
     def transition(
-        self, from_state: S | Iterable[S], event: E, to_state: S,
+        self,
+        from_state: S | Iterable[S],
+        event: E,
+        to_state: S,
     ) -> Callable[[Action[C]], Action[C]]:
         if not isinstance(from_state, Iterable):
             from_state = (from_state,)
@@ -117,7 +123,7 @@ def do_hide_solution(ctx: MazeContext) -> None:
 
 
 @sm.transition(MazeState.SOLVE, Event.SHOW_SOLUTION, MazeState.SOLVE)
-def do_show_solution(ctx: MazeContext) -> None: 
+def do_show_solution(ctx: MazeContext) -> None:
     if not ctx.maze_generator.renderer.show_solution():
         return
     ctx.maze_generator.display()

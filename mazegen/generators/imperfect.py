@@ -72,7 +72,9 @@ class GeneratorImperfect(Generator):
             if not a:
                 continue
             cell, direction = random.choice(a)
-            if not GeneratorImperfect._creates_open_area(grid, cell, direction):
+            if not GeneratorImperfect._creates_open_area(
+                grid, cell, direction
+            ):
                 grid.open_wall(cell, direction)
                 if renderer.animate():
                     renderer.display_cell(grid, cell)
@@ -80,25 +82,29 @@ class GeneratorImperfect(Generator):
     @staticmethod
     def _is_opened_3x3(grid: Grid, x: int, y: int) -> bool:
         return all(
-            grid.get_wall_state(Cell(col, row), Direction.EAST) is WallState.OPEN
+            grid.get_wall_state(Cell(col, row), Direction.EAST)
+            is WallState.OPEN
             for row in range(y, y + 3)
             for col in range(x, x + 2)
         ) and all(
-            grid.get_wall_state(Cell(col, row), Direction.SOUTH) is WallState.OPEN
+            grid.get_wall_state(Cell(col, row), Direction.SOUTH)
+            is WallState.OPEN
             for row in range(y, y + 2)
             for col in range(x, x + 3)
         )
 
     @staticmethod
-    def _creates_open_area(grid: Grid, cell: Cell, direction: Direction) -> bool:
+    def _creates_open_area(
+        grid: Grid, cell: Cell, direction: Direction
+    ) -> bool:
         """Temporarily check if opening area will create 3x3 area"""
         grid.open_wall(cell, direction)
         result = any(
             GeneratorImperfect._is_opened_3x3(grid, x, y)
-            for x in range(max(0, cell.x - 2),
-                           min(grid.width - 2, cell.x + 1))
-            for y in range(max(0, cell.y - 2),
-                           min(grid.height - 2, cell.y + 1))
+            for x in range(max(0, cell.x - 2), min(grid.width - 2, cell.x + 1))
+            for y in range(
+                max(0, cell.y - 2), min(grid.height - 2, cell.y + 1)
+            )
         )
         grid.close_wall(cell, direction)
         return result

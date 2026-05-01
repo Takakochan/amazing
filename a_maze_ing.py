@@ -9,11 +9,11 @@ from config import Config, ConfigError
 from state import Event, GenerateState, State
 from statemachine import (
     Event,
-    sm,
     InvalidTransition,
     MazeContext,
     MazeGenerator,
     MazeState,
+    sm,
 )
 
 
