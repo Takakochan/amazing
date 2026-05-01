@@ -38,20 +38,14 @@ def main() -> None:
     try:
         config = Config.from_file(sys.argv[1])
     except ConfigError as error:
-        print(f"Error {error}")
+        print(f"Config error: {error}")
         sys.exit(1)
 
     with NonBlockingInput():
-        # state: State = GenerateState.from_config(config)
         ctx = MazeContext(MazeGenerator.from_config(config), config)
-        if config.animation:
-            ctx.maze_generator.display()
-        ctx.maze_generator.generate(config.perfect, config.seed)
-        ctx.maze_generator.display()
-        print(f"Generated maze (seed: {ctx.maze_generator.seed})")
-        print()
-        print("[g]enerate | [s]olve | [q]uit | [c]olor")
         current_state = MazeState.GENERATE
+        STATE_MACHINE.handle(ctx, current_state, Event.GENERATE)
+
         while True:
             read_fd, _, _ = select.select([sys.stdin], [], [], 0)
             if not read_fd:
@@ -70,7 +64,6 @@ def main() -> None:
             if event is Event.QUIT:
                 break
 
-            # state = state.on_event(event)
             try:
                 current_state = STATE_MACHINE.handle(ctx, current_state, event)
             except InvalidTransition:
