@@ -33,7 +33,6 @@ class RenderConfig:
         )
 
     def randomize(self) -> None:
-        colors = random.sample(list(Color), 7)
         (
             self.background_color,
             self.wall_color,
@@ -42,4 +41,4 @@ class RenderConfig:
             self.forty_two_color,
             self.solution_color,
             self.animation_color,
-        ) = colors
+        ) = random.sample(list(Color), 7)

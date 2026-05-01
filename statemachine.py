@@ -1,6 +1,6 @@
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from enum import Enum, StrEnum, auto
-from typing import Callable, Iterable
 
 from config import Config
 from mazegen import MazeGenerator
@@ -46,11 +46,11 @@ class StateMachine[S: Enum, E: Enum, C]:
         to_state: S,
         func: Action[C],
     ) -> None:
-        self.transitions[(from_state, event)] = (to_state, func)
+        self.transitions[from_state, event] = (to_state, func)
 
     def next_transition(self, state: S, event: E) -> tuple[S, Action[C]]:
         try:
-            return self.transitions[(state, event)]
+            return self.transitions[state, event]
         except KeyError as e:
             raise InvalidTransition(
                 f"Can not {event.name} when {state.name}",

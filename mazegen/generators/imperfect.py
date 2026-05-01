@@ -29,7 +29,7 @@ class GeneratorImperfect(Generator):
     def _open_random_walls(
         grid: Grid,
         renderer: Renderer,
-        closed_walls: list,
+        closed_walls: list[tuple[Cell, Direction]],
         ratio: float = 0.2,
     ) -> None:
         count = max(1, int(len(closed_walls) * ratio))
@@ -43,7 +43,7 @@ class GeneratorImperfect(Generator):
     def _open_walls_by_areas(
         grid: Grid,
         renderer: Renderer,
-        closed_walls: list,
+        closed_walls: list[tuple[Cell, Direction]],
     ) -> None:
         mid_x = grid.width // 2
         mid_y = grid.height // 2
@@ -73,7 +73,9 @@ class GeneratorImperfect(Generator):
                 continue
             cell, direction = random.choice(a)
             if not GeneratorImperfect._creates_open_area(
-                grid, cell, direction
+                grid,
+                cell,
+                direction,
             ):
                 grid.open_wall(cell, direction)
                 if renderer.animate():
@@ -95,7 +97,9 @@ class GeneratorImperfect(Generator):
 
     @staticmethod
     def _creates_open_area(
-        grid: Grid, cell: Cell, direction: Direction
+        grid: Grid,
+        cell: Cell,
+        direction: Direction,
     ) -> bool:
         """Temporarily check if opening area will create 3x3 area"""
         grid.open_wall(cell, direction)
@@ -103,7 +107,8 @@ class GeneratorImperfect(Generator):
             GeneratorImperfect._is_opened_3x3(grid, x, y)
             for x in range(max(0, cell.x - 2), min(grid.width - 2, cell.x + 1))
             for y in range(
-                max(0, cell.y - 2), min(grid.height - 2, cell.y + 1)
+                max(0, cell.y - 2),
+                min(grid.height - 2, cell.y + 1),
             )
         )
         grid.close_wall(cell, direction)

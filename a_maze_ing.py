@@ -6,12 +6,11 @@ import termios
 from types import TracebackType
 
 from config import Config, ConfigError
-from state import Event, GenerateState, State
+from mazegen import MazeGenerator
 from statemachine import (
     Event,
     InvalidTransition,
     MazeContext,
-    MazeGenerator,
     MazeState,
     sm,
 )
