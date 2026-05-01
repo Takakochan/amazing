@@ -46,13 +46,11 @@ def main() -> None:
         current_state = MazeState.GENERATE
         STATE_MACHINE.handle(ctx, current_state, Event.GENERATE)
 
-        while True:
+        while current_state is not MazeState.QUIT:
             read_fd, _, _ = select.select([sys.stdin], [], [], 0)
             if not read_fd:
                 continue
-
             character = sys.stdin.read(1)
-
             if not character:
                 break
 
@@ -60,9 +58,6 @@ def main() -> None:
                 event = Event(character)
             except ValueError:
                 continue
-
-            if event is Event.QUIT:
-                break
 
             try:
                 current_state = STATE_MACHINE.handle(ctx, current_state, event)

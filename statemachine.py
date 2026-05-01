@@ -22,6 +22,7 @@ class MazeState(Enum):
     GENERATE = auto()
     SOLVE = auto()
     SAVE = auto()
+    QUIT = auto()
 
 
 class Event(StrEnum):
@@ -29,8 +30,8 @@ class Event(StrEnum):
     SHOW_SOLUTION = "s"
     HIDE_SOLUTION = "h"
     SAVE = "S"
-    QUIT = "q"
     COLORS = "c"
+    QUIT = "q"
 
 
 @dataclass
@@ -96,7 +97,7 @@ def do_generate(ctx: MazeContext) -> None:
 
     print(f"Generated maze (seed: {ctx.maze_generator.seed})")
     print()
-    print("[g]enerate | [s]olve | [q]uit | [c]olor")
+    print("[g]enerate | [s]olve | [c]olor | [q]uit")
 
 
 @STATE_MACHINE.transition(
@@ -111,7 +112,7 @@ def do_solve(ctx: MazeContext) -> None:
 
     print(f"Solved maze (seed: {ctx.maze_generator.seed})")
     print()
-    print("[g]enerate | [h]ide solution | [S]ave | [q]uit | [c]olor")
+    print("[g]enerate | [h]ide solution | [S]ave | [c]olor | [q]uit")
 
 
 @STATE_MACHINE.transition(MazeState.SOLVE, Event.SAVE, MazeState.SAVE)
@@ -122,7 +123,7 @@ def do_save(ctx: MazeContext) -> None:
 
     print(f"Generated maze (seed: {ctx.maze_generator.seed})")
     print()
-    print("[g]enerate | [q]uit | [c]olor")
+    print("[g]enerate | [q]uit | [c]olor | [q]uit")
 
 
 @STATE_MACHINE.transition(
@@ -138,7 +139,7 @@ def do_hide_solution(ctx: MazeContext) -> None:
 
     print(f"Solved maze (seed: {ctx.maze_generator.seed})")
     print()
-    print("[g]enerate | [s]how solution | [S]ave | [q]uit | [c]olor")
+    print("[g]enerate | [s]how solution | [S]ave | [c]olor | [q]uit")
 
 
 @STATE_MACHINE.transition(
@@ -154,7 +155,7 @@ def do_show_solution(ctx: MazeContext) -> None:
 
     print(f"Solved maze (seed: {ctx.maze_generator.seed})")
     print()
-    print("[g]enerate | [h]ide solution | [S]ave | [q]uit | [c]olor")
+    print("[g]enerate | [h]ide solution | [S]ave | [c]olor | [q]uit")
 
 
 @STATE_MACHINE.transition(MazeState.GENERATE, Event.COLORS, MazeState.GENERATE)
@@ -165,7 +166,7 @@ def do_colors_generate(ctx: MazeContext) -> None:
 
     print(f"Generated maze (seed: {ctx.maze_generator.seed})")
     print()
-    print("[g]enerate | [s]olve | [q]uit | [c]olor")
+    print("[g]enerate | [s]olve | [c]olor | [q]uit")
 
 
 @STATE_MACHINE.transition(MazeState.SOLVE, Event.COLORS, MazeState.SOLVE)
@@ -176,7 +177,7 @@ def do_colors_solve(ctx: MazeContext) -> None:
 
     print(f"Solved maze (seed: {ctx.maze_generator.seed})")
     print()
-    print("[g]enerate | [h]ide solution | [S]ave | [q]uit | [c]olor")
+    print("[g]enerate | [h]ide solution | [S]ave | [c]olor | [q]uit")
 
 
 @STATE_MACHINE.transition(MazeState.SAVE, Event.COLORS, MazeState.SAVE)
@@ -187,4 +188,11 @@ def do_colors_save(ctx: MazeContext) -> None:
 
     print(f"Generated maze (seed: {ctx.maze_generator.seed})")
     print()
-    print("[g]enerate | [q]uit | [c]olor")
+    print("[g]enerate | [c]olor | [q]uit")
+
+
+@STATE_MACHINE.transition(MazeState.GENERATE, Event.QUIT, MazeState.QUIT)
+@STATE_MACHINE.transition(MazeState.SOLVE, Event.QUIT, MazeState.QUIT)
+@STATE_MACHINE.transition(MazeState.SAVE, Event.QUIT, MazeState.QUIT)
+def do_quit(ctx: MazeContext) -> None:
+    pass
