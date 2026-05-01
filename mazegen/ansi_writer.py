@@ -75,6 +75,7 @@ class AnsiWriter:
             self.write_color_pixel(color, width)
 
     def flush(self) -> None:
+        self.write_color_reset()
         sys.stdout.write(self._buffer)
         sys.stdout.flush()
         self._buffer = ""
