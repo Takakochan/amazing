@@ -118,6 +118,8 @@ def do_solve(ctx: MazeContext) -> None:
 def do_save(ctx: MazeContext) -> None:
     ctx.maze_generator.save(ctx.config.output_file)
 
+    ctx.maze_generator.display()
+
     print(f"Generated maze (seed: {ctx.maze_generator.seed})")
     print()
     print("[g]enerate | [q]uit | [c]olor")
