@@ -30,8 +30,8 @@ $h(n) = |dx| + |dy|$
                                                                         
 Using Manhattan distance here ensures the heuristic is admissible — it never overestimates the actual number of steps — which guarantees A* always finds the shortest path.
 
-#State Machine                                                                         
-###Overview                                                  
+# State Machine                                                                         
+### Overview                                                  
 
 User interactions are managed by a generic state machine (StateMachine[S, E, C]). It separates what state the program is in from what to do when an event occurs, making the logic easy to extend.       
                                                             
