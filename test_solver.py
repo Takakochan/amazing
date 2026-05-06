@@ -24,7 +24,7 @@ def solve(
     maze_generator.solve(algorithm)
     solution_bfs = maze_generator.solution
     maze_generator.save(output_file + algorithm)
-    return solution_bfs
+    return solution_bfs or []
 
 
 def run(config: Config, seed: int) -> None:
