@@ -1,9 +1,9 @@
-from mazegen.cell import Cell
-from mazegen.cell_value import CellValue
-from mazegen.direction import Direction
-from mazegen.grid import Grid
-from mazegen.render.base import Renderer
-from mazegen.solvers.base import Solver
+from src.mazegen.cell import Cell
+from src.mazegen.cell_value import CellValue
+from src.mazegen.direction import Direction
+from src.mazegen.grid import Grid
+from src.mazegen.render.base import Renderer
+from src.mazegen.solvers.base import Solver
 
 
 class SolverDFS(Solver):

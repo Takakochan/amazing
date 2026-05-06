@@ -1,8 +1,8 @@
 # TODO: move test file to test directory
 
-from config import Config
-from mazegen import MazeGenerator
-from mazegen.wall_state import WallState
+from src.config import Config
+from src.mazegen import MazeGenerator
+from src.mazegen.wall_state import WallState
 
 CONFIG = Config(
     18,

@@ -1,10 +1,10 @@
 import random
 import time
 
-from mazegen.cell import Cell
-from mazegen.generators.base import Generator
-from mazegen.grid import Grid
-from mazegen.render.base import Renderer
+from src.mazegen.cell import Cell
+from src.mazegen.generators.base import Generator
+from src.mazegen.grid import Grid
+from src.mazegen.render.base import Renderer
 
 
 class GeneratorDFS(Generator):

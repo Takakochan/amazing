@@ -2,9 +2,9 @@
 
 from typing import Literal
 
-from config import Config
-from mazegen import MazeGenerator
-from mazegen.direction import Direction
+from src.config import Config
+from src.mazegen import MazeGenerator
+from src.mazegen.direction import Direction
 
 CONFIG = Config(
     18,

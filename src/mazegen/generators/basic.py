@@ -1,7 +1,7 @@
-from mazegen.generators.base import Generator
-from mazegen.generators.dfs import GeneratorDFS
-from mazegen.grid import Grid
-from mazegen.render.base import Renderer
+from src.mazegen.generators.base import Generator
+from src.mazegen.generators.dfs import GeneratorDFS
+from src.mazegen.grid import Grid
+from src.mazegen.render.base import Renderer
 
 
 class GeneratorBasic(Generator):

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Self
 
-from mazegen.direction import Direction
+from src.mazegen.direction import Direction
 
 
 class CellError(Exception):

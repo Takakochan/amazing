@@ -5,9 +5,9 @@ import sys
 import termios
 from types import TracebackType
 
-from config import Config, ConfigError
-from mazegen import MazeGenerator
-from statemachine import (
+from src.config import Config, ConfigError
+from src.mazegen import MazeGenerator
+from src.statemachine import (
     STATE_MACHINE,
     Context,
     Event,

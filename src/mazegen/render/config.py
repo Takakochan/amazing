@@ -2,8 +2,8 @@ import random
 from dataclasses import dataclass
 from typing import Self
 
-from color import Color
-from config import Config
+from src.color import Color
+from src.config import Config
 
 
 @dataclass

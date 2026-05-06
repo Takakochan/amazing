@@ -2,21 +2,21 @@ import sys
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal, Self
 
-from config import Config
-from mazegen.cell import Cell
-from mazegen.cell_value import CellValue
-from mazegen.direction import Direction
-from mazegen.generators.dfs import GeneratorDFS
-from mazegen.generators.imperfect import GeneratorImperfect
-from mazegen.grid import FortyTwoPatternError, Grid
-from mazegen.render.ascii_renderer import AsciiRenderer
-from mazegen.render.base import Renderer
-from mazegen.solvers.a_star import SolverAStar
-from mazegen.solvers.bfs import SolverBFS
-from mazegen.solvers.dfs import SolverDFS
+from src.config import Config
+from src.mazegen.cell import Cell
+from src.mazegen.cell_value import CellValue
+from src.mazegen.direction import Direction
+from src.mazegen.generators.dfs import GeneratorDFS
+from src.mazegen.generators.imperfect import GeneratorImperfect
+from src.mazegen.grid import FortyTwoPatternError, Grid
+from src.mazegen.render.ascii_renderer import AsciiRenderer
+from src.mazegen.render.base import Renderer
+from src.mazegen.solvers.a_star import SolverAStar
+from src.mazegen.solvers.bfs import SolverBFS
+from src.mazegen.solvers.dfs import SolverDFS
 
 if TYPE_CHECKING:
-    from mazegen.solvers.base import Solver
+    from src.mazegen.solvers.base import Solver
 
 
 def validate(

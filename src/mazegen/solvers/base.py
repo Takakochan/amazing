@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-from mazegen.cell import Cell
-from mazegen.direction import Direction
-from mazegen.grid import Grid
-from mazegen.render.base import Renderer
+from src.mazegen.cell import Cell
+from src.mazegen.direction import Direction
+from src.mazegen.grid import Grid
+from src.mazegen.render.base import Renderer
 
 
 class Solver(ABC):

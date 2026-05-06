@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
-from color import Color
-from mazegen.render.config import RenderConfig
+from src.color import Color
+from src.mazegen.render.config import RenderConfig
 
 
 class CellMarking(Enum):

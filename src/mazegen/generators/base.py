@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from mazegen.grid import Grid
-from mazegen.render.base import Renderer
+from src.mazegen.grid import Grid
+from src.mazegen.render.base import Renderer
 
 
 class Generator(ABC):

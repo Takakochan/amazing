@@ -4,8 +4,8 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum, StrEnum, auto
 
-from config import Config
-from mazegen import MazeGenerator
+from src.config import Config
+from src.mazegen import MazeGenerator
 
 type Action[C] = Callable[[C], None]
 
