@@ -53,4 +53,5 @@ def do_solve(ctx: MazeContext) -> None:
     ctx.maze_generator.solve(ctx.config.algorithm)
     ctx.maze_generator.display()                
 
-reffered source : [![The State Pattern in Python](https://img.youtube.com/vi/OeirQdzYdnc/0.jpg)](https://www.youtube.com/watch?v=OeirQdzYdnc)
+reffered source : 
+[![The State Pattern in Python](https://img.youtube.com/vi/OeirQdzYdnc/0.jpg)](https://www.youtube.com/watch?v=OeirQdzYdnc)
