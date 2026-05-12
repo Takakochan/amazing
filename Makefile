@@ -16,12 +16,7 @@ RM := rm -rf
 all: install run
 
 install:
-	uv tool install flake8
-	uv tool install mypy
-	uv tool install ruff
-	uv tool install ty
-	uv tool install pytest
-	uv tool install build
+	@echo "This program has no dependencies."
 
 run:
 	uv run $(MAIN_PROGRAM) config.txt
