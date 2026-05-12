@@ -8,6 +8,13 @@ from src.mazegen.grid import Grid
 from src.mazegen.render.base import Renderer
 from src.mazegen.wall_state import WallState
 
+# FIXME: imperfect maze must have multiple solutions
+# Examples:
+# - entry at (0, 0) and exit at (1, 1)
+# - entry and exit in center
+# Plan:
+# - reimplement imperfect generator
+
 
 class GeneratorImperfect(Generator):
     def generate(
