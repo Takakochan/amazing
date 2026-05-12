@@ -27,7 +27,7 @@ class GeneratorImperfect(Generator):
 
         generator = GeneratorDFS()
         seed = generator.generate(grid, seed, renderer)
-        closed_walls = grid.get_collect_closed_walls()
+        closed_walls = grid.get_closed_walls()
         open_walls_by_areas(grid, renderer, closed_walls)
 
         return seed

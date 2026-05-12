@@ -17,7 +17,7 @@ def run(config: Config, seed: int) -> None:
 
     maze_generator.generate(config.perfect, seed)
 
-    closed = maze_generator.grid.get_collect_closed_walls()
+    closed = maze_generator.grid.get_closed_walls()
 
     for cell, direction in closed:
         assert (

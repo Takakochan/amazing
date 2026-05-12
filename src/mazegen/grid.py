@@ -337,7 +337,7 @@ class Grid:
             + "\n"
         )
 
-    def get_collect_closed_walls(self) -> list[tuple[Cell, Direction]]:
+    def get_closed_walls(self) -> list[tuple[Cell, Direction]]:
         closed_walls_south = [
             (Cell(x, y), Direction.SOUTH)
             for x in range(self.width)
