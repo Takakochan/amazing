@@ -19,6 +19,10 @@ class Renderer(ABC):
         pass
 
     @abstractmethod
+    def is_solution_shown(self) -> bool:
+        pass
+
+    @abstractmethod
     def write_cell(self, grid: Grid, cell: Cell) -> None:
         pass
 

@@ -110,13 +110,28 @@ class StateMachine:
         print(event.message(ctx))
 
         if next_state is not State.QUIT:
+            events = []
+            for s, e in self.transitions:
+                if s != next_state:
+                    continue
+
+                if (
+                    e is Event.HIDE_SOLUTION
+                    and not ctx.maze_generator.renderer.is_solution_shown()
+                ):
+                    continue
+
+                if (
+                    e is Event.SHOW_SOLUTION
+                    and ctx.maze_generator.renderer.is_solution_shown()
+                ):
+                    continue
+
+                events.append(e)
+
             print()
             print(
-                " | ".join([
-                    e.to_string()
-                    for s, e in self.transitions
-                    if s == next_state
-                ]),
+                " | ".join([e.to_string() for e in events]),
             )
 
         return next_state

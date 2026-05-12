@@ -46,6 +46,9 @@ class AsciiRenderer(Renderer):
 
         return False
 
+    def is_solution_shown(self) -> bool:
+        return self._show_solution
+
     def get_cell_color(self, grid: Grid, cell: Cell) -> Color:
         grid.validate_coordinate(cell)
 
