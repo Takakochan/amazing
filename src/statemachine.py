@@ -162,15 +162,13 @@ def do_save(ctx: Context) -> None:
 @STATE_MACHINE.transition(State.SOLVE, Event.SHOW_SOLUTION, State.SOLVE)
 @STATE_MACHINE.transition(State.SAVE, Event.SHOW_SOLUTION, State.SAVE)
 def do_show_solution(ctx: Context) -> None:
-    if not ctx.maze_generator.renderer.show_solution():
-        return
+    ctx.maze_generator.renderer.show_solution()
 
 
 @STATE_MACHINE.transition(State.SOLVE, Event.HIDE_SOLUTION, State.SOLVE)
 @STATE_MACHINE.transition(State.SAVE, Event.HIDE_SOLUTION, State.SAVE)
 def do_hide_solution(ctx: Context) -> None:
-    if not ctx.maze_generator.renderer.hide_solution():
-        return
+    ctx.maze_generator.renderer.hide_solution()
 
 
 @STATE_MACHINE.transition(State.GENERATE, Event.COLORS, State.GENERATE)
