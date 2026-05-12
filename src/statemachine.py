@@ -19,17 +19,21 @@ class Context:
 
 
 class State(Enum):
-    GENERATE = auto()
-    SOLVE = auto()
-    SAVE = auto()
+    GENERATED = auto()
+    SOLVED = auto()
+    SOLVED_HIDDEN = auto()
+    SOLVED_SHOWN = auto()
+    SAVED_HIDDEN = auto()
+    SAVED_SHOWN = auto()
     QUIT = auto()
 
 
 class Event(StrEnum):
     GENERATE = "g"
-    SHOW_SOLUTION = "s"
+    SOLVE = "o"
     HIDE_SOLUTION = "h"
-    SAVE = "S"
+    SHOW_SOLUTION = "s"
+    SAVE = "a"
     COLORS = "c"
     QUIT = "q"
 
@@ -37,10 +41,12 @@ class Event(StrEnum):
         match self:
             case Event.GENERATE:
                 return f"Generated maze (seed: {ctx.maze_generator.seed})"
-            case Event.SHOW_SOLUTION:
+            case Event.SOLVE:
                 return f"Solved maze (seed: {ctx.maze_generator.seed})"
             case Event.HIDE_SOLUTION:
                 return f"Hidden solution (seed: {ctx.maze_generator.seed})"
+            case Event.SHOW_SOLUTION:
+                return f"Shown solution (seed: {ctx.maze_generator.seed})"
             case Event.SAVE:
                 return (
                     f"Saved solution to '{ctx.config.output_file}' "
@@ -55,12 +61,14 @@ class Event(StrEnum):
         match self:
             case Event.GENERATE:
                 return "[g]enerate"
-            case Event.SHOW_SOLUTION:
-                return "[s]how"
+            case Event.SOLVE:
+                return "s[o]lve"
             case Event.HIDE_SOLUTION:
                 return "[h]ide"
+            case Event.SHOW_SOLUTION:
+                return "[s]how"
             case Event.SAVE:
-                return "[S]ave"
+                return "s[a]ve"
             case Event.COLORS:
                 return "[c]olor"
             case Event.QUIT:
@@ -152,9 +160,12 @@ class StateMachine:
 STATE_MACHINE: StateMachine = StateMachine()
 
 
-@STATE_MACHINE.transition(State.GENERATE, Event.GENERATE, State.GENERATE)
-@STATE_MACHINE.transition(State.SOLVE, Event.GENERATE, State.GENERATE)
-@STATE_MACHINE.transition(State.SAVE, Event.GENERATE, State.GENERATE)
+@STATE_MACHINE.transition(State.GENERATED, Event.GENERATE, State.GENERATED)
+@STATE_MACHINE.transition(State.SOLVED, Event.GENERATE, State.GENERATED)
+@STATE_MACHINE.transition(State.SOLVED_HIDDEN, Event.GENERATE, State.GENERATED)
+@STATE_MACHINE.transition(State.SOLVED_SHOWN, Event.GENERATE, State.GENERATED)
+@STATE_MACHINE.transition(State.SAVED_HIDDEN, Event.GENERATE, State.GENERATED)
+@STATE_MACHINE.transition(State.SAVED_SHOWN, Event.GENERATE, State.GENERATED)
 def do_generate(ctx: Context) -> None:
     ctx.maze_generator = MazeGenerator.from_config(ctx.config)
 
@@ -164,41 +175,70 @@ def do_generate(ctx: Context) -> None:
     ctx.maze_generator.generate(ctx.config.perfect, ctx.config.seed)
 
 
-@STATE_MACHINE.transition(State.GENERATE, Event.SHOW_SOLUTION, State.SOLVE)
+@STATE_MACHINE.transition(State.GENERATED, Event.SOLVE, State.SOLVED)
 def do_solve(ctx: Context) -> None:
     ctx.maze_generator.solve(ctx.config.algorithm)
 
 
-@STATE_MACHINE.transition(State.SOLVE, Event.SAVE, State.SAVE)
+@STATE_MACHINE.transition(State.SOLVED, Event.SAVE, State.SAVED_SHOWN)
+@STATE_MACHINE.transition(State.SOLVED_HIDDEN, Event.SAVE, State.SAVED_HIDDEN)
+@STATE_MACHINE.transition(State.SOLVED_SHOWN, Event.SAVE, State.SAVED_SHOWN)
 def do_save(ctx: Context) -> None:
     ctx.maze_generator.save(ctx.config.output_file)
 
 
-@STATE_MACHINE.transition(State.SOLVE, Event.SHOW_SOLUTION, State.SOLVE)
-@STATE_MACHINE.transition(State.SAVE, Event.SHOW_SOLUTION, State.SAVE)
+@STATE_MACHINE.transition(
+    State.SOLVED_HIDDEN,
+    Event.SHOW_SOLUTION,
+    State.SOLVED_SHOWN,
+)
+@STATE_MACHINE.transition(
+    State.SAVED_HIDDEN,
+    Event.SHOW_SOLUTION,
+    State.SAVED_SHOWN,
+)
 def do_show_solution(ctx: Context) -> None:
     ctx.maze_generator.renderer.show_solution()
 
 
-@STATE_MACHINE.transition(State.SOLVE, Event.HIDE_SOLUTION, State.SOLVE)
-@STATE_MACHINE.transition(State.SAVE, Event.HIDE_SOLUTION, State.SAVE)
+@STATE_MACHINE.transition(
+    State.SOLVED,
+    Event.HIDE_SOLUTION,
+    State.SOLVED_HIDDEN,
+)
+@STATE_MACHINE.transition(
+    State.SOLVED_SHOWN,
+    Event.HIDE_SOLUTION,
+    State.SOLVED_HIDDEN,
+)
+@STATE_MACHINE.transition(
+    State.SAVED_SHOWN,
+    Event.HIDE_SOLUTION,
+    State.SAVED_HIDDEN,
+)
 def do_hide_solution(ctx: Context) -> None:
     ctx.maze_generator.renderer.hide_solution()
 
 
-@STATE_MACHINE.transition(State.GENERATE, Event.COLORS, State.GENERATE)
-@STATE_MACHINE.transition(State.SOLVE, Event.COLORS, State.SOLVE)
-@STATE_MACHINE.transition(State.SAVE, Event.COLORS, State.SAVE)
+@STATE_MACHINE.transition(State.GENERATED, Event.COLORS, State.GENERATED)
+@STATE_MACHINE.transition(State.SOLVED, Event.COLORS, State.SOLVED)
+@STATE_MACHINE.transition(
+    State.SOLVED_HIDDEN,
+    Event.COLORS,
+    State.SOLVED_HIDDEN,
+)
+@STATE_MACHINE.transition(State.SOLVED_SHOWN, Event.COLORS, State.SOLVED_SHOWN)
+@STATE_MACHINE.transition(State.SAVED_HIDDEN, Event.COLORS, State.SAVED_HIDDEN)
+@STATE_MACHINE.transition(State.SAVED_SHOWN, Event.COLORS, State.SAVED_SHOWN)
 def do_colors(ctx: Context) -> None:
     ctx.maze_generator.renderer.random_color(ctx.maze_generator.grid)
 
 
-def do_colors_save(ctx: Context) -> None:
-    ctx.maze_generator.renderer.random_color(ctx.maze_generator.grid)
-
-
-@STATE_MACHINE.transition(State.GENERATE, Event.QUIT, State.QUIT)
-@STATE_MACHINE.transition(State.SOLVE, Event.QUIT, State.QUIT)
-@STATE_MACHINE.transition(State.SAVE, Event.QUIT, State.QUIT)
+@STATE_MACHINE.transition(State.GENERATED, Event.QUIT, State.QUIT)
+@STATE_MACHINE.transition(State.SOLVED, Event.QUIT, State.QUIT)
+@STATE_MACHINE.transition(State.SOLVED_HIDDEN, Event.QUIT, State.QUIT)
+@STATE_MACHINE.transition(State.SOLVED_SHOWN, Event.QUIT, State.QUIT)
+@STATE_MACHINE.transition(State.SAVED_HIDDEN, Event.QUIT, State.QUIT)
+@STATE_MACHINE.transition(State.SAVED_SHOWN, Event.QUIT, State.QUIT)
 def do_quit(ctx: Context) -> None:
     pass

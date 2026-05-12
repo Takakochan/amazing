@@ -43,7 +43,7 @@ def main() -> None:
 
     with NonBlockingInput():
         ctx = Context(MazeGenerator.from_config(config), config)
-        current_state = State.GENERATE
+        current_state = State.GENERATED
         STATE_MACHINE.handle(ctx, current_state, Event.GENERATE)
 
         while current_state is not State.QUIT:
@@ -62,7 +62,7 @@ def main() -> None:
             try:
                 current_state = STATE_MACHINE.handle(ctx, current_state, event)
             except InvalidTransition:
-                break
+                continue
 
 
 if __name__ == "__main__":
