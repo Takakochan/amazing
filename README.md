@@ -57,3 +57,11 @@ def do_solve(ctx: Context) -> None:
 
 Referred source:
 [![The State Pattern in Python](https://img.youtube.com/vi/OeirQdzYdnc/0.jpg)](https://www.youtube.com/watch?v=OeirQdzYdnc)
+
+
+
+Markdown,
+Installation
+Usage
+Build
+etc
