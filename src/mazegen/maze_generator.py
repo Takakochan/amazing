@@ -1,4 +1,5 @@
 import sys
+import time
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal, Self
 
@@ -80,11 +81,11 @@ class MazeGenerator:
         try:
             self.grid.set_forty_two_pattern([self.src, self.dest])
         except FortyTwoPatternError as error:
-            # TODO: display 42 pattern error more clearly
             print(
-                f"\033[91mcould not draw 42 pattern: {error}\033[0m",
+                f"\033[93mWARN: could not draw 42 pattern: {error}\033[0m",
                 file=sys.stderr,
             )
+            time.sleep(1)
 
         self.renderer = AsciiRenderer.default()
         self.seed = None
