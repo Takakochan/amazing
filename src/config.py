@@ -201,6 +201,12 @@ class Config:
         if self.height <= 0:
             raise ConfigError(f"height must be positive: `{self.height}`")
 
+        if self.entry == self.exit:
+            raise ConfigError(
+                "entry and exit must be different: "
+                f"entry: `{self.entry}`, exit: `{self.exit}`",
+            )
+
         if (
             self.entry[0] < 0
             or self.entry[0] >= self.width
