@@ -62,7 +62,7 @@ def main() -> None:
             try:
                 current_state = STATE_MACHINE.handle(ctx, current_state, event)
             except InvalidTransition:
-                continue
+                break
 
 
 if __name__ == "__main__":
