@@ -8,13 +8,6 @@ from src.mazegen.grid import Grid
 from src.mazegen.render.base import Renderer
 from src.mazegen.wall_state import WallState
 
-# FIXME: imperfect maze must have multiple solutions
-# Examples:
-# - entry at (0, 0) and exit at (1, 1)
-# - entry and exit in center
-# Plan:
-# - reimplement imperfect generator
-
 
 class GeneratorImperfect(Generator):
     def generate(
@@ -27,57 +20,23 @@ class GeneratorImperfect(Generator):
 
         generator = GeneratorDFS()
         seed = generator.generate(grid, seed, renderer)
+
         closed_walls = grid.get_closed_walls()
-        open_walls_by_areas(grid, renderer, closed_walls)
+        random.shuffle(closed_walls)
+
+        for cell, direction in closed_walls:
+            if random.random() * 3 > 1:
+                continue
+
+            if creates_open_area(grid, cell, direction):
+                continue
+
+            grid.open_wall(cell, direction)
+
+            if renderer.animate():
+                renderer.display_cell(grid, cell)
 
         return seed
-
-
-def open_walls_by_areas(
-    grid: Grid,
-    renderer: Renderer,
-    closed_walls: list[tuple[Cell, Direction]],
-) -> None:
-    mid_x = grid.width // 2
-    mid_y = grid.height // 2
-    area_a = [
-        (cell, direction)
-        for cell, direction in closed_walls
-        if 0 < cell.x <= mid_x and 0 < cell.y <= mid_y
-    ]
-    area_b = [
-        (cell, direction)
-        for cell, direction in closed_walls
-        if mid_x < cell.x < grid.width and mid_y < cell.y < grid.height
-    ]
-    area_c = [
-        (cell, direction)
-        for cell, direction in closed_walls
-        if 0 < cell.x <= mid_x and mid_y < cell.y < grid.height
-    ]
-    area_d = [
-        (cell, direction)
-        for cell, direction in closed_walls
-        if mid_x < cell.x < grid.width and 0 < cell.y <= mid_y
-    ]
-
-    for area in [area_a, area_b, area_c, area_d]:
-        if not area:
-            continue
-
-        cell, direction = random.choice(area)
-
-        if creates_open_area(
-            grid,
-            cell,
-            direction,
-        ):
-            continue
-
-        grid.open_wall(cell, direction)
-
-        if renderer.animate():
-            renderer.display_cell(grid, cell)
 
 
 def creates_open_area(
