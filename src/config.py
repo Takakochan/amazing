@@ -1,5 +1,3 @@
-# TODO: move file to separate directory
-
 from collections.abc import Callable
 from dataclasses import dataclass, fields
 from typing import Any, Literal, Self, get_args, get_type_hints

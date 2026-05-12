@@ -1,5 +1,3 @@
-# TODO: move file to separate directory
-
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum, StrEnum, auto

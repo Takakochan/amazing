@@ -1,5 +1,3 @@
-# TODO: move test file to test directory
-
 from typing import Literal
 
 from src.config import Config
