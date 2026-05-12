@@ -25,6 +25,11 @@ def validate(
     width: int,
     height: int,
 ) -> None:
+    if src == dest:
+        raise ValueError(
+            f"src and dest must be different: `{src}`",
+        )
+
     if width <= 0:
         raise ValueError(f"width must be positive: `{width}`")
 

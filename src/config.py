@@ -203,8 +203,7 @@ class Config:
 
         if self.entry == self.exit:
             raise ConfigError(
-                "entry and exit must be different: "
-                f"entry: `{self.entry}`, exit: `{self.exit}`",
+                f"entry and exit must be different: `{self.entry}`",
             )
 
         if (
