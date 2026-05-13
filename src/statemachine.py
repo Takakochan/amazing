@@ -4,6 +4,7 @@ from enum import Enum, StrEnum, auto
 
 from src.config import Config
 from src.mazegen import MazeGenerator
+from src.mazegen.render.ascii_renderer import AsciiRenderer
 
 type Action[C] = Callable[[C], None]
 
@@ -167,7 +168,13 @@ STATE_MACHINE: StateMachine = StateMachine()
 @STATE_MACHINE.transition(State.SAVED_HIDDEN, Event.GENERATE, State.GENERATED)
 @STATE_MACHINE.transition(State.SAVED_SHOWN, Event.GENERATE, State.GENERATED)
 def do_generate(ctx: Context) -> None:
-    ctx.maze_generator = MazeGenerator.from_config(ctx.config)
+    ctx.maze_generator = MazeGenerator(
+        ctx.config.entry,
+        ctx.config.exit,
+        ctx.config.width,
+        ctx.config.height,
+    )
+    ctx.maze_generator.renderer = AsciiRenderer.from_config(ctx.config)
 
     if ctx.config.animation:
         ctx.maze_generator.display()

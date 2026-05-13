@@ -12,9 +12,8 @@ Example:
 import sys
 import time
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal, Self
+from typing import TYPE_CHECKING, Literal
 
-from src.config import Config
 from src.mazegen.cell import Cell
 from src.mazegen.cell_value import CellValue
 from src.mazegen.direction import Direction
@@ -112,18 +111,6 @@ class MazeGenerator:
         self.renderer = AsciiRenderer.default()
         self.seed = None
         self.solution = None
-
-    @classmethod
-    def from_config(cls, config: Config) -> Self:
-        maze_generator = cls(
-            config.entry,
-            config.exit,
-            config.width,
-            config.height,
-        )
-        maze_generator.renderer = AsciiRenderer.from_config(config)
-
-        return maze_generator
 
     def display(self) -> None:
         self.renderer.display_grid(self.grid)

@@ -1,17 +1,7 @@
 from typing import Literal
 
-from src.config import Config
 from src.mazegen import MazeGenerator
 from src.mazegen.direction import Direction
-
-CONFIG = Config(
-    18,
-    18,
-    (0, 0),
-    (17, 17),
-    "/tmp/test_maze_",
-    False,
-)
 
 
 def solve(
@@ -25,13 +15,14 @@ def solve(
     return solution_bfs or []
 
 
-def run(config: Config, seed: int) -> None:
-    maze_generator = MazeGenerator.from_config(config)
+def run(seed: int) -> None:
+    maze_generator = MazeGenerator((0, 0), (17, 17), 18, 18)
 
-    maze_generator.generate(config.perfect, seed)
+    maze_generator.generate(True, seed)
 
-    solution_bfs = solve(maze_generator, "BFS", config.output_file)
-    solution_a_star = solve(maze_generator, "A*", config.output_file)
+    output_file = "/tmp/test_maze_"
+    solution_bfs = solve(maze_generator, "BFS", output_file)
+    solution_a_star = solve(maze_generator, "A*", output_file)
 
     solution_bfs_string = "".join([
         direction.into_file_format() for direction in solution_bfs
@@ -49,24 +40,24 @@ def run(config: Config, seed: int) -> None:
 
 
 def test_solver_seed() -> None:
-    run(CONFIG, 1776190330919183478)
+    run(1776190330919183478)
 
 
 def test_solver_range_0_50() -> None:
     for seed in range(0, 50):
-        run(CONFIG, seed)
+        run(seed)
 
 
 def test_solver_range_50_100() -> None:
     for seed in range(50, 100):
-        run(CONFIG, seed)
+        run(seed)
 
 
 def test_solver_range_100_150() -> None:
     for seed in range(100, 150):
-        run(CONFIG, seed)
+        run(seed)
 
 
 def test_solver_range_150_200() -> None:
     for seed in range(100, 150):
-        run(CONFIG, seed)
+        run(seed)
