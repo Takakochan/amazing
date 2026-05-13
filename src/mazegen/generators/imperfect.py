@@ -25,7 +25,7 @@ class GeneratorImperfect(Generator):
         random.shuffle(closed_walls)
 
         for cell, direction in closed_walls:
-            if random.random() * 3 > 1:
+            if random.random() * 5 > 1:
                 continue
 
             if creates_open_area(grid, cell, direction):
