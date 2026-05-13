@@ -38,8 +38,9 @@ ANIMATION_COLOR=blue
 
 ### Generator
 
-- Depth-First Search (DFS)
-- Imperfect
+#### Depth-First Search (DFS)
+
+<!-- TODO -->
 
 #### Imperfect
 
@@ -47,11 +48,19 @@ After generating the perfect maze, the maze is divided into four quadrants using
 Additional walls are selectively removed between quadrants to create loops and multiple possible paths.
 Before removing a wall, the algorithm checks that the change does not create an open area larger than 3×3 cells, helping preserve the overall maze structure.
 
-## Solver
+### Solver
 
-- Depth-First Search (DFS)
-- Breadth-First Search (BFS)
-- A\*
+#### Depth-First Search (DFS)
+
+<!-- TODO -->
+
+#### Breadth-First Search (BFS)
+
+<!-- TODO -->
+
+#### A\*
+
+<!-- TODO -->
 
 # Instructions
 
