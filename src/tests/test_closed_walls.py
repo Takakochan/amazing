@@ -1,5 +1,5 @@
-from src.mazegen import MazeGenerator
-from src.mazegen.wall_state import WallState
+from mazegen import MazeGenerator
+from mazegen.wall_state import WallState
 
 
 def run(seed: int) -> None:

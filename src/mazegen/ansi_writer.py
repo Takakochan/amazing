@@ -2,7 +2,7 @@ import sys
 from dataclasses import dataclass
 
 from src.color import Color
-from src.mazegen.cell import Cell
+from mazegen.cell import Cell
 
 
 @dataclass

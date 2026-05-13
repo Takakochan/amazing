@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 
-from src.mazegen.cell import Cell
-from src.mazegen.cell_marking import CellMarking
-from src.mazegen.cell_state import CellState
-from src.mazegen.cell_value import CellValue
-from src.mazegen.direction import Direction
-from src.mazegen.wall_state import WallState
+from mazegen.cell import Cell
+from mazegen.cell_marking import CellMarking
+from mazegen.cell_state import CellState
+from mazegen.cell_value import CellValue
+from mazegen.direction import Direction
+from mazegen.wall_state import WallState
 
 FORTY_TWO = [
     [1, 0, 1, 0, 1, 1, 1],

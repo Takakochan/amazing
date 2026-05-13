@@ -3,8 +3,8 @@ from dataclasses import dataclass, field
 from enum import Enum, StrEnum, auto
 
 from src.config import Config
-from src.mazegen import MazeGenerator
-from src.mazegen.render.ascii_renderer import AsciiRenderer
+from mazegen import MazeGenerator
+from mazegen.render.ascii_renderer import AsciiRenderer
 
 type Action[C] = Callable[[C], None]
 

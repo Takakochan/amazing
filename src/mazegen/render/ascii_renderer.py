@@ -4,15 +4,15 @@ from typing import Self
 
 from src.color import Color
 from src.config import Config
-from src.mazegen.ansi_writer import AnsiWriter
-from src.mazegen.cell import Cell
-from src.mazegen.cell_marking import CellMarking
-from src.mazegen.cell_value import CellValue
-from src.mazegen.direction import Direction
-from src.mazegen.grid import Grid
-from src.mazegen.render.base import Renderer
-from src.mazegen.render.config import RenderConfig
-from src.mazegen.wall_state import WallState
+from mazegen.ansi_writer import AnsiWriter
+from mazegen.cell import Cell
+from mazegen.cell_marking import CellMarking
+from mazegen.cell_value import CellValue
+from mazegen.direction import Direction
+from mazegen.grid import Grid
+from mazegen.render.base import Renderer
+from mazegen.render.config import RenderConfig
+from mazegen.wall_state import WallState
 
 
 @dataclass

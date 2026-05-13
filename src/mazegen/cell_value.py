@@ -1,7 +1,7 @@
 from enum import IntEnum
 
 from src.color import Color
-from src.mazegen.render.config import RenderConfig
+from mazegen.render.config import RenderConfig
 
 
 class CellValue(IntEnum):

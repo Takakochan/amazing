@@ -1,12 +1,12 @@
 import random
 
-from src.mazegen.cell import Cell
-from src.mazegen.direction import Direction
-from src.mazegen.generators.base import Generator
-from src.mazegen.generators.dfs import GeneratorDFS
-from src.mazegen.grid import Grid
-from src.mazegen.render.base import Renderer
-from src.mazegen.wall_state import WallState
+from mazegen.cell import Cell
+from mazegen.direction import Direction
+from mazegen.generators.base import Generator
+from mazegen.generators.dfs import GeneratorDFS
+from mazegen.grid import Grid
+from mazegen.render.base import Renderer
+from mazegen.wall_state import WallState
 
 
 class GeneratorImperfect(Generator):

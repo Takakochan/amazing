@@ -6,8 +6,8 @@ import termios
 from types import TracebackType
 
 from src.config import Config, ConfigError
-from src.mazegen import MazeGenerator
-from src.mazegen.render.ascii_renderer import AsciiRenderer
+from mazegen import MazeGenerator
+from mazegen.render.ascii_renderer import AsciiRenderer
 from src.statemachine import (
     STATE_MACHINE,
     Context,

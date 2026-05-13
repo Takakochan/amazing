@@ -1,4 +1,4 @@
-from src.mazegen import MazeGenerator
+from mazegen import MazeGenerator
 
 
 def main() -> None:

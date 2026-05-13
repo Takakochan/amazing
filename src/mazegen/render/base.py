@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
-from src.mazegen.cell import Cell
-from src.mazegen.direction import Direction
-from src.mazegen.grid import Grid
+from mazegen.cell import Cell
+from mazegen.direction import Direction
+from mazegen.grid import Grid
 
 
 class Renderer(ABC):

@@ -1,7 +1,7 @@
 from typing import Literal
 
-from src.mazegen import MazeGenerator
-from src.mazegen.direction import Direction
+from mazegen import MazeGenerator
+from mazegen.direction import Direction
 
 
 def solve(
