@@ -1,5 +1,4 @@
-*This project has been created as part of the 42 curriculum by <ilclaass>[, <tkunugi>].*
-
+_This project has been created as part of the 42 curriculum by <ilclaass>[, <tkunugi>]._
 
 ## MazeGenerator
 
@@ -12,24 +11,24 @@ maze_generator.solve("A*")
 print(maze_generator.solution)
 ```
 
-
 ## Discription
+
 42 Next commoncore Python project. - A-Maze-ing
 
 ### The algorythm what we have choosen for Maze generator
+
 Depth-First Search algorithm for perfect maze
 
-
 ### What we have implement for imperfect maze generator
+
 After generating the perfect maze, the maze is divided into four quadrants using one horizontal and one vertical center line.
 Additional walls are selectively removed between quadrants to create loops and multiple possible paths.
 Before removing a wall, the algorithm checks that the change does not create an open area larger than 3×3 cells, helping preserve the overall maze structure.
 
-
-### Solver 
-
+### Solver
 
 ## Instructions
+
 • An “Instructions” section containing any relevant information about compilation,
 installation, and/or execution.
 
@@ -45,8 +44,8 @@ make build
 
 This creates both:
 
-* `.whl`
-* `.tar.gz`
+- `.whl`
+- `.tar.gz`
 
 package files at the root of the repository.
 
@@ -126,7 +125,6 @@ make format
 make clean
 ```
 
-
 ## A\* Algorithm
 
 ### Why A\*?
@@ -158,6 +156,7 @@ $h(n) = |dx| + |dy|$
 Using Manhattan distance here ensures the heuristic is admissible — it never overestimates the actual number of steps — which guarantees A\* always finds the shortest path.
 
 ## State Machine
+
 ### Overview
 
 User interactions are managed by a state machine.
@@ -185,8 +184,6 @@ def do_solve(ctx: Context) -> None:
 
 ### Resouce
 
-[About A*](https://ja.wikipedia.org/wiki/A*)
+[About A\*](https://ja.wikipedia.org/wiki/A*)
 [Heuristics](https://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html)
 [![The State Pattern in Python](https://img.youtube.com/vi/OeirQdzYdnc/0.jpg)](https://www.youtube.com/watch?v=OeirQdzYdnc)
-
-
