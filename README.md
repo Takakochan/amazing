@@ -158,7 +158,7 @@ make format
 make clean
 ```
 
-## Resources
+# Resources
 
 We used the following resources during development:
 
@@ -166,8 +166,28 @@ We used the following resources during development:
 - [Heuristics](https://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html)
 - [The State Pattern in Python (video)](https://www.youtube.com/watch?v=OeirQdzYdnc)
 
-### How AI was used
+## How AI was used
 
 - Ensured the understanding of the algorithm was correct.
 - Explored and gained a better understanding of Python built-in modules.
 - Improved English writing.
+
+# Project management
+
+## Roles
+
+<!-- TODO -->
+
+## Planning
+
+<!-- TODO -->
+
+## Reflection
+
+<!-- TODO -->
+
+## Tools
+
+- `uv`: package and project manager
+- `ruff` and `ty`: linting and formatting
+- `pytest`: run tests
