@@ -1,14 +1,15 @@
 _This project has been created as part of the 42 curriculum by ilclaass, tkunugi._<br>
 
-## Discription
+# Discription
 
-42 Next commoncore Python project. - A-Maze-ing
+42 Next commoncore Python project.  A-Maze-ing. 
+Create own maze generator and display its result.
 
 ## MazeGenerator
 
 ### The algorythm what we have choosen for Maze generator
 
-Depth-First Search algorithm for perfect maze
+**Depth-First Search** algorithm for the perfect maze.
 
 ### What we have implement for imperfect maze generator
 
@@ -25,11 +26,8 @@ maze_generator.solve("A*")
 print(maze_generator.solution)
 ```
 
-<br>
-
 ## Solver
-
-## A\* Algorithm
+### A\* Algorithm
 
 ### Why A\*?
 
@@ -84,7 +82,7 @@ def do_solve(ctx: Context) -> None:
 
 <br>
 
-## Instructions
+# Instructions
 
 ### Build the package
 
@@ -181,4 +179,9 @@ make clean
 
 [About A\* wikipedia](https://ja.wikipedia.org/wiki/A*)<br>
 [Heuristics](https://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html)<br>
-[The State Pattern in Python (video)](https://www.youtube.com/watch?v=OeirQdzYdnc)
+[The State Pattern in Python (video)](https://www.youtube.com/watch?v=OeirQdzYdnc)<br>
+
+### How AI was used 
+Ensured the understanding of the algorithm was correct.<br>
+Explored and gained a better understanding of Python built-in modules.<br>
+Improved English writing.<br>
