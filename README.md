@@ -1,31 +1,30 @@
 _This project has been created as part of the 42 curriculum by ilclaass, tkunugi._
 
-# A-Maze-ing
+# Description
 
 42 Next common core Python project.
 Create own maze generator and display its result.
 
-### Maze Generator
+### Generator algorithms
 
+- Depth-First Search (DFS)
+- Imperfect
 
-- Depth-First Searcc algorithm
+#### Imperfect
 
-For imperfect maze generator<br>
 After generating the perfect maze, the maze is divided into four quadrants using one horizontal and one vertical center line.
 Additional walls are selectively removed between quadrants to create loops and multiple possible paths.
 Before removing a wall, the algorithm checks that the change does not create an open area larger than 3×3 cells, helping preserve the overall maze structure.
 
+## Solver algorithms
 
-## Solver
-- A* search algorithm<br>
-- Breadth-First Search (BFS) algorithm<br>
-- Depth-First Search algorithm
+- Depth-First Search (DFS)
+- Breadth-First Search (BFS)
+- A\*
 
+# Instructions
 
-
-## Usage
-
-### Example
+### Usage
 
 ```python
 maze_generator = MazeGenerator(src=(0, 0), dest=(19, 19), width=20, height=20)
@@ -33,9 +32,6 @@ maze_generator.generate(perfect=True, seed=None)
 maze_generator.solve("A*")
 print(maze_generator.solution)
 ```
-
-
-# Instructions
 
 ### Build the package
 
@@ -57,7 +53,6 @@ Example:
 ```bash
 mazegen-1.0.0-py3-none-any.whl
 ```
-
 
 ---
 
@@ -129,14 +124,16 @@ make format
 make clean
 ```
 
-### How AI was used
+## Resources
 
-Ensured the understanding of the algorithm was correct.
-Explored and gained a better understanding of Python built-in modules.
-Improved English writing.
-
-### Resources
+We used the following resources during development:
 
 - [A\* search algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
 - [Heuristics](https://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html)
 - [The State Pattern in Python (video)](https://www.youtube.com/watch?v=OeirQdzYdnc)
+
+### How AI was used
+
+- Ensured the understanding of the algorithm was correct.
+- Explored and gained a better understanding of Python built-in modules.
+- Improved English writing.
