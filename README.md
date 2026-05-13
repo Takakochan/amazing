@@ -1,13 +1,13 @@
-_This project has been created as part of the 42 curriculum by ilclaass, tkunugi._<br>
+_This project has been created as part of the 42 curriculum by ilclaass, tkunugi._
 
-# Discription
+# A-Maze-ing
 
-42 Next commoncore Python project.  A-Maze-ing. 
+42 Next common core Python project.
 Create own maze generator and display its result.
 
-## MazeGenerator
+## Maze Generator
 
-### The algorythm what we have choosen for Maze generator
+### The algorithm that we have chosen for Maze generator
 
 **Depth-First Search** algorithm for the perfect maze.
 
@@ -27,6 +27,7 @@ print(maze_generator.solution)
 ```
 
 ## Solver
+
 ### A\* Algorithm
 
 ### Why A\*?
@@ -57,8 +58,6 @@ $h(n) = |dx| + |dy|$
 
 Using Manhattan distance here ensures the heuristic is admissible — it never overestimates the actual number of steps — which guarantees A\* always finds the shortest path.
 
-<br>
-
 ## State Machine
 
 ### Overview
@@ -79,8 +78,6 @@ Transitions are registered with a decorator, keeping the definition and the acti
 def do_solve(ctx: Context) -> None:
     ctx.maze_generator.solve(ctx.config.algorithm)
 ```
-
-<br>
 
 # Instructions
 
@@ -175,13 +172,14 @@ make format
 make clean
 ```
 
-### Resouce
+### How AI was used
 
-[About A\* wikipedia](https://ja.wikipedia.org/wiki/A*)<br>
-[Heuristics](https://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html)<br>
-[The State Pattern in Python (video)](https://www.youtube.com/watch?v=OeirQdzYdnc)<br>
+Ensured the understanding of the algorithm was correct.
+Explored and gained a better understanding of Python built-in modules.
+Improved English writing.
 
-### How AI was used 
-Ensured the understanding of the algorithm was correct.<br>
-Explored and gained a better understanding of Python built-in modules.<br>
-Improved English writing.<br>
+### Resources
+
+- [A\* search algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
+- [Heuristics](https://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html)
+- [The State Pattern in Python (video)](https://www.youtube.com/watch?v=OeirQdzYdnc)
