@@ -39,14 +39,14 @@ ALGORITHM=A*
 ### Generator
 
 #### Depth-First Search (DFS)
-<!-- TODO -->
+
 Depth-First Search is well suited for maze generation because it naturally creates:
-* long corridors
-* branching paths
-* organic maze structures
+
+- long corridors
+- branching paths
+- organic maze structures
 
 Random neighbor selection ensures that different seeds generate different maze layouts while still preserving valid maze connectivity.
-
 
 #### Imperfect
 
@@ -57,16 +57,15 @@ Before removing a wall, the algorithm checks that the change does not create an 
 ### Solver
 
 #### Depth-First Search (DFS)
-<!-- TODO -->
+
 Depth-First Search is a natural choice for solving mazes because it explores paths thoroughly before backtracking. This approach is particularly effective for:
 
 Finding complete solutions – DFS will eventually reach the exit if a path exists.
 Exploring branches – By following one path to its end, DFS reveals dead ends and alternative routes systematically.
 Memory efficiency – DFS only needs to remember the current path, making it lightweight for large mazes.
 
-
 #### Breadth-First Search (BFS)
-<!-- TODO -->
+
 Breadth-First Search is ideal for solving mazes when the goal is to find the shortest path from start to finish. BFS explores the maze level by level, ensuring that all positions at a given distance are visited before moving further. This makes it particularly suited for:
 
 Guaranteed shortest paths – BFS always finds the path with the fewest steps.
@@ -74,6 +73,7 @@ Systematic exploration – It evenly examines all branches before going deeper, 
 Predictable behavior – BFS produces consistent solutions for the same maze, independent of randomness.
 
 #### A\*
+
 A\* was chosen as the solver because it is both optimal (always finds the shortest path) and efficient (explores fewer cells than a naive search by using a heuristic).
 
 A\* assigns each cell a priority score:
@@ -97,7 +97,6 @@ Manhattan distance fits this constraint exactly:
 $h(n) = |dx| + |dy|$
 
 Using Manhattan distance here ensures the heuristic is admissible — it never overestimates the actual number of steps — which guarantees A\* always finds the shortest path.
-
 
 # Instructions
 
@@ -233,12 +232,12 @@ tkunugi:
 ## Planning
 
 We mainly used a pair-programming style because there was a significant difference in our programming skills and experience.
-Afterwards, tasks were divided in ilclaass, taking into account my (tkunugi’s) learning goals and growth.
+Afterwards, tasks were divided in ilclaass, taking into account tkunugi's learning goals and growth.
 
 ## Reflection
 
-I (tkunugi) was able to learn the structure and conceptual ideas by implementing a state machine.
-Also, coding algorithms using Python’s heapq library was a great opportunity to revisit how Python handles tuples and comparisons.
+tkunugi was able to learn the structure and conceptual ideas by implementing a state machine.
+Also, coding algorithms using Python's heapq library was a great opportunity to revisit how Python handles tuples and comparisons.
 
 ## Tools
 
