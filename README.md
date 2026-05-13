@@ -73,6 +73,8 @@ maze_generator.solve("A*")
 print(maze_generator.solution)
 ```
 
+---
+
 ### Build the package
 
 Generate the distributable package files:
@@ -81,18 +83,10 @@ Generate the distributable package files:
 make build
 ```
 
-This creates both:
+This creates the following packages:
 
-- `.whl`
-- `.tar.gz`
-
-package files at the root of the repository.
-
-Example:
-
-```bash
-mazegen-1.0.0-py3-none-any.whl
-```
+- `mazegen-1.0.0-py3-none-any.whl`
+- `mazegen-1.0.0.tar.gz`
 
 ---
 
