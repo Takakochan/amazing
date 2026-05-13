@@ -1,6 +1,7 @@
 MAIN_PROGRAM := a_maze_ing.py
 
 FLAKE8_FLAGS += --color always
+FLAKE8_FLAGS += --exclude .mypy_cache,.pytest_cache,.ruff_cache,.venv
 MYPY_FLAGS += --color-output
 MYPY_FLAGS += --warn-return-any
 MYPY_FLAGS += --warn-unused-ignores
