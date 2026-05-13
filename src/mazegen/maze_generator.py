@@ -1,3 +1,14 @@
+"""Generate and solve a maze.
+
+Example:
+    >>> maze_generator = MazeGenerator(
+    ...     src=(0, 0), dest=(19, 19), width=20, height=20
+    ... )
+    >>> maze_generator.generate(perfect=True, seed=None)
+    >>> maze_generator.solve("A*")
+    >>> print(maze_generator.solution)
+"""
+
 import sys
 import time
 from dataclasses import dataclass
@@ -26,6 +37,17 @@ def validate(
     width: int,
     height: int,
 ) -> None:
+    """Validate the given values.
+
+    Args:
+        src: the starting coordinates
+        dest: the ending coordinates
+        width: the width of the maze
+        height: the height of the maze
+
+    Raises:
+        ValueError
+    """
     if src == dest:
         raise ValueError(
             f"src and dest must be different: `{src}`",
@@ -111,11 +133,24 @@ class MazeGenerator:
         perfect: bool,
         seed: int | None,
     ) -> None:
+        """Generate a maze. To regenerate the same maze, use `self.seed` as the
+        seed.
+
+        Args:
+            perfect: generate a perfect maze that has a single solution.
+            seed: generate a deterministic maze with a specific seed.
+        """
         generator = GeneratorDFS() if perfect else GeneratorImperfect()
 
         self.seed = generator.generate(self.grid, seed, self.renderer)
 
     def solve(self, algorithm: Literal["DFS", "BFS", "A*"] | None) -> None:
+        """Solve the maze. The maze should be generated first. The solution is
+        stored in `self.solution`.
+
+        Args:
+            algorithm: DFS, BFS, or A*
+        """
         solver: Solver = SolverBFS()
 
         match algorithm:
@@ -133,18 +168,23 @@ class MazeGenerator:
             self.renderer,
         )
 
+    def into_file_format(self) -> str:
+        text = ""
+
+        text += self.grid.into_file_format()
+        text += "\n"
+        text += self.src.into_file_format()
+        text += self.dest.into_file_format()
+
+        if self.solution:
+            text += "".join([
+                direction.into_file_format() for direction in self.solution
+            ])
+
+        return text
+
     def save(self, filename: str) -> None:
         with open(filename, "w", encoding="utf-8") as file:
-            file.write(self.grid.into_file_format())
-            file.write("\n")
-            file.write(self.src.into_file_format())
-            file.write(self.dest.into_file_format())
-
-            if self.solution:
-                file.write(
-                    "".join([
-                        direction.into_file_format()
-                        for direction in self.solution
-                    ])
-                    + "\n",
-                )
+            file.write(
+                self.into_file_format() + "\n",
+            )

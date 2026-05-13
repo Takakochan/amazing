@@ -1,3 +1,14 @@
+## MazeGenerator
+
+# Example
+
+```python
+maze_generator = MazeGenerator(src=(0, 0), dest=(19, 19), width=20, height=20)
+maze_generator.generate(perfect=True, seed=None)
+maze_generator.solve("A*")
+print(maze_generator.solution)
+```
+
 ## A\* Algorithm
 
 ### Why A\*?
