@@ -1,10 +1,11 @@
-*This project has been created as part of the 42 curriculum by ilclaass, tkunugi.*<br>
+_This project has been created as part of the 42 curriculum by ilclaass, tkunugi._<br>
 
 ## Discription
 
 42 Next commoncore Python project. - A-Maze-ing
 
 ## MazeGenerator
+
 ### The algorythm what we have choosen for Maze generator
 
 Depth-First Search algorithm for perfect maze
@@ -23,9 +24,11 @@ maze_generator.generate(perfect=True, seed=None)
 maze_generator.solve("A*")
 print(maze_generator.solution)
 ```
+
 <br>
 
 ## Solver
+
 ## A\* Algorithm
 
 ### Why A\*?
@@ -68,7 +71,6 @@ It separates what state the program is in from what to do when an event occurs, 
 At its core, the state machine is a lookup table mapping (state, event) pairs to (next state, action).
 
 <!-- This pattern is widely used beyond games and CLIs — payment processing systems, for example, use the same approach to manage order lifecycles (e.g. pending → authorized → captured → refunded). -->
-
 
 ### Design
 
