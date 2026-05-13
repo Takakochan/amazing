@@ -512,6 +512,9 @@ class NonBlockingInput:
 
 
 def main() -> None:
+    # hide cursor
+    print("\033[?25l", end="")
+
     try:
         config = Config.from_file(sys.argv[1])
     except IndexError:
@@ -553,6 +556,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    # hide cursor
-    print("\033[?25l")
     main()
