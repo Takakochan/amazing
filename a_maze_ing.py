@@ -5,10 +5,10 @@ import sys
 import termios
 from types import TracebackType
 
-from src.config import Config, ConfigError
+from config import Config, ConfigError
 from mazegen import MazeGenerator
 from mazegen.render.ascii_renderer import AsciiRenderer
-from src.statemachine import (
+from statemachine import (
     STATE_MACHINE,
     Context,
     Event,
@@ -49,7 +49,7 @@ def main() -> None:
             config.width,
             config.height,
         )
-        maze_generator.renderer = AsciiRenderer.from_config(config)
+        maze_generator.renderer = AsciiRenderer(config.into_render_config())
         ctx = Context(maze_generator, config)
         current_state = State.GENERATED
         STATE_MACHINE.handle(ctx, current_state, Event.GENERATE)

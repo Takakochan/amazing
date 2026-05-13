@@ -2,7 +2,8 @@ from collections.abc import Callable
 from dataclasses import dataclass, fields
 from typing import Any, Literal, Self, get_args, get_type_hints
 
-from src.color import Color
+from mazegen.color import Color
+from mazegen.render.config import RenderConfig
 
 type ParserFn = Callable[[str], Any]
 
@@ -221,3 +222,16 @@ class Config:
             raise ConfigError(
                 f"entry and exit must be different: `{self.entry}`",
             )
+
+    def into_render_config(self) -> RenderConfig:
+        return RenderConfig(
+            self.animation,
+            self.animation_speed,
+            self.background_color,
+            self.wall_color,
+            self.entry_color,
+            self.exit_color,
+            self.forty_two_color,
+            self.solution_color,
+            self.animation_color,
+        )

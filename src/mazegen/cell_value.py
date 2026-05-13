@@ -1,6 +1,6 @@
 from enum import IntEnum
 
-from src.color import Color
+from mazegen.color import Color
 from mazegen.render.config import RenderConfig
 
 

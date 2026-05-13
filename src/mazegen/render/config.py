@@ -2,8 +2,7 @@ import random
 from dataclasses import dataclass
 from typing import Self
 
-from src.color import Color
-from src.config import Config
+from mazegen.color import Color
 
 
 @dataclass
@@ -30,20 +29,6 @@ class RenderConfig:
             Color.YELLOW,
             Color.MAGENTA,
             Color.BLUE,
-        )
-
-    @classmethod
-    def from_config(cls, config: Config) -> Self:
-        return cls(
-            config.animation,
-            config.animation_speed,
-            config.background_color,
-            config.wall_color,
-            config.entry_color,
-            config.exit_color,
-            config.forty_two_color,
-            config.solution_color,
-            config.animation_color,
         )
 
     def randomize(self) -> None:

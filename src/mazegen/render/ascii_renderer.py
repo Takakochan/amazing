@@ -2,12 +2,12 @@ import time
 from dataclasses import dataclass, field
 from typing import Self
 
-from src.color import Color
-from src.config import Config
+from config import Config
 from mazegen.ansi_writer import AnsiWriter
 from mazegen.cell import Cell
 from mazegen.cell_marking import CellMarking
 from mazegen.cell_value import CellValue
+from mazegen.color import Color
 from mazegen.direction import Direction
 from mazegen.grid import Grid
 from mazegen.render.base import Renderer
@@ -27,7 +27,7 @@ class AsciiRenderer(Renderer):
 
     @classmethod
     def from_config(cls, config: Config) -> Self:
-        return cls(RenderConfig.from_config(config))
+        return cls(config.into_render_config())
 
     def animate(self) -> bool:
         return self._config.animation

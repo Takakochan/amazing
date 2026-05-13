@@ -2,7 +2,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum, StrEnum, auto
 
-from src.config import Config
+from config import Config
 from mazegen import MazeGenerator
 from mazegen.render.ascii_renderer import AsciiRenderer
 
@@ -174,7 +174,9 @@ def do_generate(ctx: Context) -> None:
         ctx.config.width,
         ctx.config.height,
     )
-    ctx.maze_generator.renderer = AsciiRenderer.from_config(ctx.config)
+    ctx.maze_generator.renderer = AsciiRenderer(
+        ctx.config.into_render_config(),
+    )
 
     if ctx.config.animation:
         ctx.maze_generator.display()
