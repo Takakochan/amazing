@@ -176,7 +176,22 @@ We used the following resources during development:
 
 ## Roles
 
-<!-- TODO -->
+We both worked on most of the code, but each of us worked more on certain parts of the codebase.
+
+ilclaass:
+
+- config
+- grid
+- DFS generator, solver
+- BFS solver
+- rendering
+
+tkunugi:
+
+- config
+- state machine
+- imperfect generator
+- A\* solver
 
 ## Planning
 
