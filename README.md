@@ -232,11 +232,13 @@ tkunugi:
 
 ## Planning
 
-<!-- TODO -->
+We mainly used a pair-programming style because there was a significant difference in our programming skills and experience.
+Afterwards, tasks were divided in ilclaass, taking into account my (tkunugi’s) learning goals and growth.
 
 ## Reflection
 
-<!-- TODO -->
+I (tkunugi) was able to learn the structure and conceptual ideas by implementing a state machine.
+Also, coding algorithms using Python’s heapq library was a great opportunity to revisit how Python handles tuples and comparisons.
 
 ## Tools
 
