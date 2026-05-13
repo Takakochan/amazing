@@ -514,6 +514,9 @@ class NonBlockingInput:
 def main() -> None:
     try:
         config = Config.from_file(sys.argv[1])
+    except IndexError:
+        print("Config error: file is not specified")
+        sys.exit(1)
     except ConfigError as error:
         print(f"Config error: {error}")
         sys.exit(1)
