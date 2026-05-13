@@ -1,3 +1,6 @@
+*This project has been created as part of the 42 curriculum by <ilclaass>[, <tkunugi>].*
+
+
 ## MazeGenerator
 
 # Example
@@ -8,6 +11,121 @@ maze_generator.generate(perfect=True, seed=None)
 maze_generator.solve("A*")
 print(maze_generator.solution)
 ```
+
+
+## Discription
+42 Next commoncore Python project. - A-Maze-ing
+
+### The algorythm what we have choosen for Maze generator
+Depth-First Search algorithm for perfect maze
+
+
+### What we have implement for imperfect maze generator
+After generating the perfect maze, the maze is divided into four quadrants using one horizontal and one vertical center line.
+Additional walls are selectively removed between quadrants to create loops and multiple possible paths.
+Before removing a wall, the algorithm checks that the change does not create an open area larger than 3×3 cells, helping preserve the overall maze structure.
+
+
+### Solver 
+
+
+## Instructions
+• An “Instructions” section containing any relevant information about compilation,
+installation, and/or execution.
+
+## Instructions
+
+### Build the package
+
+Generate the distributable package files:
+
+```bash
+make build
+```
+
+This creates both:
+
+* `.whl`
+* `.tar.gz`
+
+package files at the root of the repository.
+
+Example:
+
+```bash
+mazegen-1.0.0-py3-none-any.whl
+```
+
+---
+
+### Install the package
+
+Install from the generated wheel:
+
+```bash
+pip install ./mazegen-1.0.0-py3-none-any.whl
+```
+
+Or install from the source archive:
+
+```bash
+pip install ./mazegen-1.0.0.tar.gz
+```
+
+---
+
+### Run the program
+
+```bash
+make run
+```
+
+---
+
+### Debug mode
+
+```bash
+make debug
+```
+
+---
+
+### Run tests
+
+```bash
+make test
+```
+
+---
+
+### Linting and formatting
+
+Run lint checks:
+
+```bash
+make lint
+```
+
+Run strict linting and type checking:
+
+```bash
+make lint-strict
+```
+
+Format the code:
+
+```bash
+make format
+```
+
+---
+
+### Clean generated files
+
+```bash
+make clean
+```
+
 
 ## A\* Algorithm
 
@@ -39,8 +157,7 @@ $h(n) = |dx| + |dy|$
 
 Using Manhattan distance here ensures the heuristic is admissible — it never overestimates the actual number of steps — which guarantees A\* always finds the shortest path.
 
-# State Machine
-
+## State Machine
 ### Overview
 
 User interactions are managed by a state machine.
@@ -52,8 +169,8 @@ At its core, the state machine is a lookup table mapping (state, event) pairs to
 
 States and transitions
 
-GENERATE --[s]--> SOLVE --[S]--> SAVE
-^ | |
+GENERATE --[s]--> SOLVE --[S]--> SAVE <br>
+^ | | <br>
 └───────────────┴──────[g]──────┘
 
 ### Design
@@ -66,13 +183,10 @@ def do_solve(ctx: Context) -> None:
     ctx.maze_generator.solve(ctx.config.algorithm)
 ```
 
-Referred source:
+### Resouce
+
+[About A*](https://ja.wikipedia.org/wiki/A*)
+[Heuristics](https://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html)
 [![The State Pattern in Python](https://img.youtube.com/vi/OeirQdzYdnc/0.jpg)](https://www.youtube.com/watch?v=OeirQdzYdnc)
 
 
-
-Markdown,
-Installation
-Usage
-Build
-etc
