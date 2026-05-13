@@ -5,7 +5,38 @@ _This project has been created as part of the 42 curriculum by ilclaass, tkunugi
 42 Next common core Python project.
 Create own maze generator and display its result.
 
-### Generator algorithms
+## Config
+
+The config file contains one option per line, in the format: `OPTION=value`.
+Empty lines and lines starting with a `#` are ignored.
+
+Example:
+
+```
+WIDTH=18
+HEIGHT=18
+ENTRY=0,0
+EXIT=17,17
+
+OUTPUT_FILE=maze.txt
+PERFECT=True
+ALGORITHM=A*
+SEED=42
+
+ANIMATION=True
+ANIMATION_SPEED=100
+BACKGROUND_COLOR=white
+WALL_COLOR=black
+ENTRY_COLOR=red
+EXIT_COLOR=green
+FORTY_TWO_COLOR=magenta
+SOLUTION_COLOR=yellow
+ANIMATION_COLOR=blue
+```
+
+## Algorithms
+
+### Generator
 
 - Depth-First Search (DFS)
 - Imperfect
@@ -16,7 +47,7 @@ After generating the perfect maze, the maze is divided into four quadrants using
 Additional walls are selectively removed between quadrants to create loops and multiple possible paths.
 Before removing a wall, the algorithm checks that the change does not create an open area larger than 3×3 cells, helping preserve the overall maze structure.
 
-## Solver algorithms
+## Solver
 
 - Depth-First Search (DFS)
 - Breadth-First Search (BFS)
