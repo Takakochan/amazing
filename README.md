@@ -5,9 +5,9 @@ _This project has been created as part of the 42 curriculum by ilclaass, tkunugi
 42 Next common core Python project.
 Create own maze generator and display its result.
 
-## Config
+## Configuration
 
-The config file contains one option per line, in the format: `OPTION=value`.
+The configuration file contains one option per line, in the format: `OPTION=value`.
 Empty lines and lines starting with a `#` are ignored.
 
 Example:
@@ -21,17 +21,17 @@ EXIT=17,17
 OUTPUT_FILE=maze.txt
 PERFECT=True
 ALGORITHM=A*
-SEED=42
+#SEED=42
 
-ANIMATION=True
-ANIMATION_SPEED=100
-BACKGROUND_COLOR=white
-WALL_COLOR=black
-ENTRY_COLOR=red
-EXIT_COLOR=green
-FORTY_TWO_COLOR=magenta
-SOLUTION_COLOR=yellow
-ANIMATION_COLOR=blue
+#ANIMATION=True
+#ANIMATION_SPEED=100
+#BACKGROUND_COLOR=white
+#WALL_COLOR=black
+#ENTRY_COLOR=red
+#EXIT_COLOR=green
+#FORTY_TWO_COLOR=magenta
+#SOLUTION_COLOR=yellow
+#ANIMATION_COLOR=blue
 ```
 
 ## Algorithms
